@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Glassmorphism layers */
+  --glass-bg-primary: rgba(255, 255, 255, 0.72);
+  --glass-bg-secondary: rgba(255, 255, 255, 0.55);
+  --glass-bg-tertiary: rgba(255, 255, 255, 0.35);
+
+  /* Blur strengths */
+  --glass-blur-strong: blur(40px);
+  --glass-blur-medium: blur(24px);
+  --glass-blur-light: blur(12px);
+
+  /* Borders */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+  --glass-border-inner: 1px solid rgba(255, 255, 255, 0.5);
+
+  /* Shadows for depth */
+  --glass-shadow-sm: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --glass-shadow-md: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --glass-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.15);
+
+  /* Safe area insets for notch/Dynamic Island */
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-left: env(safe-area-inset-left);
+  --safe-right: env(safe-area-inset-right);
+
+  /* iOS spring animation curves */
+  --spring-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --spring-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --spring-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    /* Smooth momentum scrolling on iOS/Safari (also helps on Pi) */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Support for 120Hz displays */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Only disable selection on interactive elements */
+  button,
+  a,
+  .btn-touch {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+  }
+
+  body {
+    @apply bg-gray-100 text-gray-900;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  /* Hide scrollbar for specific scrollable containers only */
+  .hide-scrollbar,
+  .apps-container.carousel {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar,
+  .apps-container.carousel::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  .btn-touch {
+    @apply min-h-[44px] min-w-[44px] px-6 py-3;
+  }
+
+  .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+}
