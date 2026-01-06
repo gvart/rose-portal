@@ -223,7 +223,7 @@ const installUrl = computed(() => {
   const base = window.location.origin
   const backend = encodeURIComponent(settingsStore.backendUrl || '')
   const vosk = encodeURIComponent(settingsStore.voskUrl || '')
-  return `${base}/install?backendUrl=${backend}&voskUrl=${vosk}`
+  return `${base}/?action=install&backendUrl=${backend}&voskUrl=${vosk}`
 })
 
 function handleBackendSave(newUrl: string) {

@@ -14,3 +14,17 @@ app.directive('haptic', hapticDirective)
 app.directive('swipe-back', swipeBackDirective)
 
 app.mount('#app')
+
+// Handle query param navigation (for GitHub Pages compatibility)
+router.isReady().then(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  const action = urlParams.get('action')
+
+  if (action === 'install') {
+    // Navigate to /install and preserve other query params
+    urlParams.delete('action')
+    const remainingParams = urlParams.toString()
+    const installPath = remainingParams ? `/install?${remainingParams}` : '/install'
+    router.push(installPath)
+  }
+})
