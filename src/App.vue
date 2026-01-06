@@ -3,6 +3,8 @@
     <InstallPrompt />
     <UpdatePrompt />
     <ConfigurationModal />
+    <TimerFloatingPill />
+    <TimerCompletionModal />
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'slide'" mode="out-in">
         <component :is="Component" :key="route.path" />
@@ -15,6 +17,14 @@
 import InstallPrompt from '@/components/pwa/InstallPrompt.vue'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt.vue'
 import ConfigurationModal from '@/components/common/ConfigurationModal.vue'
+import TimerFloatingPill from '@/components/timer/TimerFloatingPill.vue'
+import TimerCompletionModal from '@/components/timer/TimerCompletionModal.vue'
+import { useTimerStore } from '@/apps/timer/stores/timerStore'
+import { useTimerEngine } from '@/apps/timer/composables/useTimerEngine'
+
+// Initialize timer engine globally
+const timerStore = useTimerStore()
+useTimerEngine(timerStore)
 </script>
 
 <style scoped>

@@ -44,5 +44,16 @@ export const appRegistry: AppConfig[] = [
     color: '#6366F1',
     enabled: true,
     order: 4
+  },
+  {
+    id: 'timer',
+    name: 'Timer',
+    icon: '/icons/timer.svg',
+    description: 'Countdown, stopwatch, and pomodoro timers',
+    route: '/timer',
+    component: () => import('@/apps/timer/TimerApp.vue'),
+    color: '#F59E0B',
+    enabled: true,
+    order: 5
   }
 ]
