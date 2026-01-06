@@ -72,8 +72,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import { useConfiguration } from '@/composables/useConfiguration'
 
+const route = useRoute()
 const { isConfigured, setBackendUrl, setVoskUrl, validateUrl } = useConfiguration()
 
 const shouldShow = ref(false)
@@ -95,7 +97,11 @@ const isValid = computed(() => {
 onMounted(async () => {
   // Only show in production mode if not configured
   // In development, Vite proxy handles API calls
-  if (!isConfigured.value && import.meta.env.PROD) {
+  // Don't show on /install page as it handles configuration from query params
+  // Don't show if action=install query param is present (during redirect)
+  const isInstallFlow = route.path === '/install' || route.query.action === 'install'
+
+  if (!isConfigured.value && import.meta.env.PROD && !isInstallFlow) {
     shouldShow.value = true
     // Auto-focus the first input when modal opens
     await nextTick()
