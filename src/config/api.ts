@@ -1,13 +1,8 @@
 import { useConfiguration } from '@/composables/useConfiguration'
 
 export function getApiBaseUrl(): string {
-  // Development: always use empty string to utilize Vite proxy
-  // This avoids mixed content errors (HTTPS dev server + HTTP backend)
-  if (!import.meta.env.PROD) {
-    return ''
-  }
-
-  // Production: use configured URL from localStorage
+  // Both development and production use configured URL from localStorage
+  // Configure your backend URL in Settings → Backend Configuration
   const { getBackendUrl } = useConfiguration()
   const configuredUrl = getBackendUrl()
 

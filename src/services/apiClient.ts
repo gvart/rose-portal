@@ -130,17 +130,16 @@ export function createApiClient(options: ApiClientOptions = {}): AxiosInstance {
   } = options
 
   // Determine base URL based on path
-  const baseURL = basePath.startsWith('/actuator')
-    ? basePath // Actuator endpoints are absolute paths
-    : basePath
-      ? `${getApiBaseUrl()}${basePath}`
-      : getApiBaseUrl()
+  const baseURL = basePath
+    ? `${getApiBaseUrl()}${basePath}`
+    : getApiBaseUrl()
 
   const client = axios.create({
     baseURL,
     timeout,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   })
 

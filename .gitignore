@@ -36,7 +36,7 @@ coverage
 *.lcov
 .nyc_output
 
-# SSL certificates for local development
+# SSL certificates (if you choose to enable HTTPS for local dev)
 .cert
 
 # Editor directories and files

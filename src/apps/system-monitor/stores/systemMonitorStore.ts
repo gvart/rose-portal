@@ -73,7 +73,7 @@ export const useSystemMonitorStore = defineStore('systemMonitor', () => {
 
   // Helper to extract VALUE measurement
   function extractValue(metric: MetricResponse | null, statistic = 'VALUE'): number {
-    if (!metric) return 0
+    if (!metric || !metric.measurements) return 0
     const measurement = metric.measurements.find(m => m.statistic === statistic)
     return measurement?.value ?? 0
   }

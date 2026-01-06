@@ -7,66 +7,29 @@ npm install
 npm run dev
 ```
 
-Visit: `https://localhost:5173`
+Visit: `http://localhost:5173`
 
 ## Development vs Production
 
 ### Development Mode (`npm run dev`)
 
-**Backend API**:
-- ✅ Uses **Vite proxy** automatically
-- ✅ No configuration modal
-- ✅ No mixed content errors
-- ✅ Proxies `/api` → Your backend (configured in `.env.local`)
-- ✅ Proxies `/actuator` → Your backend (configured in `.env.local`)
-
-**Vosk WebSocket**:
-- ✅ Falls back to `ws://raspberrypi.local:2700` if not configured
-- ✅ Can be overridden in Settings if needed
+**Backend API & Vosk WebSocket**:
+- ✅ Uses **localStorage configuration** (same as production)
+- ✅ Configuration modal **will appear** on first visit
+- ✅ Configure your backend URL in Settings or via the modal
 
 **Key Points**:
-- Configuration modal **will not appear** in development
-- Backend URL from localStorage is **ignored** (proxy is always used)
-- HTTPS dev server (https://localhost:5173) proxies to HTTP backend
+- Development and production work **exactly the same**
+- Configure backend URL: `http://your-backend.com:8080`
+- Configure Vosk URL: `ws://your-backend.com:2700`
+- No proxy, no environment variables - pure runtime configuration
 
 ### Production Mode (`npm run build`)
 
-**Backend API**:
-- ⚙️ Reads from localStorage (`rose_backend_url`)
-- ⚙️ Shows configuration modal if not set
-- ⚙️ User must configure: `https://your-backend.com:8080`
-
-**Vosk WebSocket**:
-- ⚙️ Reads from localStorage (`rose_vosk_url`)
-- ⚙️ User must configure: `wss://your-backend.com:2700`
-
-## Vite Proxy Configuration
-
-The proxy is configured in `vite.config.ts` to read from environment variables:
-
-```typescript
-proxy: {
-  '/api': {
-    target: process.env.VITE_DEV_BACKEND_HOST,
-    changeOrigin: true
-  },
-  '/actuator': {
-    target: process.env.VITE_DEV_BACKEND_HOST,
-    changeOrigin: true
-  }
-}
-```
-
-**To configure your backend in development**:
-1. Create `.env.local` file in the project root (if not exists)
-2. Add your backend URL:
-   ```
-   VITE_DEV_BACKEND_HOST=http://your-backend-host:8080
-   ```
-   Example: `VITE_DEV_BACKEND_HOST=http://raspberrypi.local:8080`
-3. Restart dev server: `npm run dev`
-
-**Note**: `.env.local` is ignored by git, so your private hostnames stay safe
+**Backend API & Vosk WebSocket**:
+- ⚙️ Uses **localStorage configuration** (same as development)
+- ⚙️ Configuration modal appears on first visit
+- ⚙️ Configure via Settings page anytime
 
 ## Clearing Configuration (If Needed)
 
@@ -138,28 +101,6 @@ npm run type-check       # Run TypeScript compiler
 npm run generate:icons   # Generate PWA icons
 ```
 
-## HTTPS in Development
-
-The dev server uses HTTPS with self-signed certificates:
-
-**Location**: `.cert/localhost+4.pem` and `.cert/localhost+4-key.pem`
-
-**Browser Warnings**:
-- Chrome/Edge: Click "Advanced" → "Proceed to localhost"
-- Firefox: Click "Advanced" → "Accept the Risk"
-- Safari: May require installing the certificate
-
-**To regenerate certificates** (if needed):
-```bash
-# Install mkcert (one-time)
-brew install mkcert  # macOS
-# or download from https://github.com/FiloSottile/mkcert
-
-# Generate certificates
-cd portal/.cert
-mkcert localhost 127.0.0.1 ::1 dnp6j4rc7q.local
-```
-
 ## Testing Configuration Flow
 
 ### Test First-Run Modal (Production Only)
@@ -182,33 +123,24 @@ npm run preview
 4. **Scan**: Use phone to scan QR code
 5. **Install Page**: Should auto-configure and show PWA instructions
 
-## Environment Variables
+## Configuration
 
-### Development (.env.local)
+Both development and production use runtime configuration stored in localStorage. No environment variables needed!
 
-Used for local development configuration (git-ignored):
-
-```bash
-# Required: Backend server URL for Vite proxy
-VITE_DEV_BACKEND_HOST=http://your-backend-host:8080
-
-# Optional: Vosk WebSocket URL (if different)
-# VITE_DEV_VOSK_HOST=ws://your-backend-host:2700
-```
-
-**Important**: This file is git-ignored to protect your private hostnames
-
-### Production (.env.production)
-
-Not used - runtime configuration via localStorage
+**How it works**:
+1. On first visit, a configuration modal appears
+2. Enter your backend URL (e.g., `http://192.168.1.100:8080`)
+3. Enter your Vosk WebSocket URL (e.g., `ws://192.168.1.100:2700`)
+4. Configuration is saved in browser's localStorage
+5. Change configuration anytime via Settings → Backend Configuration
 
 ## Debugging
 
 ### Check API Calls
 
 **Browser DevTools → Network Tab**:
-- Development: Should see `/api/v1/...` (proxied)
-- Production: Should see full URL `https://backend.com:8080/api/v1/...`
+- Should see full URL (e.g., `http://backend.com:8080/api/v1/...`)
+- Works the same in development and production
 
 ### Check Configuration
 
@@ -222,33 +154,26 @@ localStorage.getItem('rose_vosk_url')
 import.meta.env.PROD  // false in dev, true in production
 ```
 
-### Check Proxy
-
-**Vite Dev Server Logs**:
-```
-[vite] http proxy: /api/v1/plants -> http://your-backend:8080/api/v1/plants
-```
-
-The target URL will match your `VITE_DEV_BACKEND_HOST` from `.env.local`
-
 ## Common Issues
 
-### Issue: Configuration modal shows in development
+### Issue: Configuration modal appears on every reload
 
-**Solution**: This shouldn't happen after the fix. If it does:
+**Solution**: Configuration should persist in localStorage. If it doesn't:
 ```javascript
-// Browser console
-localStorage.clear()
-location.reload()
+// Browser console - check if config is saved
+localStorage.getItem('rose_backend_url')
+localStorage.getItem('rose_vosk_url')
 ```
+
+If values are null, reconfigure via the modal or Settings page.
 
 ### Issue: API calls fail with CORS error
 
-**Solution**: Backend must allow CORS from `https://localhost:5173`
+**Solution**: Backend must allow CORS from `http://localhost:5173`
 
 **Backend Configuration** (Spring Boot example):
 ```kotlin
-@CrossOrigin(origins = ["https://localhost:5173"])
+@CrossOrigin(origins = ["http://localhost:5173"])
 ```
 
 ### Issue: Vosk WebSocket connection fails
