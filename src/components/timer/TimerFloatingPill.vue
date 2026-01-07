@@ -231,6 +231,9 @@ function toggleTimer(timer: Timer) {
 /* Expanded View */
 .expanded-view {
   @apply py-3 max-h-96 overflow-y-auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .expanded-header {
