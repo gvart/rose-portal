@@ -204,6 +204,9 @@ export const apiClients = {
   /** Recipe API - /api/v1/recipe */
   recipe: createApiClient({ basePath: '' }),
 
+  /** Weather API - /api/v1/weather */
+  weather: createApiClient({ basePath: '/api/v1/weather' }),
+
   /** System Monitor API - /actuator */
   actuator: createApiClient({
     basePath: '/actuator',

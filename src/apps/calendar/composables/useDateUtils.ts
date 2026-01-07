@@ -298,6 +298,17 @@ export function formatRelativeTime(date: Date): string {
   }
 }
 
+/**
+ * Format date for header display (e.g., "Monday, January 6")
+ */
+export function formatHeaderDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  })
+}
+
 // ============================================================================
 // Date Parsing
 // ============================================================================

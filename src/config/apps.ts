@@ -55,5 +55,16 @@ export const appRegistry: AppConfig[] = [
     color: '#F59E0B',
     enabled: true,
     order: 5
+  },
+  {
+    id: 'weather',
+    name: 'Weather',
+    icon: '/icons/weather.svg',
+    description: '7-day forecast and weather alerts',
+    route: '/weather',
+    component: () => import('@/apps/weather/WeatherApp.vue'),
+    color: '#3B82F6',
+    enabled: true,
+    order: 6
   }
 ]

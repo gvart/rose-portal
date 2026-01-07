@@ -5,11 +5,13 @@ import App from './App.vue'
 import './assets/styles/main.css'
 import { hapticDirective } from './directives/haptic'
 import { swipeBackDirective } from './directives/swipeBack'
+import { MotionPlugin } from '@vueuse/motion'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.use(MotionPlugin)
 app.directive('haptic', hapticDirective)
 app.directive('swipe-back', swipeBackDirective)
 

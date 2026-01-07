@@ -13,12 +13,7 @@
 
       <!-- Adaptive Header -->
       <header class="home-header">
-        <h1 :class="['home-title', { compact: isLandscapeMode }]">
-          ROSE Smart Hub
-        </h1>
-        <p v-if="!isLandscapeMode" class="home-subtitle">
-          Your intelligent home assistant
-        </p>
+        <ClockDisplay :is-compact="isLandscapeMode" />
       </header>
 
       <!-- App Grid/Carousel -->
@@ -39,6 +34,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HomeLayout from '@/layouts/HomeLayout.vue'
 import AppGrid from '@/components/home/AppGrid.vue'
+import ClockDisplay from '@/components/common/ClockDisplay.vue'
 import { useAppStore } from '@/stores/appRegistry'
 import { useOrientation } from '@/composables/useOrientation'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
@@ -150,26 +146,6 @@ function goToSettings() {
     transform: rotate(180deg);
     flex-shrink: 0;
   }
-}
-
-.home-title {
-  font-size: 3rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: font-size 0.3s var(--spring-smooth);
-}
-
-.home-title.compact {
-  font-size: 1.5rem;
-}
-
-.home-subtitle {
-  font-size: 1.25rem;
-  color: rgba(60, 60, 67, 0.6);
-  margin-top: 8px;
 }
 
 .apps-wrapper {
