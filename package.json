@@ -10,7 +10,9 @@
     "generate:icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
+    "@iconify/vue": "^5.0.0",
     "@vuepic/vue-datepicker": "^12.1.0",
+    "@vueuse/motion": "^3.0.3",
     "axios": "^1.13.2",
     "marked": "^17.0.1",
     "pinia": "^3.0.4",
