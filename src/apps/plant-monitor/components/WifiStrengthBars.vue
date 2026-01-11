@@ -17,19 +17,29 @@ const bars = computed(() => getWifiBars(props.rssi))
 
 const statusClass = computed(() => {
   const status = getWifiStatus(props.rssi)
-  if (status === 'good') return 'text-green-500'
-  if (status === 'warning') return 'text-amber-500'
-  return 'text-red-500'
+  if (status === 'good') return 'wifi-good'
+  if (status === 'warning') return 'wifi-warning'
+  return 'wifi-critical'
 })
 </script>
 
 <style scoped>
 .wifi-bars {
-  @apply flex items-end gap-0.5 h-4;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
 }
 
+.wifi-good { color: var(--color-success-solid); }
+.wifi-warning { color: var(--color-warning-solid); }
+.wifi-critical { color: var(--color-error-solid); }
+
 .bar {
-  @apply w-1 bg-gray-300 rounded-sm transition-colors;
+  width: var(--space-1);
+  background: var(--color-border-secondary);
+  border-radius: var(--radius-xs);
+  transition: background-color var(--duration-fast) var(--ease-in-out);
 }
 
 .bar-1 { height: 25%; }
@@ -38,6 +48,6 @@ const statusClass = computed(() => {
 .bar-4 { height: 100%; }
 
 .bar.active {
-  @apply bg-current;
+  background: currentColor;
 }
 </style>

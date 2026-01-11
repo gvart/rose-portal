@@ -28,30 +28,58 @@ defineProps<{
 
 <style scoped>
 .metric-row {
-  @apply flex justify-between items-center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .label {
-  @apply text-gray-600 font-medium;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 .value {
-  @apply text-gray-900 font-semibold text-lg;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-18);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .value.active {
-  @apply text-green-600;
+  color: var(--color-success-solid);
 }
 
 .status-indicator {
-  @apply flex items-center gap-2 mt-3 p-2 bg-green-50 rounded;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-2);
+  background: var(--color-success-bg);
+  border-radius: var(--radius-xs);
 }
 
 .pulse {
-  @apply w-3 h-3 bg-green-600 rounded-full animate-pulse;
+  width: 12px;
+  height: 12px;
+  background: var(--color-success-solid);
+  border-radius: var(--radius-full);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .status-text {
-  @apply text-sm text-green-700 font-medium;
+  font-size: var(--font-size-14);
+  color: var(--color-success-text);
+  font-weight: var(--font-weight-medium);
 }
 </style>

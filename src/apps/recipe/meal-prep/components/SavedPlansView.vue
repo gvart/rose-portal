@@ -105,91 +105,168 @@ function openPlanModal(plan: WeeklyMenuResponse, index: number) {
 
 <style scoped>
 .saved-plans-view {
-  @apply w-full;
+  width: 100%;
 }
 
 .view-header {
-  @apply flex items-center justify-between mb-6 pb-4 border-b-2 border-gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-border-primary);
 }
 
 .header-title {
-  @apply text-3xl font-bold text-gray-800;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .plan-count {
-  @apply px-4 py-2 bg-emerald-600 text-white
-         rounded-full text-sm font-semibold;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-success-solid);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .loading-state {
-  @apply flex flex-col items-center justify-center p-12 bg-gray-50 rounded-xl gap-4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  gap: var(--space-4);
 }
 
 .loading-spinner {
-  @apply w-12 h-12 text-emerald-600 animate-spin;
+  width: 48px;
+  height: 48px;
+  color: var(--color-success-solid);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
-  @apply text-lg font-semibold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .error-state {
-  @apply flex flex-col items-center justify-center p-12 bg-red-50
-         border-2 border-red-200 rounded-xl gap-4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  background: var(--color-error-bg);
+  border: 2px solid var(--color-error-border);
+  border-radius: var(--radius-lg);
+  gap: var(--space-4);
 }
 
 .error-message {
-  @apply text-lg text-red-700 font-medium;
+  font-size: var(--font-size-18);
+  color: var(--color-error-text);
+  font-weight: var(--font-weight-medium);
 }
 
 .retry-button {
-  @apply px-6 py-3 bg-red-600 text-white font-bold
-         rounded-lg hover:bg-red-700 transition-all duration-200;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-error-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 48px;
 }
 
+.retry-button:active {
+  transform: scale(0.98);
+  background: #dc2626;
+}
+
 .empty-state {
-  @apply flex items-center justify-center p-12 bg-gray-50 rounded-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
 }
 
 .empty-message {
-  @apply text-lg text-gray-600;
+  font-size: var(--font-size-18);
+  color: var(--color-text-secondary);
 }
 
 .plans-container {
-  @apply flex flex-col gap-4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .plan-card {
-  @apply bg-white rounded-xl border-2 border-gray-200
-         hover:border-emerald-300 hover:shadow-lg
-         transition-all duration-200 cursor-pointer;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.plan-card:active {
+  border-color: var(--color-success-border);
+  box-shadow: var(--depth-2-shadow);
 }
 
 .plan-header {
-  @apply flex items-center justify-between p-6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
   min-height: 80px;
 }
 
 .plan-info {
-  @apply flex-1;
+  flex: 1;
 }
 
 .plan-title {
-  @apply text-xl font-bold text-gray-800 mb-1;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
 }
 
 .plan-meta {
-  @apply text-sm text-gray-600;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
 }
 
 .arrow-icon {
-  @apply w-6 h-6 text-emerald-600 transition-transform duration-200;
+  width: 24px;
+  height: 24px;
+  color: var(--color-success-solid);
+  transition: transform var(--duration-fast) var(--ease-in-out);
   min-width: 24px;
   min-height: 24px;
 }
 
-.plan-card:hover .arrow-icon {
-  @apply translate-x-1;
+.plan-card:active .arrow-icon {
+  transform: translateX(4px);
 }
 </style>

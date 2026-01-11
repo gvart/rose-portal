@@ -80,34 +80,54 @@ function handleAcknowledge() {
 <style scoped>
 /* Completion Overlay */
 .completion-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: var(--space-4);
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0%,
   100% {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6);
   }
   50% {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.7);
   }
 }
 
 /* Completion Content */
 .completion-content {
-  @apply w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center
-    transform transition-all duration-300;
+  width: 100%;
+  max-width: 448px;
+  background: var(--color-bg-primary);
+  border: var(--depth-3-border);
+  box-shadow: var(--depth-3-shadow);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  text-align: center;
+  transform: scale(1);
+  transition: all var(--duration-slow) var(--ease-in-out);
 }
 
 /* Completion Icon */
 .completion-icon-container {
-  @apply flex items-center justify-center mb-6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6);
 }
 
 .completion-icon {
-  @apply w-24 h-24 text-green-500;
-  animation: check-bounce 0.6s ease;
+  width: 96px;
+  height: 96px;
+  color: var(--color-success-solid);
+  animation: check-bounce 0.6s var(--ease-in-out);
 }
 
 @keyframes check-bounce {
@@ -124,50 +144,86 @@ function handleAcknowledge() {
 
 /* Completion Text */
 .completion-title {
-  @apply text-3xl font-bold text-gray-900 mb-3;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
 }
 
 .completion-message {
-  @apply text-lg text-gray-700 mb-6;
+  font-size: var(--font-size-16);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
 }
 
 /* Pomodoro Phase Info */
 .pomodoro-phase {
-  @apply flex justify-center mb-6;
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
 }
 
 .phase-badge {
-  @apply px-4 py-2 rounded-full font-semibold text-sm;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-13);
 }
 
 .phase-work {
-  @apply bg-red-100 text-red-700;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 
 .phase-break {
-  @apply bg-green-100 text-green-700;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 /* Acknowledge Button */
 .acknowledge-btn {
-  @apply w-full px-8 py-4 bg-amber-500 text-white font-bold text-lg rounded-xl
-    hover:bg-amber-600 transition-all duration-150 active:scale-95
-    focus:outline-none focus:ring-4 focus:ring-amber-500 focus:ring-offset-2;
+  width: 100%;
+  padding: var(--space-4) var(--space-8);
+  background: var(--color-warning-solid);
+  color: white;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-16);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.acknowledge-btn:active {
+  transform: scale(0.96);
+  background: #d97706;
+}
+
+.acknowledge-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
 /* Modal Transition */
 .modal-enter-active,
 .modal-leave-active {
-  @apply transition-all duration-300 ease-out;
+  transition: opacity var(--duration-slow) var(--ease-in-out);
 }
 
 .modal-enter-from,
 .modal-leave-to {
-  @apply opacity-0;
+  opacity: 0;
 }
 
 .modal-enter-from .completion-content,
 .modal-leave-to .completion-content {
-  @apply scale-90 translate-y-8;
+  transform: scale(0.9) translateY(var(--space-8));
+  transition: transform var(--duration-slow) var(--ease-in-out);
+}
+
+.modal-enter-active .completion-content,
+.modal-leave-active .completion-content {
+  transition: transform var(--duration-slow) var(--ease-in-out);
 }
 </style>

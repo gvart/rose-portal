@@ -43,26 +43,45 @@ function formatBytes(bytes: number): string {
 
 <style scoped>
 .metric-row {
-  @apply flex justify-between items-center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .label {
-  @apply text-gray-600 font-medium;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 .value {
-  @apply text-gray-900 font-semibold text-lg;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-18);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .usage-bar-container {
-  @apply w-full h-4 bg-gray-200 rounded-full overflow-hidden mt-2;
+  width: 100%;
+  height: 16px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--space-2);
 }
 
 .usage-bar {
-  @apply h-full bg-blue-600 transition-all duration-300;
+  height: 100%;
+  background: var(--color-info-solid);
+  transition: all var(--duration-normal) var(--ease-in-out);
 }
 
 .usage-text {
-  @apply text-center text-sm text-gray-600 mt-1;
+  text-align: center;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  margin-top: var(--space-1);
 }
 </style>

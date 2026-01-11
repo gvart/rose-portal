@@ -30,18 +30,27 @@ defineProps<{
 
 <style scoped>
 .metric-row {
-  @apply flex justify-between items-center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .metric-row.range {
-  @apply border-t pt-2 mt-2;
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: var(--space-2);
+  margin-top: var(--space-2);
 }
 
 .label {
-  @apply text-gray-600 font-medium;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 .value {
-  @apply text-gray-900 font-semibold text-lg;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-18);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 </style>

@@ -108,124 +108,213 @@ const viewOptions = VIEW_OPTIONS
 
 <style scoped>
 .calendar-header {
-  @apply flex items-center justify-between gap-4 p-4 bg-white rounded-xl shadow-md mb-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
   flex-wrap: wrap;
 }
 
 /* Navigation Controls */
 .nav-controls {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .nav-btn {
-  @apply flex items-center justify-center w-10 h-10 rounded-lg
-         text-gray-600 hover:bg-gray-100 hover:text-gray-800
-         transition-all duration-150 active:scale-95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.nav-btn:active {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  transform: scale(0.95);
 }
 
 .nav-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 .today-btn {
-  @apply px-4 py-2 font-semibold text-gray-700 bg-gray-100
-         rounded-lg hover:bg-gray-200 transition-all duration-150
-         active:scale-95;
+  padding: var(--space-2) var(--space-4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 40px;
 }
 
+.today-btn:active:not(.today-btn--active) {
+  transform: scale(0.95);
+  background: var(--color-bg-tertiary);
+}
+
 .today-btn--active {
-  @apply bg-indigo-100 text-indigo-700 hover:bg-indigo-200;
+  background: var(--color-info-bg);
+  color: var(--color-info-solid);
 }
 
 /* Title */
 .header-title {
-  @apply text-xl font-bold text-gray-800 text-center flex-1;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+  flex: 1;
   min-width: 200px;
 }
 
 /* Actions */
 .header-actions {
-  @apply flex items-center gap-3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 /* View Toggle */
 .view-toggle {
-  @apply flex bg-gray-100 rounded-lg p-1;
+  display: flex;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-1);
 }
 
 .view-btn {
-  @apply px-4 py-2 font-semibold text-gray-600 rounded-md
-         transition-all duration-150;
+  padding: var(--space-2) var(--space-4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 36px;
 }
 
 .view-btn--compact {
-  @apply px-3;
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
 }
 
-.view-btn:hover:not(.view-btn--active) {
-  @apply text-gray-800;
+.view-btn:active:not(.view-btn--active) {
+  color: var(--color-text-primary);
 }
 
 .view-btn--active {
-  @apply bg-white text-indigo-600 shadow-sm;
+  background: var(--color-bg-primary);
+  color: var(--color-info-solid);
+  box-shadow: var(--depth-1-shadow);
 }
 
 /* Create Button */
 .create-btn {
-  @apply flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white
-         font-semibold rounded-lg hover:bg-indigo-700
-         transition-all duration-150 active:scale-95 shadow-md;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-info-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  box-shadow: var(--depth-2-shadow);
   min-height: 40px;
 }
 
+.create-btn:active {
+  transform: scale(0.95);
+  background: #4f46e5;
+}
+
 .create-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 .create-label {
-  @apply hidden sm:inline;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .create-label {
+    display: inline;
+  }
 }
 
 /* Responsive */
 .desktop-only {
-  @apply hidden md:flex;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktop-only {
+    display: flex;
+  }
 }
 
 .mobile-only {
-  @apply flex md:hidden;
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
 }
 
 /* Mobile adjustments */
 @media (max-width: 640px) {
   .calendar-header {
-    @apply flex-col gap-3 p-3;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3);
   }
 
   .nav-controls {
-    @apply order-2 w-full justify-center;
+    order: 2;
+    width: 100%;
+    justify-content: center;
   }
 
   .header-title {
-    @apply order-1 w-full text-lg;
+    order: 1;
+    width: 100%;
+    font-size: var(--font-size-18);
     min-width: auto;
   }
 
   .header-actions {
-    @apply order-3 w-full justify-center;
+    order: 3;
+    width: 100%;
+    justify-content: center;
   }
 
   .today-btn {
-    @apply px-3 text-sm;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    font-size: var(--font-size-14);
   }
 
   .view-btn {
-    @apply px-3 py-1.5 text-sm;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-14);
   }
 
   .create-btn {
-    @apply px-3;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
   }
 }
 </style>

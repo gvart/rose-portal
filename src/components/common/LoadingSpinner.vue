@@ -13,15 +13,32 @@ defineProps<{
 
 <style scoped>
 .loading-container {
-  @apply flex flex-col items-center justify-center gap-4 p-8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-8);
 }
 
 .spinner {
-  @apply w-16 h-16 border-4 border-emerald-200 border-t-emerald-600
-         rounded-full animate-spin;
+  width: 64px;
+  height: 64px;
+  border: 4px solid var(--color-border-primary);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-message {
-  @apply text-gray-600 text-lg;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-medium);
 }
 </style>

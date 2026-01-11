@@ -91,8 +91,12 @@ function stopTimer() {
 
 <style scoped>
 .watering-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center;
-  backdrop-filter: blur(4px);
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
   /* Ensure it covers safe areas */
   padding-top: var(--safe-top);
@@ -102,16 +106,26 @@ function stopTimer() {
 }
 
 .watering-content {
-  @apply relative flex flex-col items-center gap-6 p-8;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-8);
   transition: all 0.4s var(--spring-bounce);
 }
 
 .water-drops {
-  @apply absolute inset-0 pointer-events-none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .drop {
-  @apply absolute rounded-full bg-blue-400 opacity-60;
+  position: absolute;
+  border-radius: var(--radius-full);
+  background: #60a5fa;
+  opacity: 0.6;
   animation: fall 2s infinite;
 }
 
@@ -168,27 +182,58 @@ function stopTimer() {
 }
 
 .watering-icon {
-  @apply relative z-10 animate-bounce;
+  position: relative;
+  z-index: 10;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .watering-title {
-  @apply text-2xl font-bold text-white relative z-10;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  position: relative;
+  z-index: 10;
 }
 
 .progress-container {
-  @apply w-full max-w-md relative z-10;
+  width: 100%;
+  max-width: 28rem;
+  position: relative;
+  z-index: 10;
 }
 
 .progress-bar {
-  @apply w-full h-3 bg-gray-700 rounded-full overflow-hidden;
+  width: 100%;
+  height: var(--space-3);
+  background: #374151;
+  border-radius: var(--radius-full);
+  overflow: hidden;
 }
 
 .progress-fill {
-  @apply h-full bg-blue-500 rounded-full transition-all duration-100;
+  height: 100%;
+  background: var(--color-info-solid);
+  border-radius: var(--radius-full);
+  transition: width 100ms linear;
 }
 
 .progress-text {
-  @apply text-center text-white text-lg font-semibold mt-3;
+  text-align: center;
+  color: white;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .overlay-enter-active {

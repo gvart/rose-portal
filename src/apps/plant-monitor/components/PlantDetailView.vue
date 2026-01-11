@@ -296,71 +296,160 @@ function onSaveConfig(config: PlantConfig & { name: string }) {
 
 <style scoped>
 .loading-state {
-  @apply flex items-center justify-center py-16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) 0;
 }
 
 .plant-detail {
-  @apply w-full relative;
+  width: 100%;
+  position: relative;
 }
 
 .plant-detail-content {
-  @apply space-y-6 pb-8;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-8);
 }
 
 .plant-header {
-  @apply flex items-center justify-between gap-4 bg-white rounded-xl p-4 shadow-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
 }
 
 .plant-header__actions {
-  @apply flex gap-2;
+  display: flex;
+  gap: var(--space-2);
 }
 
 .action-wrapper {
-  @apply flex flex-col gap-1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .action-hint {
-  @apply text-xs text-amber-600 font-medium text-center;
+  font-size: var(--font-size-12);
+  color: #d97706;
+  font-weight: var(--font-weight-medium);
+  text-align: center;
 }
 
 .gauge-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .gauge-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .success-message {
-  @apply flex items-center justify-center gap-2 p-4 bg-green-50
-         border-2 border-green-200 rounded-xl text-green-700 font-medium
-         animate-pulse;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-success-bg);
+  border: 2px solid var(--color-success-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-success-text);
+  font-weight: var(--font-weight-medium);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .action-btn {
-  @apply flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold
-         shadow-md transition-all duration-150 active:scale-95
-         disabled:opacity-50 disabled:cursor-not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 44px;
 }
 
+.action-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .action-btn--water {
-  @apply bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg;
+  background: var(--color-info-solid);
+  color: white;
+}
+
+.action-btn--water:active:not(:disabled) {
+  background: #2563eb;
 }
 
 .action-btn__icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 .action-btn--water .action-btn__icon {
-  @apply text-blue-100;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .action-btn--config {
-  @apply bg-gray-600 text-white hover:bg-gray-700 hover:shadow-lg;
+  background: var(--color-text-secondary);
+  color: white;
+}
+
+.action-btn--config:active:not(:disabled) {
+  background: var(--color-text-primary);
 }
 
 .action-btn--config .action-btn__icon {
-  @apply text-gray-100;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .action-btn__label {
-  @apply text-sm sm:text-base;
+  font-size: var(--font-size-13);
+}
+
+@media (min-width: 640px) {
+  .action-btn__label {
+    font-size: var(--font-size-14);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
 </style>

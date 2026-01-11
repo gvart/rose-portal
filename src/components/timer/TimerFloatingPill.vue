@@ -164,139 +164,255 @@ function toggleTimer(timer: Timer) {
 <style scoped>
 .timer-floating-pill {
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
-  left: 12px;
-  right: 12px;
+  bottom: calc(var(--safe-bottom) + var(--space-4));
+  left: var(--space-3);
+  right: var(--space-3);
   z-index: 99;
   pointer-events: none;
 }
 
 .pill-container {
   pointer-events: auto;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  background: var(--color-bg-primary);
+  border: var(--depth-4-border);
+  box-shadow: var(--depth-4-shadow);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-slow) var(--ease-in-out);
 }
 
 .pill-container.minimized {
-  @apply w-16 h-16 rounded-full mx-auto;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  margin: 0 auto;
 }
 
 /* Minimized View */
 .minimized-view {
-  @apply flex items-center justify-center w-full h-full cursor-pointer relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  position: relative;
 }
 
 .timer-icon {
-  @apply w-8 h-8 text-amber-500;
+  width: 32px;
+  height: 32px;
+  color: var(--color-warning-solid);
 }
 
 .timer-badge {
-  @apply absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold
-    rounded-full flex items-center justify-center;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-error-solid);
+  color: white;
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Compact View */
 .compact-view {
-  @apply flex items-center gap-3 px-4 py-3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
 }
 
 .timer-info {
-  @apply flex flex-col flex-1 min-w-0 cursor-pointer;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
 }
 
 .timer-name {
-  @apply text-sm font-semibold text-gray-900 truncate;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timer-type {
-  @apply text-xs text-gray-500;
+  font-size: var(--font-size-11);
+  color: var(--color-text-muted);
 }
 
 .timer-time {
-  @apply text-lg font-bold text-amber-500 tabular-nums cursor-pointer;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-warning-solid);
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  cursor: pointer;
 }
 
 .control-btn {
-  @apply p-2 text-amber-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors;
+  padding: var(--space-2);
+  color: var(--color-warning-solid);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.control-btn:active {
+  transform: scale(0.96);
+  background: var(--color-warning-bg);
 }
 
 .minimize-btn {
-  @apply p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors;
+  padding: var(--space-2);
+  color: var(--color-text-faint);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.minimize-btn:active {
+  transform: scale(0.96);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
 }
 
 /* Expanded View */
 .expanded-view {
-  @apply py-3 max-h-96 overflow-y-auto;
+  padding: var(--space-3) 0;
+  max-height: 384px;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   overscroll-behavior: contain;
 }
 
 .expanded-header {
-  @apply flex items-center justify-between px-4 pb-3 border-b border-gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4) var(--space-3);
+  border-bottom: var(--depth-1-border);
 }
 
 .expanded-actions {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .expanded-title {
-  @apply text-sm font-semibold text-gray-900;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
-.close-btn {
-  @apply p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors;
-}
-
+.close-btn,
 .minimize-header-btn {
-  @apply p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors;
+  padding: var(--space-1);
+  color: var(--color-text-faint);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.close-btn:active,
+.minimize-header-btn:active {
+  transform: scale(0.96);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .expanded-timers {
-  @apply divide-y divide-gray-100;
+  border-top: var(--depth-1-border);
 }
 
 .expanded-timer {
-  @apply flex items-center justify-between px-4 py-3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--depth-1-border);
+}
+
+.expanded-timer:last-child {
+  border-bottom: none;
 }
 
 .expanded-timer-info {
-  @apply flex flex-col flex-1 min-w-0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .expanded-timer-name {
-  @apply text-sm font-medium text-gray-900 truncate;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .expanded-timer-time {
-  @apply text-lg font-bold text-amber-500 tabular-nums;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-warning-solid);
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
 .expanded-timer-controls {
-  @apply flex gap-2;
+  display: flex;
+  gap: var(--space-2);
 }
 
 .mini-control-btn {
-  @apply p-2 text-gray-600 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition-colors;
+  padding: var(--space-2);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
 }
 
-.mini-control-btn.danger {
-  @apply hover:text-red-500 hover:bg-red-50;
+.mini-control-btn:active {
+  transform: scale(0.96);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-solid);
+}
+
+.mini-control-btn.danger:active {
+  background: var(--color-error-bg);
+  color: var(--color-error-solid);
 }
 
 /* Slide Up Transition */
 .slide-down-enter-active,
 .slide-down-leave-active {
-  @apply transition-all duration-300 ease-out;
+  transition: all var(--duration-slow) var(--ease-in-out);
 }
 
 .slide-down-enter-from,
 .slide-down-leave-to {
-  @apply opacity-0 translate-y-full;
+  opacity: 0;
+  transform: translateY(100%);
 }
 </style>

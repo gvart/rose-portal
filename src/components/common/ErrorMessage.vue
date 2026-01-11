@@ -24,24 +24,52 @@ defineEmits<{
 
 <style scoped>
 .error-container {
-  @apply flex flex-col items-center justify-center gap-4 p-8
-         bg-red-50 rounded-xl border-2 border-red-200 max-w-md mx-auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  background: var(--color-error-bg);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-error-border);
+  max-width: 448px;
+  margin: 0 auto;
 }
 
 .error-icon {
-  @apply w-16 h-16 text-red-600;
+  width: 64px;
+  height: 64px;
+  color: var(--color-error-solid);
 }
 
 .icon {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .error-message {
-  @apply text-red-800 text-lg text-center;
+  color: var(--color-error-text);
+  font-size: var(--font-size-16);
+  text-align: center;
+  font-weight: var(--font-weight-medium);
 }
 
 .retry-button {
-  @apply px-6 py-3 min-w-[44px] min-h-[44px] bg-red-600 text-white rounded-lg
-         hover:bg-red-700 transition-colors duration-200 font-medium;
+  padding: var(--space-3) var(--space-6);
+  min-width: var(--space-11);
+  min-height: var(--space-11);
+  background: var(--color-error-solid);
+  color: white;
+  border-radius: var(--radius-md);
+  border: none;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.retry-button:active {
+  transform: scale(0.96);
+  opacity: 0.9;
 }
 </style>

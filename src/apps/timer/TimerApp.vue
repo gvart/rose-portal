@@ -129,75 +129,159 @@ function handleDelete(id: string) {
 
 <style scoped>
 .timer-app {
-  @apply w-full min-h-full p-4 space-y-6;
+  width: 100%;
+  min-height: 100%;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 /* Header */
 .app-header {
-  @apply flex items-center justify-between mb-6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
 }
 
 .header-title {
-  @apply text-2xl font-bold text-gray-900;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .create-btn {
-  @apply flex items-center gap-2 px-4 py-2 bg-amber-500 text-white font-semibold rounded-lg
-    hover:bg-amber-600 transition-all duration-150 active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-warning-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.create-btn:active {
+  transform: scale(0.96);
+  background: #d97706;
+}
+
+.create-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
 /* Sections */
 .section {
-  @apply space-y-4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .section-title {
-  @apply flex items-center gap-2 text-lg font-semibold text-gray-900;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .timer-count {
-  @apply inline-flex items-center justify-center w-6 h-6 text-xs font-bold
-    bg-amber-100 text-amber-700 rounded-full;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--space-1);
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-bold);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Timer Grid */
 .timer-grid {
-  @apply grid grid-cols-1 gap-4;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
 }
 
 @media (min-width: 768px) {
   .timer-grid {
-    @apply grid-cols-2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 1280px) {
   .timer-grid {
-    @apply grid-cols-3;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* Empty State */
 .empty-state {
-  @apply flex flex-col items-center justify-center py-20 px-4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
+  padding-top: 80px;
 }
 
 .empty-icon {
-  @apply w-32 h-32 text-gray-300 mb-6;
+  width: 128px;
+  height: 128px;
+  color: var(--color-border-secondary);
+  margin-bottom: var(--space-6);
 }
 
 .empty-text {
-  @apply text-2xl font-semibold text-gray-900 mb-2;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .empty-subtext {
-  @apply text-base text-gray-500 mb-8;
+  font-size: var(--font-size-14);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-8);
 }
 
 .empty-cta {
-  @apply flex items-center gap-2 px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg
-    hover:bg-amber-600 transition-all duration-150 active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-warning-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.empty-cta:active {
+  transform: scale(0.96);
+  background: #d97706;
+}
+
+.empty-cta:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 </style>

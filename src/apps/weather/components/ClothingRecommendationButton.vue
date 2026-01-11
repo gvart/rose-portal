@@ -80,32 +80,24 @@ const buttonText = computed(() => {
   align-items: center;
   width: 100%;
   max-width: 350px;
-  margin: 1rem auto 0;
-  padding: 0.875rem 1.5rem;
+  margin: var(--space-4) auto 0;
+  padding: var(--space-3) var(--space-6);
   background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 500;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--duration-normal) var(--ease-in-out);
   outline: none;
 }
 
-.clothing-btn:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
 .clothing-btn:active:not(:disabled) {
-  transform: translateY(0);
+  background: rgba(0, 0, 0, 0.2);
+  transform: scale(0.98);
 }
 
 .clothing-btn:disabled {
@@ -116,7 +108,7 @@ const buttonText = computed(() => {
 .btn-content {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .btn-icon {

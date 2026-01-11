@@ -84,56 +84,97 @@ onMounted(() => {
 
 <style scoped>
 .install-prompt {
-  @apply fixed bottom-0 left-0 right-0 z-50
-         bg-white shadow-2xl border-t border-gray-200
-         p-4;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-bg-primary);
+  box-shadow: var(--depth-4-shadow);
+  border-top: 1px solid var(--color-border-primary);
+  padding: var(--space-4);
 }
 
 .install-content {
-  @apply flex items-center gap-4 max-w-2xl mx-auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 672px;
+  margin: 0 auto;
 }
 
 .install-icon {
-  @apply w-12 h-12 flex-shrink-0
-         bg-green-500 text-white rounded-xl
-         flex items-center justify-center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: var(--color-success-solid);
+  color: white;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .install-icon svg {
-  @apply w-6 h-6;
+  width: 24px;
+  height: 24px;
 }
 
 .install-text {
-  @apply flex-1 min-w-0;
+  flex: 1;
+  min-width: 0;
 }
 
 .install-title {
-  @apply font-semibold text-gray-900 text-base;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-16);
 }
 
 .install-description {
-  @apply text-sm text-gray-600 truncate;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .install-actions {
-  @apply flex gap-2 flex-shrink-0;
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
 }
 
 .btn-install {
-  @apply px-4 py-2 bg-green-500 text-white font-medium rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-green-600;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-success-solid);
+  color: white;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.btn-install:active {
+  transform: scale(0.95);
+  background: #059669;
 }
 
 .btn-dismiss {
-  @apply px-4 py-2 text-gray-600 font-medium rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-gray-100;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.btn-dismiss:active {
+  transform: scale(0.95);
+  background: var(--color-bg-secondary);
 }
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: transform 0.3s ease-out;
+  transition: transform var(--duration-normal) var(--ease-out);
 }
 
 .slide-up-enter-from,

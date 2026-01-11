@@ -40,7 +40,7 @@ function formatHour(date: Date): string {
 
 <style scoped>
 .hourly-timeline {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 }
 
 .timeline-scroll {
@@ -56,52 +56,48 @@ function formatHour(date: Date): string {
 
 .timeline-track {
   display: flex;
-  gap: 0.5rem;
-  padding: 0 0.25rem 0.5rem;
+  gap: var(--space-2);
+  padding: 0 var(--space-1) var(--space-2);
 }
 
 .glass-hour-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 0.75rem;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-3);
   min-width: 70px;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast) var(--ease-in-out);
   color: white;
 }
 
-.glass-hour-card:hover {
+.glass-hour-card:active {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: scale(0.98);
 }
 
 .hour-time {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
   opacity: 0.9;
   letter-spacing: 0.01em;
 }
 
 .hour-icon {
-  width: 2rem;
-  height: 2rem;
+  width: 32px;
+  height: 32px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .hour-temp {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
 }

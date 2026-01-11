@@ -82,19 +82,28 @@ onUnmounted(() => {
 
 <style scoped>
 .system-monitor {
-  @apply w-full relative;
+  width: 100%;
+  position: relative;
 }
 
 .system-monitor__content {
-  @apply w-full;
+  width: 100%;
 }
 
 .no-metrics-message {
-  @apply col-span-full flex items-center justify-center p-8
-         bg-yellow-50 border-2 border-yellow-200 rounded-xl;
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  background: var(--color-warning-bg);
+  border: 2px solid var(--color-warning-border);
+  border-radius: var(--radius-lg);
 }
 
 .no-metrics-message p {
-  @apply text-lg font-medium;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-warning-text);
 }
 </style>

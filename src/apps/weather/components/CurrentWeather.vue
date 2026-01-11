@@ -133,29 +133,20 @@ function formatCondition(condition: string): string {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Glassmorphic Metrics Panel */
+/* Metrics Panel */
 .glass-metrics {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-  padding: 1rem 1.5rem;
-  background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-width: 350px;
   margin-left: auto;
   margin-right: auto;
-  transition: all 0.3s ease;
-}
-
-.glass-metrics:hover {
-  background: rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .metric-item {

@@ -1,7 +1,7 @@
 <template>
   <div class="app-layout" :style="{ '--theme-color': themeColor }">
-    <!-- Floating Glass Header -->
-    <header class="app-header-glass">
+    <!-- App Header -->
+    <header class="app-header">
       <div class="header-content">
         <BackButton @click="goBack" />
         <h1 class="app-title">{{ title }}</h1>
@@ -58,13 +58,13 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
 
 <style scoped>
 .app-layout {
-  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  background: var(--color-bg-secondary);
   padding-top: var(--safe-top);
   padding-bottom: var(--safe-bottom);
   min-height: 100vh;
 }
 
-.app-header-glass {
+.app-header {
   position: fixed;
   top: var(--safe-top);
   left: 0;
@@ -72,45 +72,42 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
   z-index: 100;
   overflow: hidden;
 
-  /* Enhanced glassmorphism */
-  background: var(--glass-bg-primary);
-  backdrop-filter: var(--glass-blur-strong);
-  -webkit-backdrop-filter: var(--glass-blur-strong);
+  /* Borders-only depth strategy */
+  background: var(--color-bg-primary);
+  border-bottom: var(--depth-2-border);
 
-  border-bottom: var(--glass-border);
-  box-shadow: var(--glass-shadow-md);
-
-  transition: all 0.3s var(--spring-smooth);
+  transition: all var(--duration-normal) var(--ease-in-out);
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  gap: 12px;
+  padding: var(--space-4);
+  gap: var(--space-3);
 }
 
 .app-title {
   flex: 1;
   text-align: center;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .spacer {
-  width: 44px;
+  width: var(--space-11);
 }
 
 .header-accent {
-  height: 3px;
+  height: 4px;
   background: var(--theme-color);
-  box-shadow: 0 0 8px var(--theme-color);
+  opacity: 0.9;
 }
 
 .app-content {
-  padding: 20px;
-  padding-top: 80px;
-  padding-bottom: calc(20px + var(--safe-bottom));
+  padding: var(--space-5);
+  padding-top: calc(68px + var(--space-6));
+  padding-bottom: calc(var(--space-5) + var(--safe-bottom));
 }
 </style>

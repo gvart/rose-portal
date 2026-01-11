@@ -25,77 +25,72 @@ defineProps<{
 
 <style scoped>
 .daily-forecast {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 }
 
 .forecast-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .glass-day-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast) var(--ease-in-out);
   color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.glass-day-row:hover {
+.glass-day-row:active {
   background: rgba(255, 255, 255, 0.12);
-  transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: scale(0.99);
 }
 
 .day-name {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
   min-width: 50px;
-  font-weight: 500;
-  font-size: 0.9375rem;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-14);
   letter-spacing: 0.01em;
 }
 
 .day-icon {
-  width: 2rem;
-  height: 2rem;
+  width: 32px;
+  height: 32px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .day-temps {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
   margin-left: auto;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 0.9375rem;
+  font-size: var(--font-size-14);
 }
 
 .temp-bar {
   width: 60px;
-  height: 4px;
+  height: var(--space-1);
   background: linear-gradient(90deg, rgba(59, 130, 246, 0.4) 0%, rgba(239, 68, 68, 0.4) 100%);
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-xs);
 }
 
 .temp-low {
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   opacity: 0.7;
   min-width: 32px;
   text-align: right;
 }
 
 .temp-high {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   min-width: 32px;
 }
 </style>

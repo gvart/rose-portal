@@ -46,65 +46,99 @@ defineEmits<{
 
 <style scoped>
 .dish-select-item {
-  @apply flex gap-4 p-4 rounded-xl border-2 cursor-pointer
-         transition-all duration-200 text-left w-full
-         hover:shadow-md;
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  text-align: left;
+  width: 100%;
   min-height: 100px;
-  border-color: #d1d5db;
-  background-color: white;
+  background-color: var(--color-bg-primary);
 }
 
-.dish-select-item:hover {
-  border-color: #6ee7b7;
+.dish-select-item:active:not(.selected) {
+  border-color: var(--color-success-border);
 }
 
 .dish-select-item.selected {
-  border-color: #10b981;
-  background-color: #d1fae5;
+  border-color: var(--color-success-solid);
+  background-color: var(--color-success-bg);
 }
 
 .checkbox-wrapper {
-  @apply flex items-start pt-1;
+  display: flex;
+  align-items: flex-start;
+  padding-top: var(--space-1);
   min-width: 44px;
   min-height: 44px;
 }
 
 .checkbox {
-  @apply flex items-center justify-center rounded-md border-2
-         transition-all duration-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
   width: 24px;
   height: 24px;
-  border-color: #d1d5db;
-  background-color: white;
+  background-color: var(--color-bg-primary);
 }
 
 .checkbox.checked {
-  border-color: #10b981;
-  background-color: #10b981;
+  border-color: var(--color-success-solid);
+  background-color: var(--color-success-solid);
 }
 
 .check-icon {
-  @apply w-4 h-4 text-white;
+  width: 16px;
+  height: 16px;
+  color: white;
 }
 
 .dish-content {
-  @apply flex-1 flex flex-col gap-2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .dish-header {
-  @apply flex items-center justify-between gap-3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
 
 .dish-name {
-  @apply text-lg font-semibold text-gray-800 flex-1;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  flex: 1;
 }
 
 .prep-time {
-  @apply px-2 py-1 bg-emerald-100 text-emerald-700
-         rounded-md text-sm font-medium whitespace-nowrap;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .dish-description {
-  @apply text-sm text-gray-600 leading-relaxed line-clamp-2;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

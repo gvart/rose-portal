@@ -66,40 +66,54 @@ function handleDelete(id: string) {
 
 <style scoped>
 .timer-list {
-  @apply w-full;
+  width: 100%;
 }
 
 /* Empty State */
 .empty-state {
-  @apply flex flex-col items-center justify-center py-16 px-4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-4);
 }
 
 .empty-icon {
-  @apply w-24 h-24 text-gray-300 mb-4;
+  width: 96px;
+  height: 96px;
+  color: var(--color-border-secondary);
+  margin-bottom: var(--space-4);
 }
 
 .empty-text {
-  @apply text-xl font-semibold text-gray-900 mb-2;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .empty-subtext {
-  @apply text-sm text-gray-500;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
 }
 
 /* Timer Grid */
 .timer-grid {
-  @apply grid grid-cols-1 gap-4;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
 }
 
 @media (min-width: 768px) {
   .timer-grid {
-    @apply grid-cols-2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 1024px) {
   .timer-grid {
-    @apply grid-cols-2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>

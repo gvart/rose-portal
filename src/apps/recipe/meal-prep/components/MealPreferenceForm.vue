@@ -205,140 +205,259 @@ function handleMicError(message: string) {
 
 <style scoped>
 .meal-preference-form {
-  @apply flex flex-col gap-6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 .user-input-section {
-  @apply flex flex-col;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-wrapper {
-  @apply relative;
+  position: relative;
 }
 
 .user-input {
-  @apply px-4 py-2 rounded-lg border-2 border-gray-300
-         text-sm text-gray-800 focus:outline-none
-         focus:border-emerald-500 transition-all duration-200
-         resize-none;
-  padding-right: 52px; /* Make room for microphone button */
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  padding-right: 52px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border-primary);
+  font-size: var(--font-size-14);
+  color: var(--color-text-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  resize: none;
+}
+
+.user-input:focus {
+  outline: none;
+  border-color: var(--color-success-solid);
 }
 
 .mic-inside-input {
-  @apply absolute top-1/2 right-2 -translate-y-1/2;
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
 }
 
 .preferences-section {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .section-header {
-  @apply flex items-center justify-between mb-2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
 }
 
 .section-title {
-  @apply text-xl font-bold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .preference-count {
-  @apply w-8 h-8 flex items-center justify-center
-         bg-emerald-600 text-white rounded-full
-         text-sm font-bold;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-success-solid);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .preferences-list {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .preference-card {
-  @apply bg-white rounded-lg border-2 border-gray-200
-         overflow-hidden transition-all duration-200
-         hover:border-emerald-300;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.preference-card:active {
+  border-color: var(--color-success-border);
 }
 
 .card-header {
-  @apply w-full flex items-center justify-between p-3
-         cursor-pointer hover:bg-gray-50 transition-all duration-200;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
 }
 
+.card-header:active {
+  background: var(--color-bg-secondary);
+}
+
 .header-left {
-  @apply flex items-center gap-2 flex-1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
 }
 
 .meal-number {
-  @apply w-7 h-7 flex items-center justify-center
-         bg-emerald-600 text-white rounded-full
-         text-sm font-bold flex-shrink-0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-success-solid);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .meal-type-badge {
-  @apply px-3 py-1 bg-emerald-100 text-emerald-700
-         rounded-full text-sm font-semibold;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
 }
 
 .meal-type-badge.incomplete {
-  @apply bg-gray-100 text-gray-500 italic;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  font-style: italic;
 }
 
 .attributes-count {
-  @apply px-2 py-1 bg-gray-100 text-gray-600
-         rounded text-xs font-medium;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
 }
 
 .header-right {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .remove-button {
-  @apply p-2 rounded-lg text-red-600 hover:bg-red-50
-         transition-all duration-200;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--color-error-solid);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 40px;
   min-width: 40px;
 }
 
+.remove-button:active {
+  background: var(--color-error-bg);
+}
+
 .remove-icon {
-  @apply w-4 h-4;
+  width: 16px;
+  height: 16px;
 }
 
 .expand-icon {
-  @apply w-5 h-5 text-gray-600 transition-transform duration-200;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-secondary);
+  transition: transform var(--duration-fast) var(--ease-in-out);
 }
 
 .expand-icon.rotated {
-  @apply rotate-180;
+  transform: rotate(180deg);
 }
 
 .card-content {
-  @apply flex flex-col gap-4 p-4 pt-0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  padding-top: 0;
 }
 
 .add-button {
-  @apply flex items-center justify-center gap-2 py-3 px-6
-         bg-emerald-50 text-emerald-700 font-semibold rounded-lg
-         border-2 border-emerald-300 hover:bg-emerald-100
-         transition-all duration-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-success-border);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 52px;
+}
+
+.add-button:active {
+  background: var(--color-success-border);
 }
 
 .add-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 .submit-section {
-  @apply flex flex-col gap-2 mt-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
 }
 
 .submit-button {
-  @apply w-full py-3 px-6 bg-emerald-600 text-white font-bold
-         text-lg rounded-lg hover:bg-emerald-700
-         transition-all duration-200 disabled:opacity-50
-         disabled:cursor-not-allowed disabled:hover:bg-emerald-600;
+  width: 100%;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-success-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-18);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 52px;
 }
 
+.submit-button:active:not(:disabled) {
+  transform: scale(0.98);
+  background: #059669;
+}
+
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .error-message {
-  @apply text-red-600 text-sm font-medium text-center;
+  color: var(--color-error-text);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
 }
 
 /* Slide transition */

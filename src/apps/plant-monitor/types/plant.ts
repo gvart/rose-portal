@@ -13,6 +13,8 @@ export interface PlantConfig {
   wetThreshold: number
   pumpDuration: number
   publishInterval: number
+  displayDimEnabled: boolean
+  displayDimTimeout: number
 }
 
 export interface Plant {
@@ -37,7 +39,8 @@ export const CONFIG_LIMITS = {
   dryThreshold: { min: 0, max: 100, step: 5, default: 20 },      // Default ~20% (was 2800 raw)
   wetThreshold: { min: 0, max: 100, step: 5, default: 60 },      // Default ~60% (was 2000 raw)
   pumpDuration: { min: 500, max: 10000, step: 100, default: 3000 },
-  publishInterval: { min: 5000, max: 300000, step: 5000, default: 30000 }
+  publishInterval: { min: 5000, max: 300000, step: 5000, default: 30000 },
+  displayDimTimeout: { min: 5000, max: 300000, step: 5000, default: 30000 }
 } as const
 
 // Safe operating range (15% to 85%)

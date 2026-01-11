@@ -47,47 +47,80 @@ const handleDismiss = () => {
 
 <style scoped>
 .update-prompt {
-  @apply fixed top-4 left-4 right-4 z-50
-         bg-blue-500 text-white rounded-lg shadow-lg
-         p-4;
+  position: fixed;
+  top: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  z-index: 50;
+  background: var(--color-info-solid);
+  color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--depth-3-shadow);
+  padding: var(--space-4);
 }
 
 .update-content {
-  @apply flex items-center justify-between gap-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .update-text {
-  @apply flex flex-col gap-1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .update-text strong {
-  @apply font-semibold;
+  font-weight: var(--font-weight-semibold);
 }
 
 .update-text span {
-  @apply text-sm opacity-90;
+  font-size: var(--font-size-14);
+  opacity: 0.9;
 }
 
 .update-actions {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .btn-update {
-  @apply px-4 py-2 bg-white text-blue-500 font-medium rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-blue-50;
+  padding: var(--space-2) var(--space-4);
+  background: white;
+  color: var(--color-info-solid);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.btn-update:active {
+  transform: scale(0.95);
+  background: var(--color-info-bg);
 }
 
 .btn-close {
-  @apply w-8 h-8 flex items-center justify-center
-         text-white text-2xl rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-blue-600;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: var(--font-size-24);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.btn-close:active {
+  transform: scale(0.95);
+  background: #4f46e5;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity var(--duration-normal) var(--ease-in-out);
 }
 
 .fade-enter-from,

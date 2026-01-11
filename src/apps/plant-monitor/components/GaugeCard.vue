@@ -26,7 +26,6 @@
           fill="none"
           stroke="currentColor"
           stroke-width="8"
-          stroke-linecap="round"
           class="gauge-ring__fill"
           :class="`gauge-ring__fill--${status}`"
           :stroke-dasharray="circumference"
@@ -66,75 +65,104 @@ const offset = computed(() => {
 
 <style scoped>
 .gauge-card {
-  @apply bg-white rounded-xl shadow-md p-6 text-center;
-  border-left: 4px solid #22C55E;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  text-align: center;
+  border-left: 4px solid var(--color-success-solid);
 }
 
 .gauge-card--warning {
-  border-left-color: #F59E0B;
+  border-left-color: var(--color-warning-solid);
 }
 
 .gauge-card--critical {
-  border-left-color: #EF4444;
+  border-left-color: var(--color-error-solid);
 }
 
 .gauge-card--saturated {
-  border-left-color: #3B82F6;
+  border-left-color: var(--color-info-solid);
 }
 
 .gauge-card__header {
-  @apply flex items-center justify-center gap-2 mb-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .gauge-card__header :deep(svg) {
-  @apply w-6 h-6 text-gray-600;
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-secondary);
 }
 
 .gauge-card__title {
-  @apply text-lg font-semibold text-gray-800;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .gauge-card__visual {
-  @apply relative w-32 h-32 mx-auto mb-4;
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto var(--space-4);
 }
 
 .gauge-ring {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .gauge-ring__bg {
-  @apply text-gray-200;
+  color: var(--color-border-secondary);
 }
 
 .gauge-ring__fill {
-  @apply text-green-500 transition-all duration-700;
+  color: var(--color-success-solid);
+  transition: all 700ms var(--ease-in-out);
 }
 
 .gauge-ring__fill--warning {
-  @apply text-amber-500;
+  color: var(--color-warning-solid);
 }
 
 .gauge-ring__fill--critical {
-  @apply text-red-500;
+  color: var(--color-error-solid);
 }
 
 .gauge-ring__fill--saturated {
-  @apply text-blue-500;
+  color: var(--color-info-solid);
 }
 
 .gauge-card__value {
-  @apply absolute inset-0 flex items-center justify-center;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gauge-card__number {
-  @apply text-3xl font-bold text-gray-800;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .gauge-card__unit {
-  @apply text-lg text-gray-500 ml-0.5;
+  font-size: var(--font-size-16);
+  color: var(--color-text-muted);
+  margin-left: 2px;
 }
 
 .gauge-card__subtitle {
-  @apply text-sm text-gray-600;
+  font-size: var(--font-size-13);
+  color: var(--color-text-secondary);
 }
 </style>

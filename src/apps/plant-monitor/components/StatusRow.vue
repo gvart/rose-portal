@@ -23,13 +23,13 @@ const props = defineProps<{
 }>()
 
 const valueClass = computed(() => {
-  if (!props.status) return 'text-gray-800'
+  if (!props.status) return ''
 
   const classes: Record<StatusLevel, string> = {
-    good: 'text-green-600',
-    warning: 'text-amber-600',
-    critical: 'text-red-600',
-    saturated: 'text-blue-600'
+    good: 'status-good',
+    warning: 'status-warning',
+    critical: 'status-critical',
+    saturated: 'status-saturated'
   }
   return classes[props.status]
 })
@@ -37,26 +37,61 @@ const valueClass = computed(() => {
 
 <style scoped>
 .status-row {
-  @apply flex justify-between items-center py-2 border-b border-gray-100 last:border-0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.status-row:last-child {
+  border-bottom: none;
 }
 
 .status-row__label {
-  @apply text-sm font-medium text-gray-600;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
 }
 
 .status-row__content {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .status-row__text {
-  @apply flex flex-col items-end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .status-row__value {
-  @apply text-sm font-semibold;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.status-row__value.status-good {
+  color: var(--color-success-solid);
+}
+
+.status-row__value.status-warning {
+  color: var(--color-warning-solid);
+}
+
+.status-row__value.status-critical {
+  color: var(--color-error-solid);
+}
+
+.status-row__value.status-saturated {
+  color: var(--color-info-solid);
 }
 
 .status-row__detail {
-  @apply text-xs text-gray-500;
+  font-size: var(--font-size-12);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 </style>

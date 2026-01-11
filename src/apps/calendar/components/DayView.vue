@@ -283,165 +283,291 @@ onUnmounted(() => {
 
 <style scoped>
 .day-view {
-  @apply h-full flex flex-col bg-white rounded-xl shadow-md overflow-hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--depth-2-shadow);
+  overflow: hidden;
 }
 
 /* All Day Section */
 .all-day-section {
-  @apply flex border-b-2 border-gray-200 bg-gray-50;
+  display: flex;
+  border-bottom: 2px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
 }
 
 .all-day-header {
-  @apply w-[80px] flex-shrink-0 flex items-center justify-end pr-3
-         border-r border-gray-200;
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--space-3);
+  border-right: 1px solid var(--color-border-primary);
 }
 
 .all-day-label {
-  @apply text-xs font-semibold text-gray-500 uppercase;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .all-day-events {
-  @apply flex-1 flex flex-wrap gap-2 p-3;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3);
 }
 
 .all-day-event {
-  @apply px-3 py-1.5 text-sm font-medium rounded-lg border
-         cursor-pointer hover:shadow-md transition-shadow;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.all-day-event:active {
+  box-shadow: var(--depth-2-shadow);
 }
 
 /* Time Grid */
 .time-grid {
-  @apply flex-1 overflow-auto relative;
+  flex: 1;
+  overflow: auto;
+  position: relative;
 }
 
 .time-grid-inner {
-  @apply relative min-h-full;
+  position: relative;
+  min-height: 100%;
 }
 
 /* Time Rows */
 .time-row {
-  @apply flex;
+  display: flex;
   height: 80px;
 }
 
 .time-gutter {
-  @apply w-[80px] flex-shrink-0 flex items-start justify-end pr-3 pt-0
-         border-r border-gray-200 bg-gray-50;
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-right: var(--space-3);
+  padding-top: 0;
+  border-right: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
 }
 
 .time-label {
-  @apply text-sm text-gray-500 font-medium -mt-2;
+  font-size: var(--font-size-14);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  margin-top: -8px;
 }
 
 .time-slot {
-  @apply flex-1 border-b border-gray-100 cursor-pointer
-         hover:bg-gray-50 transition-colors relative;
+  flex: 1;
+  border-bottom: 1px solid var(--color-border-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  position: relative;
+}
+
+.time-slot:active {
+  background: var(--color-bg-secondary);
 }
 
 .time-slot--past {
-  @apply bg-gray-50/50;
+  background: var(--color-bg-secondary);
+  opacity: 0.5;
 }
 
 .time-slot-half {
-  @apply absolute left-0 right-0 h-1/2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
 }
 
 .time-slot-half--first {
-  @apply top-0 border-b border-gray-100/50;
+  top: 0;
+  border-bottom: 1px solid var(--color-border-primary);
+  opacity: 0.5;
 }
 
 .time-slot-half--second {
-  @apply bottom-0;
+  bottom: 0;
 }
 
-.time-slot-half:hover {
-  @apply bg-indigo-50/50;
+.time-slot-half:active {
+  background: var(--color-info-bg);
 }
 
 /* Current Time Indicator */
 .current-time-indicator {
-  @apply absolute left-0 right-0 flex items-center pointer-events-none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
   z-index: 20;
 }
 
 .current-time-label {
-  @apply w-[80px] text-right pr-2 text-xs font-bold text-red-500;
+  width: 80px;
+  text-align: right;
+  padding-right: var(--space-2);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-error);
 }
 
 .current-time-dot {
-  @apply w-3 h-3 bg-red-500 rounded-full -ml-1.5;
+  width: 12px;
+  height: 12px;
+  background: var(--color-error);
+  border-radius: var(--radius-full);
+  margin-left: -6px;
 }
 
 .current-time-line {
-  @apply flex-1 h-0.5 bg-red-500;
+  flex: 1;
+  height: 2px;
+  background: var(--color-error);
 }
 
 /* Event Overlays */
 .event-overlay {
-  @apply rounded-lg border-l-4 cursor-pointer overflow-hidden
-         hover:shadow-lg transition-shadow;
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.event-overlay:active {
+  box-shadow: var(--depth-3-shadow);
 }
 
 .event-content {
-  @apply p-3 h-full flex flex-col;
+  padding: var(--space-3);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .event-header {
-  @apply flex items-start justify-between gap-2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
 }
 
 .event-name {
-  @apply font-semibold text-base leading-tight;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
 }
 
 .event-time {
-  @apply text-sm opacity-75 mt-1;
+  font-size: var(--font-size-14);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+  margin-top: var(--space-1);
 }
 
 /* Empty State */
 .empty-state {
-  @apply fixed inset-0 flex items-center justify-center pointer-events-none;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
   z-index: 5;
 }
 
 .empty-content {
-  @apply flex flex-col items-center justify-center px-6 py-8
-         bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg
-         border-2 border-gray-200 pointer-events-auto max-w-sm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-6);
+  background: var(--color-bg-primary);
+  border: var(--depth-2-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--depth-3-shadow);
+  pointer-events: auto;
+  max-width: 448px;
 }
 
 .empty-icon {
-  @apply w-16 h-16 text-gray-300 mb-4;
+  width: 64px;
+  height: 64px;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-4);
 }
 
 .empty-icon svg {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .empty-text {
-  @apply text-lg text-gray-500 mb-6 text-center;
+  font-size: var(--font-size-18);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+  text-align: center;
 }
 
 .add-event-btn {
-  @apply flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white
-         font-semibold rounded-lg hover:bg-indigo-700
-         transition-all duration-150 active:scale-95 shadow-md;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-info-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  box-shadow: var(--depth-2-shadow);
   min-height: 48px;
+}
+
+.add-event-btn:active {
+  transform: scale(0.95);
+  background: #4f46e5;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .time-gutter,
   .all-day-header {
-    @apply w-[60px];
+    width: 60px;
   }
 
   .time-label {
-    @apply text-xs;
+    font-size: var(--font-size-12);
   }
 
   .all-day-label {
-    @apply text-[10px];
+    font-size: 10px;
   }
 
   .time-row {
@@ -453,19 +579,20 @@ onUnmounted(() => {
   }
 
   .event-content {
-    @apply p-2;
+    padding: var(--space-2);
   }
 
   .event-name {
-    @apply text-sm;
+    font-size: var(--font-size-14);
   }
 
   .event-time {
-    @apply text-xs;
+    font-size: var(--font-size-12);
   }
 
   .current-time-label {
-    @apply w-[60px] text-[10px];
+    width: 60px;
+    font-size: 10px;
   }
 }
 </style>

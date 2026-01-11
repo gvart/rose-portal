@@ -145,92 +145,163 @@ function handleStart() {
 
 <style scoped>
 .timer-card {
-  @apply bg-white rounded-xl shadow-md p-6 space-y-4 border-2 border-transparent
-    transition-all duration-200;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-md);
+  border: var(--depth-1-border);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: all var(--duration-normal) var(--ease-in-out);
 }
 
 .timer-card.running {
-  @apply border-amber-400 shadow-lg;
+  border-color: var(--color-warning-solid);
+  box-shadow: 0 0 0 1px var(--color-warning-solid);
 }
 
 /* Header */
 .timer-header {
-  @apply flex items-start justify-between;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .timer-info {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .timer-name {
-  @apply text-xl font-semibold text-gray-900;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .timer-type-badge {
-  @apply inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700
-    rounded-full;
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
 }
 
 .delete-btn {
-  @apply p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg
-    transition-colors;
+  padding: var(--space-2);
+  color: var(--color-text-faint);
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.delete-btn:active {
+  transform: scale(0.96);
+  background: var(--color-error-bg);
+  color: var(--color-error-solid);
 }
 
 /* Timer Display */
 .timer-display {
-  @apply flex flex-col items-center py-8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-8) 0;
 }
 
 .time-value {
-  @apply text-6xl font-bold text-amber-500 tabular-nums;
+  font-size: 56px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-warning-solid);
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
 .time-label {
-  @apply text-sm text-gray-500 mt-2;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
 }
 
 /* Pomodoro Info */
 .pomodoro-info {
-  @apply flex items-center justify-center gap-3 text-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-13);
 }
 
 .phase-badge {
-  @apply px-3 py-1 rounded-full font-medium;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
 }
 
 .phase-work {
-  @apply bg-red-100 text-red-700;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 
 .phase-break {
-  @apply bg-green-100 text-green-700;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .cycle-count {
-  @apply text-gray-600;
+  color: var(--color-text-secondary);
 }
 
 /* Controls */
 .timer-controls {
-  @apply flex gap-3 justify-center;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
 }
 
 .control-btn {
-  @apply flex items-center gap-2 px-6 py-3 rounded-lg font-semibold
-    transition-all duration-150 active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-offset-2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border: none;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.control-btn:active {
+  transform: scale(0.96);
+}
+
+.control-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .control-btn.primary {
-  @apply bg-amber-500 text-white hover:bg-amber-600 focus:ring-amber-500;
+  background: var(--color-warning-solid);
+  color: white;
+}
+
+.control-btn.primary:active {
+  background: #d97706;
 }
 
 .control-btn.secondary {
-  @apply bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
 }
 
 .control-btn.danger {
-  @apply bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 </style>

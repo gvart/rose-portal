@@ -55,62 +55,81 @@ function canNavigate(stepIndex: number): boolean {
 
 <style scoped>
 .step-indicator {
-  @apply flex items-center justify-center gap-3 py-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
 }
 
 .step-dot {
-  @apply flex flex-col items-center gap-2 transition-all duration-200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--duration-fast) var(--ease-in-out);
 }
 
 .step-dot.clickable {
-  @apply cursor-pointer;
+  cursor: pointer;
 }
 
 .step-dot:not(.clickable) {
-  @apply cursor-not-allowed;
+  cursor: not-allowed;
 }
 
 .step-number {
-  @apply w-12 h-12 flex items-center justify-center rounded-full
-         border-2 font-semibold text-lg transition-all duration-200;
-  border-color: #d1d5db;
-  color: #9ca3af;
-  background-color: white;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-18);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-primary);
 }
 
 .step-dot.active .step-number {
-  border-color: #10b981;
-  background-color: #10b981;
+  border-color: var(--color-success-solid);
+  background-color: var(--color-success-solid);
   color: white;
 }
 
 .step-dot.completed .step-number {
-  border-color: #059669;
-  background-color: #d1fae5;
-  color: #059669;
+  border-color: var(--color-success-solid);
+  background-color: var(--color-success-bg);
+  color: var(--color-success-solid);
 }
 
-.step-dot.clickable:hover .step-number {
-  border-color: #6ee7b7;
-  background-color: #d1fae5;
+.step-dot.clickable:active .step-number {
+  border-color: var(--color-success-border);
+  background-color: var(--color-success-bg);
 }
 
-.step-dot.active:hover .step-number {
+.step-dot.active:active .step-number {
   border-color: #059669;
   background-color: #059669;
 }
 
 .step-label {
-  @apply text-sm font-medium transition-all duration-200;
-  color: #9ca3af;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  color: var(--color-text-muted);
 }
 
 .step-dot.active .step-label {
-  color: #10b981;
-  font-weight: 700;
+  color: var(--color-success-solid);
+  font-weight: var(--font-weight-semibold);
 }
 
 .step-dot.completed .step-label {
-  color: #059669;
+  color: var(--color-success-solid);
 }
 </style>

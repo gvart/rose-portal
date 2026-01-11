@@ -62,14 +62,21 @@ function decrement() {
 
 <style scoped>
 .threshold-stepper {
-  @apply flex items-center gap-3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .stepper-button {
-  @apply flex items-center justify-center w-14 h-14 rounded-lg
-         bg-blue-100 text-blue-700 hover:bg-blue-200
-         transition-all duration-200 disabled:opacity-40
-         disabled:cursor-not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--color-info-bg);
+  color: var(--color-info-solid);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
   min-width: 56px;
   touch-action: manipulation;
@@ -79,23 +86,43 @@ function decrement() {
 
 .stepper-button:active:not(:disabled) {
   transform: scale(0.95);
+  background: #bfdbfe;
+}
+
+.stepper-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .stepper-icon {
-  @apply w-6 h-6;
+  width: 24px;
+  height: 24px;
 }
 
 .value-display {
-  @apply flex-1 flex items-baseline justify-center gap-2
-         px-4 py-3 rounded-lg bg-gray-50 border-2 border-gray-300;
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border-secondary);
   min-height: 56px;
 }
 
 .value-number {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .value-unit {
-  @apply text-sm text-gray-500 font-medium;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
 }
 </style>

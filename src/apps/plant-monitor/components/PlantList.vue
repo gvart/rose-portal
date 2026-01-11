@@ -92,28 +92,66 @@ function onSelectPlant(deviceId: string) {
 
 <style scoped>
 .plant-list {
-  @apply w-full relative;
+  width: 100%;
+  position: relative;
 }
 
 .plant-list__content {
-  @apply w-full;
+  width: 100%;
 }
 
 .plant-list__header {
-  @apply flex items-center justify-between mb-6 p-4 bg-white rounded-lg shadow;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
 }
 
 .plant-list__last-refresh {
-  @apply text-gray-600 text-sm;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-13);
 }
 
 .plant-list__refresh-btn {
-  @apply btn-touch bg-green-600 text-white rounded-lg
-         hover:bg-green-700 transition-colors duration-200
-         disabled:bg-gray-400 disabled:cursor-not-allowed;
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-success-solid);
+  color: white;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.plant-list__refresh-btn:active:not(:disabled) {
+  transform: scale(0.96);
+  background: #16a34a;
+}
+
+.plant-list__refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .plant-list__grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .plant-list__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .plant-list__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 </style>

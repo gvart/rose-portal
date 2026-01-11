@@ -64,14 +64,25 @@ function toggleAttribute(attribute: DishAttribute) {
 
 <style scoped>
 .attribute-selector {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .selector-label {
-  @apply text-base font-semibold text-gray-700;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .groups-container {
-  @apply bg-white rounded-xl border-2 border-gray-200 divide-y divide-gray-200;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.groups-container > :not(:last-child) {
+  border-bottom: 1px solid var(--color-border-primary);
 }
 </style>

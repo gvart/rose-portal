@@ -336,154 +336,262 @@ onUnmounted(() => {
 
 <style scoped>
 .week-view {
-  @apply h-full flex flex-col bg-white rounded-xl shadow-md overflow-hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 /* Week Header */
 .week-header {
-  @apply flex border-b-2 border-gray-200 bg-gray-50;
+  display: flex;
+  border-bottom: 2px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
 }
 
 .time-gutter-header {
-  @apply w-[60px] flex-shrink-0;
+  width: 60px;
+  flex-shrink: 0;
 }
 
 .day-column-header {
-  @apply flex-1 flex flex-col items-center py-3 cursor-pointer
-         transition-colors hover:bg-gray-100;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3) 0;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.day-column-header:active {
+  background: var(--color-bg-tertiary);
 }
 
 .day-column-header--today {
-  @apply bg-indigo-50 hover:bg-indigo-100;
+  background: var(--color-info-bg);
+}
+
+.day-column-header--today:active {
+  background: var(--color-info-border);
 }
 
 .day-column-header--weekend {
-  @apply text-gray-500;
+  color: var(--color-text-muted);
 }
 
 .day-name {
-  @apply text-xs font-medium text-gray-500 uppercase;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .day-date {
-  @apply text-lg font-bold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .day-date--today {
-  @apply bg-indigo-600 text-white rounded-full w-8 h-8
-         flex items-center justify-center;
+  background: var(--color-info-solid);
+  color: white;
+  border-radius: var(--radius-full);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* All Day Row */
 .all-day-row {
-  @apply flex border-b border-gray-200 min-h-[40px];
+  display: flex;
+  border-bottom: 1px solid var(--color-border-primary);
+  min-height: 40px;
 }
 
 .all-day-cell {
-  @apply flex-1 flex flex-wrap gap-1 p-1 border-l border-gray-100
-         cursor-pointer hover:bg-gray-50 transition-colors;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border-left: 1px solid var(--color-border-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.all-day-cell:active {
+  background: var(--color-bg-secondary);
 }
 
 .all-day-cell--today {
-  @apply bg-indigo-50/50;
+  background: var(--color-info-bg);
 }
 
 .all-day-event {
-  @apply px-2 py-0.5 text-xs font-medium rounded border truncate
-         max-w-full cursor-pointer hover:opacity-80 transition-opacity;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-xs);
+  border: 1px solid;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.all-day-event:active {
+  opacity: 0.8;
 }
 
 /* Time Grid */
 .time-grid {
-  @apply flex-1 overflow-auto relative;
+  flex: 1;
+  overflow: auto;
+  position: relative;
 }
 
 .time-grid-inner {
-  @apply relative min-h-full;
+  position: relative;
+  min-height: 100%;
 }
 
 /* Time Rows */
 .time-row {
-  @apply flex;
+  display: flex;
   height: 60px;
 }
 
 .time-gutter {
-  @apply w-[60px] flex-shrink-0 flex items-start justify-end pr-2 pt-0
-         border-r border-gray-200 bg-gray-50;
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-right: var(--space-2);
+  padding-top: 0;
+  border-right: 1px solid var(--color-border-primary);
+  background: var(--color-bg-secondary);
 }
 
 .time-label {
-  @apply text-xs text-gray-500 font-medium -mt-2;
+  font-size: var(--font-size-12);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  margin-top: -8px;
 }
 
 .time-cell {
-  @apply flex-1 border-b border-l border-gray-100
-         cursor-pointer hover:bg-gray-50 transition-colors;
+  flex: 1;
+  border-bottom: 1px solid var(--color-border-primary);
+  border-left: 1px solid var(--color-border-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.time-cell:active {
+  background: var(--color-bg-secondary);
 }
 
 .time-cell--today {
-  @apply bg-indigo-50/30;
+  background: var(--color-info-bg);
 }
 
 .time-cell--weekend {
-  @apply bg-gray-50/50;
+  background: var(--color-bg-secondary);
 }
 
 /* Current Time Indicator */
 .current-time-indicator {
-  @apply absolute flex items-center pointer-events-none;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
   z-index: 20;
 }
 
 .current-time-dot {
-  @apply w-3 h-3 bg-red-500 rounded-full -ml-1.5;
+  width: 12px;
+  height: 12px;
+  background: var(--color-error);
+  border-radius: var(--radius-full);
+  margin-left: -6px;
 }
 
 .current-time-line {
-  @apply flex-1 h-0.5 bg-red-500;
+  flex: 1;
+  height: 2px;
+  background: var(--color-error);
 }
 
 /* Event Overlays */
 .event-overlay {
-  @apply rounded border cursor-pointer overflow-hidden
-         hover:shadow-md transition-shadow;
+  border-radius: var(--radius-xs);
+  border: 1px solid;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--duration-fast) var(--ease-in-out);
   margin: 0 2px;
 }
 
+.event-overlay:active {
+  box-shadow: var(--depth-2-shadow);
+}
+
 .event-content {
-  @apply p-1 h-full flex flex-col;
+  padding: var(--space-1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .event-time {
-  @apply text-[10px] font-semibold opacity-75;
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
 }
 
 .event-name {
-  @apply text-xs font-medium truncate;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .time-gutter-header,
   .time-gutter {
-    @apply w-[50px];
+    width: 50px;
   }
 
   .day-name {
-    @apply text-[10px];
+    font-size: 10px;
   }
 
   .day-date {
-    @apply text-sm;
+    font-size: var(--font-size-14);
   }
 
   .day-date--today {
-    @apply w-6 h-6 text-xs;
+    width: 24px;
+    height: 24px;
+    font-size: var(--font-size-12);
   }
 
   .time-label {
-    @apply text-[10px];
+    font-size: 10px;
   }
 
   .time-row {
@@ -491,11 +599,11 @@ onUnmounted(() => {
   }
 
   .event-time {
-    @apply hidden;
+    display: none;
   }
 
   .event-name {
-    @apply text-[10px];
+    font-size: 10px;
   }
 }
 </style>

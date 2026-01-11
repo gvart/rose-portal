@@ -134,88 +134,157 @@ function parseMarkdown(text: string): string {
 
 <style scoped>
 .modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 50;
 }
 
 .modal-container {
-  @apply bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col;
+  background: var(--color-bg-primary);
+  border: var(--depth-3-border);
+  box-shadow: var(--depth-3-shadow);
+  border-radius: var(--radius-lg);
+  max-width: 64rem;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
-  @apply flex items-center justify-between p-6 border-b-2 border-gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-bottom: 2px solid var(--color-border-primary);
 }
 
 .modal-title {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .close-button {
-  @apply p-2 hover:bg-gray-100 rounded-lg transition-all duration-200;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.close-button:active {
+  background: var(--color-bg-secondary);
 }
 
 .close-icon {
-  @apply w-6 h-6 text-gray-600;
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-secondary);
 }
 
 .plan-meta-info {
-  @apply flex gap-3 px-6 pt-4;
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6) 0;
 }
 
 .meta-badge {
-  @apply px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
 }
 
 .tabs-container {
-  @apply flex gap-2 border-b-2 border-gray-300 px-6 pt-2;
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 2px solid var(--color-border-primary);
+  padding: var(--space-2) var(--space-6) 0;
 }
 
 .tab-button {
-  @apply px-4 py-2 font-semibold text-gray-600
-         border-b-2 border-transparent transition-all duration-200
-         hover:text-emerald-600;
+  padding: var(--space-2) var(--space-4);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 44px;
 }
 
+.tab-button:active:not(.active) {
+  color: var(--color-success-solid);
+}
+
 .tab-button.active {
-  @apply text-emerald-600 border-emerald-600;
+  color: var(--color-success-solid);
+  border-bottom-color: var(--color-success-solid);
 }
 
 .modal-content {
-  @apply overflow-y-auto p-6 flex-1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  flex: 1;
 }
 
 .dishes-list {
-  @apply flex flex-col gap-4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .dish-item {
-  @apply p-4 bg-gray-50 rounded-lg border border-gray-200;
+  padding: var(--space-4);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
 }
 
 .dish-main {
-  @apply flex items-center justify-between mb-2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
 }
 
 .dish-name {
-  @apply text-lg font-bold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .dish-time {
-  @apply px-3 py-1 bg-emerald-100 text-emerald-700
-         rounded-full text-sm font-semibold whitespace-nowrap;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .dish-description {
-  @apply text-sm text-gray-600 mb-3;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
 }
 
 /* Markdown styling */
 .markdown-content :deep(p) {
-  @apply mb-2;
+  margin-bottom: var(--space-2);
 }
 
 .markdown-content :deep(p:last-child) {
-  @apply mb-0;
+  margin-bottom: 0;
 }
 
 .markdown-content :deep(h1),
@@ -224,108 +293,164 @@ function parseMarkdown(text: string): string {
 .markdown-content :deep(h4),
 .markdown-content :deep(h5),
 .markdown-content :deep(h6) {
-  @apply font-bold text-gray-800 mt-3 mb-2;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-2);
 }
 
 .markdown-content :deep(h1) {
-  @apply text-lg;
+  font-size: var(--font-size-18);
 }
 
 .markdown-content :deep(h2) {
-  @apply text-base;
+  font-size: var(--font-size-16);
 }
 
 .markdown-content :deep(h3),
 .markdown-content :deep(h4),
 .markdown-content :deep(h5),
 .markdown-content :deep(h6) {
-  @apply text-sm;
+  font-size: var(--font-size-14);
 }
 
 .markdown-content :deep(strong) {
-  @apply font-semibold text-gray-800;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .markdown-content :deep(em) {
-  @apply italic;
+  font-style: italic;
 }
 
 .markdown-content :deep(ul),
 .markdown-content :deep(ol) {
-  @apply ml-4 mb-2 space-y-1;
+  margin-left: var(--space-4);
+  margin-bottom: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .markdown-content :deep(ul) {
-  @apply list-disc;
+  list-style-type: disc;
 }
 
 .markdown-content :deep(ol) {
-  @apply list-decimal;
+  list-style-type: decimal;
 }
 
 .markdown-content :deep(li) {
-  @apply text-sm text-gray-600;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
 }
 
 .markdown-content :deep(code) {
-  @apply px-1 py-0.5 bg-gray-200 rounded text-xs font-mono text-gray-800;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-12);
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
 }
 
 .markdown-content :deep(pre) {
-  @apply p-2 bg-gray-100 rounded text-xs overflow-x-auto mb-2;
+  padding: var(--space-2);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-12);
+  overflow-x: auto;
+  margin-bottom: var(--space-2);
 }
 
 .markdown-content :deep(pre code) {
-  @apply p-0 bg-transparent;
+  padding: 0;
+  background: transparent;
 }
 
 .markdown-content :deep(blockquote) {
-  @apply border-l-4 border-emerald-500 pl-3 italic text-gray-600 my-2;
+  border-left: 4px solid var(--color-success-solid);
+  padding-left: var(--space-3);
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin: var(--space-2) 0;
 }
 
 .markdown-content :deep(a) {
-  @apply text-emerald-600 hover:text-emerald-700 underline;
+  color: var(--color-success-solid);
+  text-decoration: underline;
+}
+
+.markdown-content :deep(a:active) {
+  color: #059669;
 }
 
 .markdown-content :deep(hr) {
-  @apply border-gray-300 my-3;
+  border-top: 1px solid var(--color-border-primary);
+  margin: var(--space-3) 0;
 }
 
 .dish-ingredients {
-  @apply mt-3 pt-3 border-t border-gray-200;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-primary);
 }
 
 .ingredients-title {
-  @apply text-sm font-semibold text-gray-700 mb-2;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .ingredients-list {
-  @apply list-disc list-inside text-sm text-gray-600 space-y-1;
+  list-style-type: disc;
+  list-style-position: inside;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .ingredient-item {
-  @apply ml-2;
+  margin-left: var(--space-2);
 }
 
 .grocery-list {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .grocery-item {
-  @apply flex items-baseline gap-2 p-3 bg-gray-50 rounded-lg
-         border border-gray-200 text-base;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-16);
 }
 
 .item-quantity {
-  @apply font-semibold text-emerald-700 min-w-[3rem] text-right;
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success-text);
+  min-width: 3rem;
+  text-align: right;
 }
 
 .item-unit {
-  @apply text-gray-500 min-w-[3rem];
+  color: var(--color-text-muted);
+  min-width: 3rem;
 }
 
 .item-name {
-  @apply text-gray-800 font-medium;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Modal transition */

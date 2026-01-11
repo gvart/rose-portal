@@ -15,8 +15,22 @@ import { computed } from 'vue'
 const props = defineProps<{ level: number }>()
 
 const statusClass = computed(() => {
-  if (props.level <= 10) return 'text-red-500'
-  if (props.level <= 25) return 'text-amber-500'
-  return 'text-green-500'
+  if (props.level <= 10) return 'battery-critical'
+  if (props.level <= 25) return 'battery-warning'
+  return 'battery-good'
 })
 </script>
+
+<style scoped>
+.battery-critical {
+  color: var(--color-error-solid);
+}
+
+.battery-warning {
+  color: var(--color-warning-solid);
+}
+
+.battery-good {
+  color: var(--color-success-solid);
+}
+</style>

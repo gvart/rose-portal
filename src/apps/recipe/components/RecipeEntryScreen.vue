@@ -43,42 +43,116 @@ defineEmits<{
 
 <style scoped>
 .entry-screen {
-  @apply flex items-center justify-center min-h-full py-12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--space-16) 0;
 }
 
 .choice-grid {
-  @apply flex flex-col gap-6 w-full max-w-4xl px-4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 64rem;
+  padding: 0 var(--space-4);
 }
 
 .top-row {
-  @apply flex flex-col sm:flex-row gap-4 justify-center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .top-row {
+    flex-direction: row;
+  }
 }
 
 .meal-prep-card {
-  @apply flex flex-col sm:flex-row items-center gap-4 p-6 rounded-2xl cursor-pointer
-         transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl
-         active:scale-95 border-2 border-transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  border: 2px solid transparent;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   min-height: 120px;
 }
 
+@media (min-width: 640px) {
+  .meal-prep-card {
+    flex-direction: row;
+  }
+}
+
+.meal-prep-card:active {
+  transform: scale(0.95);
+}
+
 .icon-wrapper {
-  @apply w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-white flex-shrink-0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .icon-wrapper {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 .icon {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .meal-prep-content {
-  @apply flex flex-col gap-1 text-center sm:text-left flex-1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-align: center;
+  flex: 1;
+}
+
+@media (min-width: 640px) {
+  .meal-prep-content {
+    text-align: left;
+  }
 }
 
 .meal-prep-title {
-  @apply text-2xl sm:text-3xl font-bold text-white;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: white;
+}
+
+@media (min-width: 640px) {
+  .meal-prep-title {
+    font-size: var(--font-size-32);
+  }
 }
 
 .meal-prep-description {
-  @apply text-sm sm:text-lg text-emerald-50 leading-relaxed;
+  font-size: var(--font-size-13);
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
+
+@media (min-width: 640px) {
+  .meal-prep-description {
+    font-size: var(--font-size-18);
+  }
 }
 </style>

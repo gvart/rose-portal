@@ -15,14 +15,23 @@ defineProps<{
 
 <style scoped>
 .metric-card {
-  @apply bg-white rounded-xl shadow-md p-6;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
 }
 
 .metric-card__title {
-  @apply text-lg font-semibold text-gray-800 mb-4;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
 }
 
 .metric-card__content {
-  @apply space-y-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 </style>

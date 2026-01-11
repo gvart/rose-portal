@@ -42,19 +42,39 @@ function formatQuantityWithUnit(ingredient: Ingredient): string {
 
 <style scoped>
 .ingredients-list {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-3;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .ingredients-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .ingredient-item {
-  @apply flex justify-between items-center p-4 bg-emerald-50
-         rounded-lg border border-emerald-200;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--color-success-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-success-border);
 }
 
 .ingredient-name {
-  @apply text-lg font-medium text-gray-800 capitalize;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  text-transform: capitalize;
 }
 
 .ingredient-quantity {
-  @apply text-lg font-semibold text-emerald-700;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success-text);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 </style>

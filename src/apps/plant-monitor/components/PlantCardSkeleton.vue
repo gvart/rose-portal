@@ -29,30 +29,38 @@ import LoadingSkeleton from '@/components/feedback/LoadingSkeleton.vue'
 
 <style scoped>
 .plant-card-skeleton {
-  @apply p-6 rounded-2xl;
-  background: var(--glass-bg-primary);
-  backdrop-filter: var(--glass-blur-medium);
-  -webkit-backdrop-filter: var(--glass-blur-medium);
-  border: var(--glass-border);
-  box-shadow: var(--glass-shadow-md);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .skeleton-header {
-  @apply flex items-center gap-4;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
 }
 
 .skeleton-info {
-  @apply flex flex-col gap-2 flex-1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
 }
 
 .skeleton-metrics {
-  @apply flex justify-around gap-4;
+  display: flex;
+  justify-content: space-around;
+  gap: var(--space-4);
 }
 
 .skeleton-metric {
-  @apply flex flex-col items-center gap-2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
 }
 </style>

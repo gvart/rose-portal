@@ -18,18 +18,37 @@ defineEmits<{
 
 <style scoped>
 .dish-card {
-  @apply bg-white rounded-xl shadow-md p-5 cursor-pointer
-         transition-all duration-150 hover:shadow-lg hover:scale-105
-         active:scale-95 text-left;
-  border-left: 4px solid #10b981;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  text-align: left;
+  border-left: 4px solid var(--color-success-solid);
   min-height: 120px;
 }
 
+.dish-card:active {
+  transform: scale(0.96);
+  border-color: var(--color-border-secondary);
+}
+
 .dish-name {
-  @apply text-xl font-semibold text-gray-800 mb-2;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .dish-description {
-  @apply text-base text-gray-600 leading-relaxed line-clamp-3;
+  font-size: var(--font-size-14);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

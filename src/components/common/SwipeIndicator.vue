@@ -52,19 +52,25 @@ defineProps<{
 }
 
 .indicator-content {
-  @apply h-full flex items-center justify-center;
-  padding-left: 12px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: var(--space-3);
 }
 
 .arrow-icon {
-  @apply w-8 h-8 text-emerald-600;
+  width: 32px;
+  height: 32px;
+  color: var(--color-success-solid);
   transform: scale(var(--swipe-progress));
-  transition: transform 0.2s ease-out, color 0.2s ease-out;
+  transition: transform var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .arrow-icon.ready {
-  @apply text-emerald-500;
+  color: var(--color-success-solid);
   transform: scale(1.2);
 }
 

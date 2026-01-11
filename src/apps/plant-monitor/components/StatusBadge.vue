@@ -12,10 +12,10 @@ const props = defineProps<{ status: StatusLevel }>()
 
 const badgeClass = computed(() => {
   const classes: Record<StatusLevel, string> = {
-    good: 'bg-green-100 text-green-800',
-    warning: 'bg-amber-100 text-amber-800',
-    critical: 'bg-red-100 text-red-800',
-    saturated: 'bg-blue-100 text-blue-800'
+    good: 'badge-good',
+    warning: 'badge-warning',
+    critical: 'badge-critical',
+    saturated: 'badge-saturated'
   }
   return classes[props.status]
 })
@@ -33,6 +33,31 @@ const label = computed(() => {
 
 <style scoped>
 .status-badge {
-  @apply px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-good {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.badge-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.badge-critical {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+.badge-saturated {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
 }
 </style>

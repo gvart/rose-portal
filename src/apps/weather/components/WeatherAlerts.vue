@@ -61,46 +61,67 @@ defineProps<{
 
 <style scoped>
 .weather-alerts {
-  @apply space-y-3 mb-6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
 }
 
 .alert-card {
-  @apply flex gap-3 p-4 rounded-lg border-2 shadow-md;
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 2px solid;
 }
 
 .alert-card--low {
-  @apply bg-yellow-50 border-yellow-300 text-yellow-900;
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
 }
 
 .alert-card--medium {
-  @apply bg-orange-50 border-orange-400 text-orange-900;
+  background: #FFF7ED;
+  border-color: #FB923C;
+  color: #9A3412;
 }
 
 .alert-card--high {
-  @apply bg-red-50 border-red-400 text-red-900;
+  background: var(--color-error-bg);
+  border-color: var(--color-error-border);
+  color: var(--color-error-text);
 }
 
 .alert-card--extreme {
-  @apply bg-purple-50 border-purple-500 text-purple-900;
+  background: #FAF5FF;
+  border-color: #A855F7;
+  color: #6B21A8;
 }
 
 .alert-icon {
-  @apply flex-shrink-0 w-8 h-8;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
 }
 
 .alert-icon svg {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .alert-content {
-  @apply flex-1 min-w-0;
+  flex: 1;
+  min-width: 0;
 }
 
 .alert-title {
-  @apply text-sm font-bold mb-1;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-1);
 }
 
 .alert-description {
-  @apply text-sm;
+  font-size: var(--font-size-13);
 }
 </style>

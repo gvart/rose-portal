@@ -138,81 +138,166 @@ function handleSave() {
 <style scoped>
 /* Modal Overlay */
 .modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: var(--space-4);
 }
 
 /* Modal Container */
 .modal-container {
-  @apply w-full max-w-md bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto;
+  width: 100%;
+  max-width: 448px;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  border: var(--depth-3-border);
+  box-shadow: var(--depth-3-shadow);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Modal Header */
 .modal-header {
-  @apply sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-primary);
+  border-bottom: var(--depth-1-border);
+  padding: var(--space-4) var(--space-6);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
 }
 
 .modal-title {
-  @apply text-2xl font-bold text-gray-900;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .modal-subtitle {
-  @apply text-sm text-gray-600 mt-1;
+  font-size: var(--font-size-13);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
 }
 
 /* Modal Content */
 .modal-content {
-  @apply px-6 py-4 space-y-6;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 /* Input Section */
 .input-section {
-  @apply space-y-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .input-label {
-  @apply block text-sm font-medium text-gray-700;
+  display: block;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
 }
 
 .text-input {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg
-         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-         text-base text-gray-900 placeholder-gray-400
-         transition-all duration-150;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-14);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.text-input::placeholder {
+  color: var(--color-text-faint);
 }
 
 .input-hint {
-  @apply text-xs text-gray-500 mt-1;
+  font-size: var(--font-size-11);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
 }
 
 .input-error {
-  @apply text-xs text-red-600 mt-1 font-medium;
+  font-size: var(--font-size-11);
+  color: var(--color-error-text);
+  margin-top: var(--space-1);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Modal Actions */
 .modal-actions {
-  @apply sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 rounded-b-2xl;
+  position: sticky;
+  bottom: 0;
+  background: var(--color-bg-primary);
+  border-top: var(--depth-1-border);
+  padding: var(--space-4) var(--space-6);
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
 }
 
 .btn-primary {
-  @apply w-full px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-         disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  width: 100%;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-accent-primary);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+  background: var(--color-accent-primary-active);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 /* Modal Transition */
 .modal-enter-active,
 .modal-leave-active {
-  @apply transition-all duration-300 ease-out;
+  transition: opacity var(--duration-slow) var(--ease-in-out);
 }
 
 .modal-enter-from,
 .modal-leave-to {
-  @apply opacity-0;
+  opacity: 0;
 }
 
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
-  @apply scale-95 translate-y-4;
+  transform: scale(0.95) translateY(var(--space-4));
+  transition: transform var(--duration-slow) var(--ease-in-out);
+}
+
+.modal-enter-active .modal-container,
+.modal-leave-active .modal-container {
+  transition: transform var(--duration-slow) var(--ease-in-out);
 }
 </style>

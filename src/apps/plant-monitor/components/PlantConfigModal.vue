@@ -111,6 +111,42 @@
               </p>
             </div>
 
+            <div class="input-section">
+              <div class="toggle-row">
+                <div class="toggle-label-group">
+                  <label class="input-label">Display Dim</label>
+                  <p class="input-hint">
+                    Automatically dim the display after inactivity.
+                  </p>
+                </div>
+                <button
+                  v-haptic:light
+                  type="button"
+                  @click="localConfig.displayDimEnabled = !localConfig.displayDimEnabled"
+                  :class="['toggle-button', { active: localConfig.displayDimEnabled }]"
+                  role="switch"
+                  :aria-checked="localConfig.displayDimEnabled"
+                >
+                  <span class="toggle-slider"></span>
+                </button>
+              </div>
+            </div>
+
+            <div v-if="localConfig.displayDimEnabled" class="input-section">
+              <label class="input-label">Display Dim Timeout</label>
+              <DurationStepper
+                v-model="localConfig.displayDimTimeout"
+                :min="CONFIG_LIMITS.displayDimTimeout.min"
+                :max="CONFIG_LIMITS.displayDimTimeout.max"
+                :step="CONFIG_LIMITS.displayDimTimeout.step"
+                unit="auto"
+                :presets="[10, 30, 60, 120]"
+              />
+              <p class="input-hint">
+                How long to wait before dimming the display.
+              </p>
+            </div>
+
             <div v-if="validationErrors.length > 0" class="validation-errors">
               <div
                 v-for="(error, idx) in validationErrors"
@@ -184,7 +220,9 @@ const localConfig = ref({
   dryThreshold: 0,
   wetThreshold: 0,
   pumpDuration: 0,
-  publishInterval: 0
+  publishInterval: 0,
+  displayDimEnabled: false,
+  displayDimTimeout: 0
 })
 
 const showKeyboard = ref(false)
@@ -198,7 +236,9 @@ watch(
         dryThreshold: rawToPercentage(plant.config.dryThreshold),
         wetThreshold: rawToPercentage(plant.config.wetThreshold),
         pumpDuration: plant.config.pumpDuration,
-        publishInterval: plant.config.publishInterval
+        publishInterval: plant.config.publishInterval,
+        displayDimEnabled: plant.config.displayDimEnabled,
+        displayDimTimeout: plant.config.displayDimTimeout
       }
     }
   },
@@ -282,7 +322,9 @@ function saveConfig() {
       dryThreshold: percentageToRaw(localConfig.value.dryThreshold),
       wetThreshold: percentageToRaw(localConfig.value.wetThreshold),
       pumpDuration: localConfig.value.pumpDuration,
-      publishInterval: localConfig.value.publishInterval
+      publishInterval: localConfig.value.publishInterval,
+      displayDimEnabled: localConfig.value.displayDimEnabled,
+      displayDimTimeout: localConfig.value.displayDimTimeout
     })
   }
 }
@@ -290,115 +332,214 @@ function saveConfig() {
 
 <style scoped>
 .modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 50;
 }
 
 .modal-container {
-  @apply bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col;
+  background: var(--color-bg-primary);
+  border: var(--depth-3-border);
+  box-shadow: var(--depth-3-shadow);
+  border-radius: var(--radius-lg);
+  max-width: 672px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
-  @apply flex items-center justify-between p-6 border-b-2 border-gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-bottom: var(--depth-2-border);
 }
 
 .modal-title {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .close-button {
-  @apply flex items-center justify-center w-10 h-10 rounded-lg
-         text-gray-500 hover:bg-gray-100 hover:text-gray-700
-         transition-all duration-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--space-11);
+  min-height: var(--space-11);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-faint);
+  background: transparent;
+  border: none;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
 .close-button:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
+  background: var(--color-bg-active);
+  color: var(--color-text-secondary);
 }
 
 .modal-content {
-  @apply overflow-y-auto p-6 flex-1 space-y-6;
+  overflow-y: auto;
+  padding: var(--space-6);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 .input-section {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .input-label {
-  @apply text-base font-semibold text-gray-700;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .label-hint {
-  @apply text-sm font-normal text-gray-500 ml-2;
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+  margin-left: var(--space-2);
 }
 
 .input-hint {
-  @apply text-xs text-gray-500 mt-1;
+  font-size: var(--font-size-11);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
 }
 
 .text-input {
-  @apply px-4 py-3 rounded-lg border-2 border-gray-300
-         text-lg text-gray-800 focus:outline-none
-         focus:border-blue-500 transition-all duration-200 cursor-pointer;
-  min-height: 52px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: var(--depth-1-border);
+  font-size: var(--font-size-14);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+  min-height: var(--space-11);
   caret-color: transparent;
 }
 
 .text-input:focus {
-  @apply border-blue-500 bg-blue-50;
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .validation-errors {
-  @apply flex flex-col gap-2 p-4 bg-red-50 border-2 border-red-200 rounded-lg;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-error-bg);
+  border: 2px solid var(--color-error-border);
+  border-radius: var(--radius-sm);
 }
 
 .error-item {
-  @apply flex items-center gap-2 text-red-700 text-sm font-medium;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-error-text);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
 }
 
 .safety-warnings {
-  @apply flex flex-col gap-2 p-4 bg-amber-50 border-2 border-amber-300 rounded-lg;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-warning-bg);
+  border: 2px solid var(--color-warning-border);
+  border-radius: var(--radius-sm);
 }
 
 .warning-item {
-  @apply flex items-start gap-2 text-amber-800 text-sm font-medium;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--color-warning-text);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
 }
 
 .warning-item svg {
-  @apply flex-shrink-0 mt-0.5;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .action-buttons {
-  @apply flex gap-3 pt-4 border-t-2 border-gray-200;
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: var(--depth-2-border);
 }
 
 .btn {
-  @apply flex-1 py-3 px-6 font-semibold rounded-lg
-         transition-all duration-200 disabled:opacity-50
-         disabled:cursor-not-allowed;
-  min-height: 52px;
+  flex: 1;
+  padding: var(--space-3) var(--space-6);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border-radius: var(--radius-md);
+  border: none;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+  min-height: var(--space-11);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
 .btn-secondary {
-  @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: var(--color-bg-active);
 }
 
 .btn-primary {
-  @apply bg-blue-500 text-white hover:bg-blue-600;
+  background: var(--color-accent-primary);
+  color: white;
+}
+
+.btn-primary:active:not(:disabled) {
+  background: var(--color-accent-primary-active);
 }
 
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity var(--duration-slow) var(--ease-in-out);
 }
 
 .modal-enter-from,
@@ -408,12 +549,65 @@ function saveConfig() {
 
 .modal-enter-active .modal-container,
 .modal-leave-active .modal-container {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform var(--duration-slow) var(--ease-in-out);
 }
 
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
-  transform: scale(0.95);
+  transform: scale(0.96) translateY(var(--space-4));
   opacity: 0;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.toggle-label-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.toggle-button {
+  position: relative;
+  width: 52px;
+  height: 32px;
+  background: var(--color-bg-tertiary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  flex-shrink: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggle-button:active {
+  transform: scale(0.96);
+}
+
+.toggle-button.active {
+  background: var(--color-success-solid);
+  border-color: var(--color-success-solid);
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-full);
+  transition: transform var(--duration-fast) var(--ease-in-out);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button.active .toggle-slider {
+  transform: translateX(20px);
 }
 </style>

@@ -19,20 +19,29 @@ import LoadingSkeleton from '@/components/feedback/LoadingSkeleton.vue'
 
 <style scoped>
 .event-card-skeleton {
-  @apply flex gap-3 p-3 rounded-lg;
-  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
   min-height: 72px;
 }
 
 .skeleton-time {
-  @apply w-16 flex-shrink-0;
+  width: 64px;
+  flex-shrink: 0;
 }
 
 .skeleton-content {
-  @apply flex gap-3 flex-1;
+  display: flex;
+  gap: var(--space-3);
+  flex: 1;
 }
 
 .skeleton-details {
-  @apply flex flex-col gap-2 flex-1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
 }
 </style>

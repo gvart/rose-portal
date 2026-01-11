@@ -66,31 +66,50 @@ defineProps<{
 
 <style scoped>
 .metric-card {
-  @apply flex items-center gap-3 p-3 bg-white/80 rounded-lg;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-sm);
 }
 
 .metric-icon {
-  @apply flex-shrink-0 w-10 h-10 text-blue-500;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  color: var(--color-info-solid);
 }
 
 .metric-icon svg {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .metric-content {
-  @apply flex flex-col min-w-0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .metric-label {
-  @apply text-xs text-gray-600 font-medium;
+  font-size: var(--font-size-11);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 .metric-value {
-  @apply text-lg font-bold text-gray-900 tabular-nums;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
 .metric-unit {
-  @apply text-sm font-normal text-gray-600 ml-1;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+  margin-left: var(--space-1);
 }
 </style>

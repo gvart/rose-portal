@@ -61,54 +61,72 @@ function isSelected(attribute: DishAttribute): boolean {
 </script>
 
 <style scoped>
-.attribute-group {
-  @apply border-b border-gray-200 last:border-b-0;
-}
-
 .group-header {
-  @apply w-full flex items-center justify-between py-4 px-2
-         text-left hover:bg-gray-50 transition-all duration-200
-         rounded-lg;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-2);
+  text-align: left;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  border-radius: var(--radius-md);
   min-height: 56px;
 }
 
+.group-header:active {
+  background: var(--color-bg-secondary);
+}
+
 .group-title {
-  @apply text-lg font-semibold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .expand-icon {
-  @apply w-6 h-6 text-gray-600 transition-transform duration-200;
+  width: 24px;
+  height: 24px;
+  color: var(--color-text-secondary);
+  transition: transform var(--duration-fast) var(--ease-in-out);
 }
 
 .expand-icon.rotated {
-  @apply rotate-180;
+  transform: rotate(180deg);
 }
 
 .attributes-container {
-  @apply flex flex-wrap gap-2 pb-4 px-2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
 }
 
 .attribute-chip {
-  @apply px-4 py-2 rounded-full font-medium transition-all duration-200
-         border-2 cursor-pointer;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  border: 2px solid var(--color-border-primary);
+  cursor: pointer;
   min-height: 44px;
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
-  color: #4b5563;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
 
-.attribute-chip:hover {
-  background-color: #d1fae5;
-  border-color: #6ee7b7;
+.attribute-chip:active:not(.selected) {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-success-border);
 }
 
 .attribute-chip.selected {
-  background-color: #10b981;
-  border-color: #10b981;
+  background-color: var(--color-success-solid);
+  border-color: var(--color-success-solid);
   color: white;
 }
 
-.attribute-chip.selected:hover {
+.attribute-chip.selected:active {
   background-color: #059669;
   border-color: #059669;
 }

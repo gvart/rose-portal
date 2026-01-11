@@ -27,27 +27,76 @@ defineEmits<{
 
 <style scoped>
 .choice-card {
-  @apply flex flex-col items-center gap-3 p-5 rounded-2xl
-         bg-white border-2 border-emerald-200 cursor-pointer
-         transition-all duration-200 hover:border-emerald-400
-         hover:-translate-y-1 hover:shadow-xl active:scale-95
-         w-full sm:min-w-[280px];
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-success-border);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  width: 100%;
   min-height: 160px;
 }
 
+@media (min-width: 640px) {
+  .choice-card {
+    min-width: 280px;
+  }
+}
+
+.choice-card:active {
+  transform: scale(0.96);
+  border-color: var(--color-success-solid);
+}
+
 .icon-wrapper {
-  @apply w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center text-emerald-500;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-success-solid);
+}
+
+@media (min-width: 640px) {
+  .icon-wrapper {
+    width: 64px;
+    height: 64px;
+  }
 }
 
 .icon {
-  @apply w-full h-full;
+  width: 100%;
+  height: 100%;
 }
 
 .card-title {
-  @apply text-xl sm:text-2xl font-semibold text-gray-800 text-center;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .card-title {
+    font-size: var(--font-size-24);
+  }
 }
 
 .card-description {
-  @apply text-sm sm:text-base text-gray-500 text-center leading-relaxed;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+@media (min-width: 640px) {
+  .card-description {
+    font-size: var(--font-size-14);
+  }
 }
 </style>

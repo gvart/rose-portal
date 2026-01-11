@@ -88,25 +88,20 @@ const navigate = (path: string) => {
 }
 
 .nav-container {
-  margin: 0 12px 12px;
-  padding: 8px 16px;
-  border-radius: 24px;
+  margin: 0 var(--space-3) var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
   pointer-events: auto;
 
-  /* Enhanced glassmorphism */
-  background: var(--glass-bg-primary);
-  backdrop-filter: var(--glass-blur-strong);
-  -webkit-backdrop-filter: var(--glass-blur-strong);
-
-  border: var(--glass-border-inner);
-  box-shadow:
-    var(--glass-shadow-lg),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* Borders-only depth with subtle shadow */
+  background: var(--color-bg-primary);
+  border: var(--depth-4-border);
+  box-shadow: var(--depth-4-shadow);
 
   display: flex;
   justify-content: space-around;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .nav-item {
@@ -114,38 +109,43 @@ const navigate = (path: string) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px;
-  border-radius: 12px;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
 
-  min-width: 44px;
-  min-height: 44px;
+  min-width: var(--space-11);
+  min-height: var(--space-11);
 
   background: transparent;
   border: none;
-  color: rgba(60, 60, 67, 0.6);
-  transition: all 0.3s var(--spring-ios);
+  color: var(--color-text-muted);
+  transition: all var(--duration-fast) var(--ease-in-out);
   cursor: pointer;
 }
 
+.nav-item:active {
+  transform: scale(0.96);
+  background: var(--color-bg-active);
+}
+
 .nav-item.active {
-  color: #007AFF; /* iOS blue */
-  background: rgba(0, 122, 255, 0.1);
+  color: var(--color-accent-primary);
+  background: var(--color-info-bg);
 }
 
 .nav-icon {
   width: 24px;
   height: 24px;
-  transition: transform 0.3s var(--spring-bounce);
+  transition: transform var(--duration-fast) var(--ease-in-out);
 }
 
 .nav-item.active .nav-icon {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .nav-label {
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: -0.08px;
+  font-size: var(--font-size-10);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
 }
 </style>

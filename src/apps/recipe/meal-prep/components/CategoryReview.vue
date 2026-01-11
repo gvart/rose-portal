@@ -43,18 +43,30 @@ function isSelected(dishId: string): boolean {
 
 <style scoped>
 .category-review {
-  @apply bg-white rounded-2xl border-2 border-gray-200 p-6;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
 }
 
 .category-header {
-  @apply flex items-center justify-between mb-4 pb-4 border-b border-gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
 }
 
 .category-name {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .dishes-list {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 </style>

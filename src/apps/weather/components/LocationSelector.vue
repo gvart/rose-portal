@@ -57,36 +57,76 @@ defineEmits<{
 
 <style scoped>
 .location-selector {
-  @apply flex items-center justify-between gap-3 p-3 bg-white rounded-lg shadow-sm mb-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-4);
 }
 
 .location-display {
-  @apply flex items-center gap-2 flex-1 min-w-0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
 }
 
 .location-icon {
-  @apply w-5 h-5 text-blue-500 flex-shrink-0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-info-solid);
+  flex-shrink: 0;
 }
 
 .location-info {
-  @apply flex flex-col min-w-0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .location-coords {
-  @apply text-sm font-medium text-gray-900 truncate;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .location-placeholder {
-  @apply text-sm text-gray-500;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
 }
 
 .refresh-btn {
-  @apply p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors
-    disabled:opacity-50 disabled:cursor-not-allowed;
+  padding: var(--space-2);
+  color: var(--color-info-solid);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.refresh-btn:active:not(:disabled) {
+  background: var(--color-info-bg);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .refresh-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 @keyframes spin {

@@ -19,24 +19,37 @@ defineProps<{
 
 <style scoped>
 .metric-card {
-  @apply bg-white rounded-xl shadow-md p-6 border-l-4;
-  border-left-color: #3b82f6;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  border-left: 4px solid var(--color-info-solid);
   min-height: 150px;
 }
 
 .metric-header {
-  @apply flex items-center justify-between mb-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
 }
 
 .metric-title {
-  @apply text-xl font-semibold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .metric-icon {
-  @apply w-8 h-8 text-blue-600;
+  width: 32px;
+  height: 32px;
+  color: var(--color-info-solid);
 }
 
 .metric-content {
-  @apply space-y-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 </style>

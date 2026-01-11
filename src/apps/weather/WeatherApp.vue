@@ -590,47 +590,41 @@ async function handleRetry() {
   padding-bottom: 4rem;
 }
 
-/* Glass Tab Navigation */
+/* Tab Navigation */
 .glass-tab-nav {
   display: flex;
-  gap: 0.5rem;
-  margin: 0 1rem 1rem;
-  padding: 0.375rem;
-  background: rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  gap: var(--space-2);
+  margin: 0 var(--space-4) var(--space-4);
+  padding: var(--space-1);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-lg);
 }
 
 .glass-tab-btn {
   flex: 1;
-  padding: 0.625rem 0.875rem;
+  padding: var(--space-3) var(--space-4);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  color: rgba(255, 255, 255, 0.9);
   background: transparent;
   border: none;
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   cursor: pointer;
   letter-spacing: 0.01em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .glass-tab-btn.active {
   background: rgba(255, 255, 255, 0.3);
   color: white;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transform: scale(1.02);
+  font-weight: var(--font-weight-semibold);
 }
 
-.glass-tab-btn:hover:not(.active) {
+.glass-tab-btn:active:not(.active) {
   background: rgba(255, 255, 255, 0.15);
-  color: white;
 }
 
 /* Tab Content */
@@ -758,31 +752,24 @@ async function handleRetry() {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Glass Button */
+/* Button */
 .glass-btn {
-  padding: 1rem 2rem;
+  padding: var(--space-4) var(--space-8);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
   color: white;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all var(--duration-fast) var(--ease-in-out);
   cursor: pointer;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.glass-btn:hover {
-  background: rgba(0, 0, 0, 0.25);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .glass-btn:active {
-  transform: translateY(0);
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.25);
 }
 </style>

@@ -42,18 +42,41 @@ defineEmits<{
 
 <style scoped>
 .refresh-button {
-  @apply p-3 rounded-lg bg-emerald-50 text-emerald-700
-         hover:bg-emerald-100 transition-all duration-200
-         disabled:opacity-50 disabled:cursor-not-allowed;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-success-bg);
+  color: var(--color-success-solid);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 44px;
   min-width: 44px;
 }
 
+.refresh-button:active:not(:disabled) {
+  background: var(--color-success-border);
+}
+
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .refresh-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 .spinner-icon {
-  @apply w-5 h-5 animate-spin;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

@@ -67,87 +67,129 @@ const healthStatus = computed(() =>
 
 <style scoped>
 .plant-card {
-  @apply bg-white rounded-xl shadow-md p-5 cursor-pointer
-         transition-all duration-150 hover:shadow-lg
-         active:scale-[0.98] text-left w-full;
-  border-left: 4px solid #22C55E;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  text-align: left;
+  width: 100%;
+  border-left: 4px solid var(--color-success-solid);
   min-height: 140px;
 }
 
+.plant-card:active {
+  transform: scale(0.98);
+  border-color: var(--color-border-secondary);
+}
+
 .plant-card--warning {
-  border-left-color: #F59E0B;
+  border-left-color: var(--color-warning-solid);
 }
 
 .plant-card--critical {
-  border-left-color: #EF4444;
+  border-left-color: var(--color-error-solid);
 }
 
 .plant-card--saturated {
-  border-left-color: #3B82F6;
+  border-left-color: var(--color-info-solid);
 }
 
 .plant-card__header {
-  @apply flex items-start justify-between mb-4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
 }
 
 .plant-card__identity {
-  @apply flex-1;
+  flex: 1;
 }
 
 .plant-card__name {
-  @apply text-xl font-semibold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .plant-card__timestamp {
-  @apply text-sm text-gray-500 mt-1 block;
+  font-size: var(--font-size-11);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+  display: block;
 }
 
 .plant-card__chevron {
-  @apply w-5 h-5 text-gray-400 flex-shrink-0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-faint);
+  flex-shrink: 0;
 }
 
 .plant-card__moisture {
-  @apply mb-4;
+  margin-bottom: var(--space-4);
 }
 
 .plant-card__moisture-bar {
-  @apply h-3 bg-gray-200 rounded-full overflow-hidden mb-2;
+  height: 12px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-2);
 }
 
 .plant-card__moisture-fill {
-  @apply h-full rounded-full transition-all duration-500;
-  background: linear-gradient(90deg, #22C55E, #4ADE80);
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: all var(--duration-normal) var(--ease-in-out);
+  background: linear-gradient(90deg, var(--color-success-solid), #4ADE80);
 }
 
 .plant-card__moisture-fill--warning {
-  background: linear-gradient(90deg, #F59E0B, #FBBF24);
+  background: linear-gradient(90deg, var(--color-warning-solid), #FBBF24);
 }
 
 .plant-card__moisture-fill--critical {
-  background: linear-gradient(90deg, #EF4444, #F87171);
+  background: linear-gradient(90deg, var(--color-error-solid), #F87171);
 }
 
 .plant-card__moisture-fill--saturated {
-  background: linear-gradient(90deg, #3B82F6, #60A5FA);
+  background: linear-gradient(90deg, var(--color-info-solid), #60A5FA);
 }
 
 .plant-card__moisture-info {
-  @apply flex justify-between items-center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .plant-card__moisture-value {
-  @apply text-lg font-bold text-gray-800;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .plant-card__moisture-label {
-  @apply text-sm text-gray-500;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
 }
 
 .plant-card__metrics {
-  @apply flex gap-6;
+  display: flex;
+  gap: var(--space-6);
 }
 
 .plant-card__metric {
-  @apply flex items-center gap-2 text-sm text-gray-600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-13);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 </style>

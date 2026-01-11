@@ -21,18 +21,24 @@ import LoadingSkeleton from '@/components/feedback/LoadingSkeleton.vue'
 
 <style scoped>
 .dish-card-skeleton {
-  @apply p-6 rounded-xl border border-gray-200 bg-white;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: var(--depth-1-border);
+  background: var(--color-bg-primary);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: var(--space-4);
 }
 
 .skeleton-header {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .skeleton-description {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 </style>

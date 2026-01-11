@@ -42,38 +42,74 @@ defineEmits<{
 
 <style scoped>
 .recommendations-results {
-  @apply max-w-4xl mx-auto mt-8;
+  max-width: 64rem;
+  margin: 0 auto;
+  margin-top: var(--space-8);
 }
 
 .results-header {
-  @apply flex justify-between items-center mb-6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
 }
 
 .results-title {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .new-search-button {
-  @apply px-6 py-2 text-emerald-600 font-semibold rounded-lg
-         border-2 border-emerald-600 hover:bg-emerald-50
-         transition-all duration-200;
+  padding: var(--space-2) var(--space-6);
+  color: var(--color-success-solid);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-success-solid);
+  background: transparent;
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 44px;
 }
 
+.new-search-button:active {
+  background: var(--color-success-bg);
+  transform: scale(0.98);
+}
+
 .results-grid {
-  @apply grid grid-cols-2 gap-4;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
 }
 
 .no-results {
-  @apply flex flex-col items-center gap-4 p-12 bg-white rounded-xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
 }
 
 .no-results-text {
-  @apply text-lg text-gray-600;
+  font-size: var(--font-size-18);
+  color: var(--color-text-secondary);
 }
 
 .retry-button {
-  @apply px-6 py-3 text-white bg-emerald-600 font-semibold rounded-lg
-         hover:bg-emerald-700 transition-all duration-200;
+  padding: var(--space-3) var(--space-6);
+  color: white;
+  background: var(--color-success-solid);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  min-height: 44px;
+}
+
+.retry-button:active {
+  transform: scale(0.98);
+  background: #059669;
 }
 </style>

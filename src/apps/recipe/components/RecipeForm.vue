@@ -84,44 +84,87 @@ function handleMicError(message: string) {
 
 <style scoped>
 .recipe-form-card {
-  @apply max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 mt-8;
+  max-width: 42rem;
+  margin: 0 auto;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  margin-top: var(--space-8);
 }
 
 .form-title {
-  @apply text-3xl font-bold text-gray-800 mb-6;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
 }
 
 .form-content {
-  @apply space-y-6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 .form-group {
-  @apply space-y-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .form-label {
-  @apply block text-lg font-semibold text-gray-700;
+  display: block;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
 }
 
 .input-wrapper {
-  @apply relative;
+  position: relative;
 }
 
 .form-input, .form-textarea {
-  @apply w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg
-         focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200
-         transition-all duration-200 outline-none;
-  padding-right: 52px; /* Make room for microphone button */
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-18);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  outline: none;
+  padding-right: 52px;
+}
+
+.form-input:focus, .form-textarea:focus {
+  border-color: var(--color-success-solid);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .mic-inside-input {
-  @apply absolute top-1/2 right-2 -translate-y-1/2;
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
 }
 
 .submit-button {
-  @apply w-full py-4 text-xl font-bold text-white bg-emerald-600
-         rounded-lg hover:bg-emerald-700 disabled:bg-gray-300
-         disabled:cursor-not-allowed transition-all duration-200
-         shadow-lg hover:shadow-xl;
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  background: var(--color-success-solid);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  min-height: 44px;
+}
+
+.submit-button:active:not(:disabled) {
+  transform: scale(0.98);
+  background: #059669;
+}
+
+.submit-button:disabled {
+  background: var(--color-border-secondary);
+  cursor: not-allowed;
 }
 </style>

@@ -54,112 +54,200 @@ const formattedRecipe = computed(() => {
 
 <style scoped>
 .result-container {
-  @apply max-w-4xl mx-auto mt-8;
+  max-width: 64rem;
+  margin: 0 auto;
+  margin-top: var(--space-8);
 }
 
 .result-card {
-  @apply bg-white rounded-2xl shadow-xl p-8 space-y-8;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
 }
 
 .recipe-header {
-  @apply flex items-center justify-between gap-4 pb-6 border-b-2 border-emerald-500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+  border-bottom: 2px solid var(--color-success-solid);
 }
 
 .dish-name {
-  @apply text-3xl font-bold text-gray-800;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .prep-time-badge {
-  @apply flex items-center gap-2 px-4 py-2 bg-emerald-100
-         text-emerald-700 rounded-lg font-semibold whitespace-nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
 }
 
 .clock-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
 }
 
 .result-section {
-  @apply border-b border-gray-200 pb-6 last:border-b-0;
+  border-bottom: 1px solid var(--color-border-primary);
+  padding-bottom: var(--space-6);
+}
+
+.result-section:last-child {
+  border-bottom: none;
 }
 
 .section-title {
-  @apply text-2xl font-bold text-gray-800 mb-4;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
 }
 
 .recipe-answer {
-  @apply text-lg text-gray-700 leading-relaxed;
+  font-size: var(--font-size-18);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
 .markdown-content :deep(h1) {
-  @apply text-2xl font-bold text-gray-800 mt-6 mb-4;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .markdown-content :deep(h2) {
-  @apply text-xl font-bold text-gray-800 mt-5 mb-3;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
 }
 
 .markdown-content :deep(h3) {
-  @apply text-lg font-bold text-gray-800 mt-4 mb-2;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 
 .markdown-content :deep(p) {
-  @apply mb-4;
+  margin-bottom: var(--space-4);
+}
+
+.markdown-content :deep(ul), .markdown-content :deep(ol) {
+  list-style-position: inside;
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .markdown-content :deep(ul) {
-  @apply list-disc list-inside mb-4 space-y-2;
+  list-style-type: disc;
 }
 
 .markdown-content :deep(ol) {
-  @apply list-decimal list-inside mb-4 space-y-2;
+  list-style-type: decimal;
 }
 
 .markdown-content :deep(li) {
-  @apply text-gray-700 leading-relaxed;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
 .markdown-content :deep(strong) {
-  @apply font-bold text-gray-900;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .markdown-content :deep(em) {
-  @apply italic;
+  font-style: italic;
 }
 
 .markdown-content :deep(code) {
-  @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-emerald-700;
+  background: var(--color-bg-secondary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-13);
+  font-family: var(--font-mono);
+  color: var(--color-success-text);
 }
 
 .markdown-content :deep(pre) {
-  @apply bg-gray-100 p-4 rounded-lg mb-4 overflow-x-auto;
+  background: var(--color-bg-secondary);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
 }
 
 .markdown-content :deep(pre code) {
-  @apply bg-transparent p-0;
+  background: transparent;
+  padding: 0;
 }
 
 .markdown-content :deep(blockquote) {
-  @apply border-l-4 border-emerald-500 pl-4 italic text-gray-600 mb-4;
+  border-left: 4px solid var(--color-success-solid);
+  padding-left: var(--space-4);
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
 }
 
 .markdown-content :deep(a) {
-  @apply text-emerald-600 hover:text-emerald-700 underline;
+  color: var(--color-success-solid);
+  text-decoration: underline;
+}
+
+.markdown-content :deep(a:active) {
+  color: #059669;
 }
 
 .markdown-content :deep(hr) {
-  @apply my-6 border-gray-300;
+  margin: var(--space-6) 0;
+  border-top: 1px solid var(--color-border-secondary);
 }
 
 .result-actions {
-  @apply flex gap-4 pt-4;
+  display: flex;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
 }
 
 .action-button {
-  @apply flex-1 py-4 px-6 text-lg font-semibold rounded-lg
-         transition-all duration-200 shadow-md hover:shadow-lg;
+  flex: 1;
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  min-height: 44px;
 }
 
 .action-button.primary {
-  @apply bg-emerald-600 text-white hover:bg-emerald-700;
+  background: var(--color-success-solid);
+  color: white;
+}
+
+.action-button.primary:active {
+  transform: scale(0.98);
+  background: #059669;
 }
 </style>

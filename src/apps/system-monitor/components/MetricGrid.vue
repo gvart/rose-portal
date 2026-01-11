@@ -6,6 +6,14 @@
 
 <style scoped>
 .metric-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

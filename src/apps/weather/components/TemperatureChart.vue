@@ -187,13 +187,10 @@ function formatHour(date: Date): string {
 <style scoped>
 .temperature-chart {
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px) saturate(180%);
-  -webkit-backdrop-filter: blur(15px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 
 .chart-svg {
@@ -203,17 +200,17 @@ function formatHour(date: Date): string {
 
 .axis-label {
   fill: rgba(255, 255, 255, 0.7);
-  font-size: 11px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  font-weight: 400;
+  font-size: var(--font-size-11);
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-normal);
 }
 
 .data-point {
-  transition: all 0.2s ease;
+  transition: all var(--duration-fast) var(--ease-in-out);
   cursor: pointer;
 }
 
-.data-point:hover {
+.data-point:active {
   r: 5;
   opacity: 1;
 }

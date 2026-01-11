@@ -67,80 +67,129 @@ function formatUnit(unitType: string): string {
 
 <style scoped>
 .dish-detail-card {
-  @apply bg-white rounded-xl border-2 border-emerald-200 p-6
-         flex flex-col gap-6;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-success-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 .dish-header {
-  @apply flex flex-col gap-3 pb-4 border-b border-gray-200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
 }
 
 .header-main {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .dish-name {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .dish-meta {
-  @apply flex gap-2 flex-wrap;
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
 }
 
 .meta-badge {
-  @apply px-3 py-1 rounded-full text-sm font-semibold;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
 }
 
 .meal-type {
-  @apply bg-emerald-100 text-emerald-700;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .prep-time {
-  @apply bg-blue-100 text-blue-700;
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .dish-description {
-  @apply text-base text-gray-600 leading-relaxed;
+  font-size: var(--font-size-16);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
 .attributes-section {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .section-label {
-  @apply text-sm font-bold text-gray-700 uppercase tracking-wide;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .attributes-tags {
-  @apply flex flex-wrap gap-2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .attribute-tag {
-  @apply px-3 py-1 bg-gray-100 text-gray-700 rounded-full
-         text-sm font-medium;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
 }
 
 .ingredients-section {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .ingredients-list {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .ingredient-item {
-  @apply flex items-baseline gap-2 text-base;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--font-size-16);
 }
 
 .ingredient-quantity {
-  @apply font-semibold text-emerald-700 min-w-[3rem] text-right;
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success-text);
+  min-width: 3rem;
+  text-align: right;
 }
 
 .ingredient-unit {
-  @apply text-gray-500 min-w-[3rem];
+  color: var(--color-text-muted);
+  min-width: 3rem;
 }
 
 .ingredient-name {
-  @apply text-gray-800;
+  color: var(--color-text-primary);
 }
 </style>

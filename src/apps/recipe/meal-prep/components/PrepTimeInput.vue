@@ -72,59 +72,99 @@ function setPreset(value: number) {
 
 <style scoped>
 .prep-time-input {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .input-label {
-  @apply text-base font-semibold text-gray-700;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .stepper-container {
-  @apply flex items-center gap-3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .stepper-button {
-  @apply flex items-center justify-center w-14 h-14 rounded-lg
-         bg-emerald-100 text-emerald-700 hover:bg-emerald-200
-         transition-all duration-200 disabled:opacity-40
-         disabled:cursor-not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--color-success-bg);
+  color: var(--color-success-solid);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
   min-width: 56px;
 }
 
+.stepper-button:active:not(:disabled) {
+  background: var(--color-success-border);
+}
+
+.stepper-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .stepper-icon {
-  @apply w-6 h-6;
+  width: 24px;
+  height: 24px;
 }
 
 .time-input {
-  @apply flex-1 px-4 py-3 rounded-lg border-2 border-gray-300
-         text-center text-xl font-semibold text-gray-800
-         focus:outline-none focus:border-emerald-500
-         transition-all duration-200;
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border-primary);
+  text-align: center;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
 }
 
+.time-input:focus {
+  outline: none;
+  border-color: var(--color-success-solid);
+}
+
 .preset-buttons {
-  @apply flex gap-2 flex-wrap;
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
 }
 
 .preset-button {
-  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200
-         border-2 cursor-pointer;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  border: 2px solid var(--color-border-primary);
+  cursor: pointer;
   min-height: 44px;
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
-  color: #4b5563;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
 
-.preset-button:hover {
-  background-color: #d1fae5;
-  border-color: #6ee7b7;
+.preset-button:active:not(.active) {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-success-border);
 }
 
 .preset-button.active {
-  background-color: #10b981;
-  border-color: #10b981;
+  background-color: var(--color-success-solid);
+  border-color: var(--color-success-solid);
   color: white;
 }
 </style>

@@ -86,50 +86,96 @@ function handleMicError(message: string) {
 
 <style scoped>
 .recommendations-input {
-  @apply flex items-center justify-center min-h-full py-12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--space-16) 0;
 }
 
 .input-card {
-  @apply max-w-2xl w-full mx-auto bg-white rounded-2xl shadow-xl p-8 mt-8;
+  max-width: 42rem;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  margin-top: var(--space-8);
 }
 
 .input-title {
-  @apply text-3xl font-bold text-gray-800 mb-6;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
 }
 
 .input-wrapper {
-  @apply relative;
+  position: relative;
 }
 
 .description-input {
-  @apply w-full px-4 py-4 text-lg border-2 border-gray-300 rounded-lg
-         focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200
-         transition-all duration-200 outline-none;
+  width: 100%;
+  padding: var(--space-4);
+  font-size: var(--font-size-18);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  outline: none;
   min-height: 56px;
-  padding-right: 52px; /* Make room for microphone button */
+  padding-right: 52px;
+}
+
+.description-input:focus {
+  border-color: var(--color-success-solid);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .mic-inside-input {
-  @apply absolute top-1/2 right-2 -translate-y-1/2;
+  position: absolute;
+  top: 50%;
+  right: var(--space-2);
+  transform: translateY(-50%);
 }
 
 .suggestions-section {
-  @apply mt-6;
+  margin-top: var(--space-6);
 }
 
 .suggestions-label {
-  @apply text-sm font-medium text-gray-500 mb-3;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
 }
 
 .suggestions-grid {
-  @apply flex flex-wrap gap-2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .submit-button {
-  @apply w-full mt-6 py-4 text-xl font-bold text-white bg-emerald-600
-         rounded-lg hover:bg-emerald-700 disabled:bg-gray-300
-         disabled:cursor-not-allowed transition-all duration-200
-         shadow-lg hover:shadow-xl;
+  width: 100%;
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  background: var(--color-success-solid);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
+}
+
+.submit-button:active:not(:disabled) {
+  transform: scale(0.98);
+  background: #059669;
+}
+
+.submit-button:disabled {
+  background: var(--color-border-secondary);
+  cursor: not-allowed;
 }
 </style>

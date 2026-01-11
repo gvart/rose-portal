@@ -33,10 +33,10 @@ defineEmits<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   cursor: pointer;
   width: 80px;
-  transition: transform 0.2s var(--spring-bounce);
+  transition: transform var(--duration-normal) var(--ease-in-out);
   outline: none;
 }
 
@@ -44,34 +44,32 @@ defineEmits<{
 @media (min-width: 768px) {
   .app-icon {
     width: 120px;
-    gap: 12px;
+    gap: var(--space-3);
   }
 }
 
 .app-icon:active {
-  transform: scale(0.9);
+  transform: scale(0.94);
 }
 
 .app-icon:focus-visible .icon-container {
-  outline: 3px solid #3b82f6;
+  outline: 3px solid var(--color-border-focus);
   outline-offset: 3px;
 }
 
 .icon-container {
   width: 70px;
   height: 70px;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* iOS-style gradient background */
+  /* Keep gradient for visual brand identity */
   background: linear-gradient(135deg, var(--app-color), color-mix(in srgb, var(--app-color) 80%, black));
 
-  /* Subtle shadow for depth */
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  /* Minimal border instead of shadow */
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Desktop/Pi5 - bigger icon containers */
@@ -79,7 +77,7 @@ defineEmits<{
   .icon-container {
     width: 100px;
     height: 100px;
-    border-radius: 22px;
+    border-radius: 16px;
   }
 }
 
@@ -87,7 +85,7 @@ defineEmits<{
   width: 48px;
   height: 48px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 /* Desktop/Pi5 - bigger icon images */
@@ -99,9 +97,9 @@ defineEmits<{
 }
 
 .app-name {
-  font-size: 12px;
-  font-weight: 500;
-  color: #1f2937;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
   text-align: center;
   max-width: 80px;
   overflow: hidden;
@@ -112,7 +110,7 @@ defineEmits<{
 /* Desktop/Pi5 - bigger text */
 @media (min-width: 768px) {
   .app-name {
-    font-size: 14px;
+    font-size: var(--font-size-14);
     max-width: 120px;
   }
 }

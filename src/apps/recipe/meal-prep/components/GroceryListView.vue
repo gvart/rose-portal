@@ -96,106 +96,171 @@ function formatUnit(unitType: string): string {
 
 <style scoped>
 .grocery-list-view {
-  @apply w-full;
+  width: 100%;
 }
 
 .empty-state {
-  @apply flex items-center justify-center p-12 bg-gray-50 rounded-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
 }
 
 .empty-message {
-  @apply text-lg text-gray-600;
+  font-size: var(--font-size-18);
+  color: var(--color-text-secondary);
 }
 
 .grocery-container {
-  @apply bg-white rounded-2xl border-2 border-gray-200 overflow-hidden;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 .list-header {
-  @apply flex items-center justify-between p-6 bg-emerald-50
-         border-b-2 border-emerald-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  background: var(--color-success-bg);
+  border-bottom: 2px solid var(--color-success-border);
 }
 
 .header-title {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .item-count {
-  @apply px-3 py-1 bg-emerald-600 text-white
-         rounded-full text-sm font-semibold;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-success-solid);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
-.items-list {
-  @apply divide-y divide-gray-200;
+.items-list > :not(:last-child) {
+  border-bottom: 1px solid var(--color-border-primary);
 }
 
 .grocery-item {
-  @apply flex items-center gap-4 p-4 cursor-pointer
-         hover:bg-gray-50 transition-all duration-200;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 60px;
 }
 
+.grocery-item:active {
+  background: var(--color-bg-secondary);
+}
+
 .grocery-item.checked {
-  @apply bg-gray-50;
+  background: var(--color-bg-secondary);
 }
 
 .grocery-item.checked .item-content {
-  @apply opacity-50;
+  opacity: 0.5;
 }
 
 .checkbox-wrapper {
-  @apply flex items-center justify-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 44px;
   min-height: 44px;
 }
 
 .checkbox-input {
-  @apply sr-only;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .checkbox-custom {
-  @apply flex items-center justify-center rounded-md border-2
-         transition-all duration-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
   width: 24px;
   height: 24px;
-  border-color: #d1d5db;
-  background-color: white;
+  background-color: var(--color-bg-primary);
 }
 
 .grocery-item.checked .checkbox-custom {
-  border-color: #10b981;
-  background-color: #10b981;
+  border-color: var(--color-success-solid);
+  background-color: var(--color-success-solid);
 }
 
 .check-icon {
-  @apply w-4 h-4 text-white;
+  width: 16px;
+  height: 16px;
+  color: white;
 }
 
 .item-content {
-  @apply flex items-baseline gap-2 text-base flex-1
-         transition-opacity duration-200;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--font-size-16);
+  flex: 1;
+  transition: opacity var(--duration-fast) var(--ease-in-out);
 }
 
 .item-quantity {
-  @apply font-semibold text-emerald-700 min-w-[3rem] text-right;
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success-text);
+  min-width: 3rem;
+  text-align: right;
 }
 
 .item-unit {
-  @apply text-gray-500 min-w-[3rem];
+  color: var(--color-text-muted);
+  min-width: 3rem;
 }
 
 .item-name {
-  @apply text-gray-800 font-medium;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
 }
 
 .list-footer {
-  @apply p-4 bg-gray-50 border-t border-gray-200;
+  padding: var(--space-4);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-primary);
 }
 
 .clear-button {
-  @apply w-full py-3 px-4 bg-red-100 text-red-700
-         font-semibold rounded-lg hover:bg-red-200
-         transition-all duration-200;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 48px;
+}
+
+.clear-button:active {
+  background: var(--color-error-border);
 }
 </style>

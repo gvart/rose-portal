@@ -209,11 +209,17 @@ onUnmounted(() => {
 
 <style scoped>
 .calendar-app {
-  @apply w-full h-full flex flex-col overflow-hidden relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
 .calendar-content {
-  @apply flex-1 overflow-hidden;
+  flex: 1;
+  overflow: hidden;
 }
 
 /* View transition */
@@ -234,40 +240,73 @@ onUnmounted(() => {
 
 /* Error Banner */
 .error-banner {
-  @apply fixed bottom-6 left-1/2 transform -translate-x-1/2
-         bg-red-100 border-2 border-red-500 rounded-lg p-4
-         flex items-center gap-4 shadow-xl max-w-2xl z-40;
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-error-bg);
+  border: 2px solid var(--color-error-solid);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-shadow: var(--depth-4-shadow);
+  max-width: 48rem;
+  z-index: 40;
 }
 
 .error-content {
-  @apply flex items-center gap-3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .error-icon {
-  @apply w-6 h-6 text-red-600 flex-shrink-0;
+  width: 24px;
+  height: 24px;
+  color: var(--color-error-solid);
+  flex-shrink: 0;
 }
 
 .error-text {
-  @apply text-base font-medium text-red-800;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-error-text);
 }
 
 .error-close {
-  @apply p-2 hover:bg-red-200 rounded-lg transition-all duration-200;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 40px;
   min-width: 40px;
 }
 
+.error-close:active {
+  background: var(--color-error-border);
+}
+
 .close-icon {
-  @apply w-5 h-5 text-red-600;
+  width: 20px;
+  height: 20px;
+  color: var(--color-error-solid);
 }
 
 /* Loading Indicator */
 .loading-indicator {
-  @apply absolute top-4 right-4 flex gap-1;
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  gap: var(--space-1);
 }
 
 .loading-dot {
-  @apply w-2 h-2 bg-indigo-500 rounded-full;
+  width: 8px;
+  height: 8px;
+  background: var(--color-info-solid);
+  border-radius: var(--radius-full);
   animation: loading-bounce 1.4s infinite ease-in-out both;
 }
 

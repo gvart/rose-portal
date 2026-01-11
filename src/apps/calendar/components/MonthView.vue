@@ -332,167 +332,314 @@ watch(() => props.selectedDate, () => {
 
 <style scoped>
 .month-view {
-  @apply h-full flex flex-col bg-white rounded-xl shadow-md overflow-hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--depth-2-shadow);
+  overflow: hidden;
 }
 
 /* Day Headers */
 .day-headers {
-  @apply grid grid-cols-7 border-b-2 border-gray-200;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 2px solid var(--color-border-primary);
 }
 
 .day-header {
-  @apply py-3 text-center text-sm font-semibold text-gray-600 bg-gray-50;
+  padding: var(--space-3) 0;
+  text-align: center;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
 }
 
 .day-header--weekend {
-  @apply text-gray-400;
+  color: var(--color-text-muted);
 }
 
 /* Calendar Grid */
 .calendar-grid {
-  @apply grid grid-cols-7 flex-1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  flex: 1;
 }
 
 .day-cell {
-  @apply relative flex flex-col p-1 border-b border-r border-gray-100
-         text-left transition-colors duration-150 cursor-pointer
-         hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-1);
+  border-bottom: 1px solid var(--color-border-primary);
+  border-right: 1px solid var(--color-border-primary);
+  text-align: left;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
   min-height: 80px;
 }
 
+.day-cell:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-info-solid);
+}
+
+.day-cell:active {
+  background: var(--color-bg-secondary);
+}
+
 .day-cell:nth-child(7n) {
-  @apply border-r-0;
+  border-right: 0;
 }
 
 .day-cell--today {
-  @apply bg-amber-50;
+  background: var(--color-warning-bg);
 }
 
 .day-cell--today .day-number {
-  @apply bg-indigo-600 text-white rounded-full w-7 h-7 flex items-center justify-center;
+  background: var(--color-info-solid);
+  color: white;
+  border-radius: var(--radius-full);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .day-cell--selected {
-  @apply bg-indigo-50;
+  background: var(--color-info-bg);
 }
 
 .day-cell--other-month {
-  @apply bg-gray-50;
+  background: var(--color-bg-secondary);
 }
 
 .day-cell--other-month .day-number {
-  @apply text-gray-400;
+  color: var(--color-text-muted);
 }
 
 .day-cell--weekend {
-  @apply bg-gray-50/50;
+  background: var(--color-bg-secondary);
+  opacity: 0.5;
 }
 
 /* Day Number */
 .day-number {
-  @apply text-sm font-semibold text-gray-800 mb-1;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
 }
 
 /* Events Container */
 .events-container {
-  @apply flex-1 overflow-hidden;
+  flex: 1;
+  overflow: hidden;
 }
 
 .desktop-events {
-  @apply hidden md:flex flex-col gap-0.5;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+}
+
+@media (min-width: 768px) {
+  .desktop-events {
+    display: flex;
+  }
 }
 
 .mobile-events {
-  @apply flex md:hidden gap-1 mt-1;
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+@media (min-width: 768px) {
+  .mobile-events {
+    display: none;
+  }
 }
 
 /* Event Pills (Desktop) */
 .event-pill {
-  @apply flex items-center gap-1 px-1.5 py-0.5 text-xs rounded
-         border truncate cursor-pointer hover:opacity-80 transition-opacity;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-12);
+  border-radius: var(--radius-xs);
+  border: 1px solid;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.event-pill:active {
+  opacity: 0.8;
 }
 
 .event-time {
-  @apply font-medium text-[10px] opacity-75;
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  opacity: 0.75;
 }
 
 .event-name {
-  @apply truncate;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .more-events {
-  @apply text-xs text-gray-500 font-medium px-1.5 py-0.5;
+  font-size: var(--font-size-12);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
 }
 
 /* Event Dots (Mobile) */
 .event-dot {
-  @apply w-1.5 h-1.5 rounded-full;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
 }
 
 /* Mobile Events Panel */
 .mobile-events-panel {
-  @apply fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl
-         border-t-2 border-gray-200 z-30 max-h-[60vh] flex flex-col;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-primary);
+  border-top: 2px solid var(--color-border-primary);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  box-shadow: var(--depth-4-shadow);
+  z-index: 30;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-header {
-  @apply flex items-center justify-between p-4 border-b border-gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
 }
 
 .panel-title {
-  @apply text-lg font-bold text-gray-800;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .panel-close {
-  @apply p-2 hover:bg-gray-100 rounded-lg transition-colors;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 40px;
   min-width: 40px;
 }
 
+.panel-close:active {
+  background: var(--color-bg-secondary);
+}
+
 .panel-content {
-  @apply flex-1 overflow-y-auto p-4;
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
 }
 
 .no-events {
-  @apply text-center py-8;
+  text-align: center;
+  padding: var(--space-8) 0;
 }
 
 .no-events p {
-  @apply text-gray-500 mb-4;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
 }
 
 .events-list {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .event-item {
-  @apply flex flex-col gap-1 p-3 rounded-lg border text-left
-         transition-all duration-150 hover:shadow-md active:scale-95;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  text-align: left;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.event-item:active {
+  box-shadow: var(--depth-2-shadow);
+  transform: scale(0.95);
 }
 
 .event-time-full {
-  @apply text-xs font-semibold opacity-75;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
 }
 
 .event-name-full {
-  @apply font-medium;
+  font-weight: var(--font-weight-medium);
 }
 
 .add-event-btn {
-  @apply flex items-center justify-center gap-2 px-4 py-3
-         bg-indigo-600 text-white font-semibold rounded-lg
-         hover:bg-indigo-700 transition-all duration-150 active:scale-95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-info-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 44px;
 }
 
+.add-event-btn:active {
+  background: #4f46e5;
+  transform: scale(0.95);
+}
+
 .add-event-btn--inline {
-  @apply bg-gray-100 text-gray-700 hover:bg-gray-200 mt-2;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  margin-top: var(--space-2);
+}
+
+.add-event-btn--inline:active {
+  background: var(--color-bg-active);
 }
 
 /* Slide up transition */
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform var(--duration-normal) var(--ease-in-out),
+              opacity var(--duration-normal) var(--ease-in-out);
 }
 
 .slide-up-enter-from,
@@ -505,19 +652,22 @@ watch(() => props.selectedDate, () => {
 @media (max-width: 768px) {
   .day-cell {
     min-height: 60px;
-    @apply p-0.5;
+    padding: var(--space-1);
   }
 
   .day-number {
-    @apply text-xs;
+    font-size: var(--font-size-12);
   }
 
   .day-cell--today .day-number {
-    @apply w-5 h-5 text-xs;
+    width: 20px;
+    height: 20px;
+    font-size: var(--font-size-12);
   }
 
   .day-header {
-    @apply py-2 text-xs;
+    padding: var(--space-2) 0;
+    font-size: var(--font-size-12);
   }
 }
 </style>

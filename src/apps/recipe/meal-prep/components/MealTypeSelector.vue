@@ -31,39 +31,48 @@ const mealTypes = [MealType.BREAKFAST, MealType.BRUNCH, MealType.LUNCH, MealType
 
 <style scoped>
 .meal-type-selector {
-  @apply flex flex-col gap-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .selector-label {
-  @apply text-base font-semibold text-gray-700;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .type-chips {
-  @apply flex gap-3 flex-wrap;
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
 .type-chip {
-  @apply px-6 py-3 rounded-full font-medium transition-all duration-200
-         border-2 cursor-pointer;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  border: 2px solid var(--color-border-primary);
+  cursor: pointer;
   min-height: 48px;
   min-width: 120px;
-  background-color: #f3f4f6;
-  border-color: #d1d5db;
-  color: #4b5563;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
 
-.type-chip:hover {
-  background-color: #d1fae5;
-  border-color: #6ee7b7;
+.type-chip:active:not(.active) {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-success-border);
 }
 
 .type-chip.active {
-  background-color: #10b981;
-  border-color: #10b981;
+  background-color: var(--color-success-solid);
+  border-color: var(--color-success-solid);
   color: white;
 }
 
-.type-chip.active:hover {
+.type-chip.active:active {
   background-color: #059669;
   border-color: #059669;
 }

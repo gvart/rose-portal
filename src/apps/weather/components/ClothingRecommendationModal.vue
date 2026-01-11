@@ -150,26 +150,33 @@ onUnmounted(() => {
 <style scoped>
 /* Modal Overlay */
 .modal-overlay {
-  @apply fixed inset-0 flex items-center justify-center;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  padding: 0.5rem;
+  padding: var(--space-2);
 }
 
 @media (min-width: 640px) {
   .modal-overlay {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 }
 
 /* Modal Container */
 .modal-container {
-  @apply w-full rounded-2xl shadow-2xl flex flex-col;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--depth-3-shadow);
+  display: flex;
+  flex-direction: column;
   max-width: 95vw;
   max-height: 95vh;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(40px);
+  background: var(--color-bg-primary);
+  border: var(--depth-3-border);
 }
 
 @media (min-width: 768px) {
@@ -192,249 +199,299 @@ onUnmounted(() => {
 
 /* Modal Header */
 .modal-header {
-  @apply flex items-center justify-between border-b border-gray-200;
-  background: rgba(255, 255, 255, 0.98);
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: var(--depth-1-border);
+  background: var(--color-bg-primary);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
   flex-shrink: 0;
 }
 
 @media (min-width: 640px) {
   .modal-header {
-    padding: 1rem 1.5rem;
+    padding: var(--space-4) var(--space-6);
   }
 }
 
 .modal-title {
-  @apply text-lg font-semibold text-gray-900;
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
 @media (min-width: 640px) {
   .modal-title {
-    @apply text-xl;
+    font-size: var(--font-size-24);
   }
 }
 
 .close-btn {
-  @apply p-1.5 rounded-lg transition-colors;
-  color: #6b7280;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
 @media (min-width: 640px) {
   .close-btn {
-    @apply p-2;
+    padding: var(--space-2);
   }
 }
 
-.close-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: #374151;
+.close-btn:active {
+  background: var(--color-bg-active);
+  color: var(--color-text-primary);
 }
 
 /* Modal Content */
 .modal-content {
-  @apply overflow-y-auto;
+  overflow-y: auto;
   flex: 1;
   min-height: 0;
-  padding: 0.75rem 1rem;
+  padding: var(--space-3) var(--space-4);
 }
 
 @media (min-width: 640px) {
   .modal-content {
-    padding: 1rem 1.5rem;
+    padding: var(--space-4) var(--space-6);
   }
 }
 
 /* Loading State */
 .loading-state {
-  @apply flex flex-col items-center justify-center py-12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) 0;
 }
 
 .loading-text {
-  @apply mt-4 text-gray-600 font-medium;
+  margin-top: var(--space-4);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
 .spin {
   animation: spin 1s linear infinite;
-  color: #3b82f6;
+  color: var(--color-info-solid);
 }
 
 /* Error State */
 .error-state {
-  @apply flex flex-col items-center justify-center py-12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) 0;
 }
 
 .error-icon {
-  color: #ef4444;
+  color: var(--color-error-solid);
 }
 
 .error-title {
-  @apply mt-4 text-lg font-semibold text-gray-900;
+  margin-top: var(--space-4);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
 .error-message {
-  @apply mt-2 text-sm text-gray-600 text-center;
+  margin-top: var(--space-2);
+  font-size: var(--font-size-13);
+  color: var(--color-text-secondary);
+  text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
 .retry-btn {
-  @apply mt-6 flex items-center gap-2 px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg;
-  @apply transition-all duration-150 active:scale-95;
+  margin-top: var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-info-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
-.retry-btn:hover {
+.retry-btn:active {
+  transform: scale(0.95);
   background: #2563eb;
 }
 
 /* Weather Summary */
 .weather-summary {
-  @apply rounded-xl;
+  border-radius: var(--radius-lg);
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
   border: 1px solid rgba(59, 130, 246, 0.2);
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 @media (min-width: 640px) {
   .weather-summary {
-    padding: 1rem;
-    margin-bottom: 1.25rem;
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
   }
 }
 
 .summary-description {
-  @apply text-xs font-medium text-gray-800 text-center;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
 }
 
 @media (min-width: 640px) {
   .summary-description {
-    @apply text-sm;
-    margin-bottom: 0.75rem;
+    font-size: var(--font-size-13);
+    margin-bottom: var(--space-3);
   }
 }
 
 .summary-metrics {
-  @apply flex gap-3 justify-center;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
 }
 
 @media (min-width: 640px) {
   .summary-metrics {
-    @apply gap-6;
+    gap: var(--space-6);
   }
 }
 
 .metric {
-  @apply flex flex-col items-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .metric-label {
-  @apply text-xs text-gray-600;
+  font-size: var(--font-size-12);
+  color: var(--color-text-secondary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  margin-bottom: 0.125rem;
+  margin-bottom: var(--space-1);
 }
 
 .metric-value {
-  @apply text-sm font-semibold text-gray-900;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Sections Grid - Multi-column layout */
 .sections-grid {
-  @apply grid;
+  display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 @media (min-width: 640px) {
   .sections-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: var(--space-4);
   }
 }
 
 @media (min-width: 1024px) {
   .sections-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+    gap: var(--space-5);
   }
 }
 
 /* Body Part Sections */
 .body-part-section {
-  @apply rounded-xl;
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 0.75rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-secondary);
+  border: var(--depth-1-border);
+  padding: var(--space-3);
 }
 
 @media (min-width: 640px) {
   .body-part-section {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 }
 
 .section-title {
-  @apply text-sm font-semibold text-gray-900;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
 }
 
 @media (min-width: 640px) {
   .section-title {
-    @apply text-base;
-    margin-bottom: 0.75rem;
+    font-size: var(--font-size-16);
+    margin-bottom: var(--space-3);
   }
 }
 
 .clothing-grid {
-  @apply flex flex-col;
-  gap: 0.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 @media (min-width: 640px) {
   .clothing-grid {
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
 }
 
 .clothing-item {
-  @apply flex items-center rounded-lg;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-  padding: 0.5rem;
-  gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  padding: var(--space-2);
+  gap: var(--space-2);
 }
 
 @media (min-width: 640px) {
   .clothing-item {
-    padding: 0.625rem;
-    gap: 0.75rem;
+    padding: var(--space-3);
+    gap: var(--space-3);
   }
 }
 
-.clothing-item:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.clothing-item:active {
+  background: var(--color-bg-tertiary);
+  transform: scale(0.99);
 }
 
 .item-label {
-  @apply text-xs font-medium text-gray-700 flex-1;
+  font-size: var(--font-size-12);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  flex: 1;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
 @media (min-width: 640px) {
   .item-label {
-    @apply text-sm;
+    font-size: var(--font-size-13);
   }
 }
 
@@ -445,7 +502,11 @@ onUnmounted(() => {
 /* Empty State */
 .empty-state,
 .no-recommendations {
-  @apply flex items-center justify-center py-12 text-gray-600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) 0;
+  color: var(--color-text-secondary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 

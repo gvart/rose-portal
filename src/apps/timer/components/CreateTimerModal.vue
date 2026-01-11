@@ -293,152 +293,336 @@ watch(
 <style scoped>
 /* Modal Overlay */
 .modal-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: var(--space-4);
 }
 
 /* Modal Container */
 .modal-container {
-  @apply w-full max-w-lg bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto;
+  width: 100%;
+  max-width: 512px;
+  background: var(--color-bg-primary);
+  border: var(--depth-3-border);
+  box-shadow: var(--depth-3-shadow);
+  border-radius: var(--radius-lg);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Modal Header */
 .modal-header {
-  @apply sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl
-    flex items-center justify-between;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-primary);
+  border-bottom: var(--depth-1-border);
+  padding: var(--space-4) var(--space-6);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .modal-title {
-  @apply text-2xl font-bold text-gray-900;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
 }
 
 .close-btn {
-  @apply p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors;
+  padding: var(--space-2);
+  color: var(--color-text-faint);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.close-btn:active {
+  background: var(--color-bg-active);
+  color: var(--color-text-secondary);
 }
 
 /* Modal Content */
 .modal-content {
-  @apply px-6 py-4 space-y-6;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 /* Form Groups */
 .form-group {
-  @apply space-y-2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .form-label {
-  @apply block text-sm font-medium text-gray-700;
+  display: block;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
 }
 
 .form-input {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent
-    text-base text-gray-900 placeholder-gray-400 transition-all duration-150;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-14);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.form-input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 /* Type Selector */
 .type-selector {
-  @apply grid grid-cols-3 gap-2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
 }
 
 .type-btn {
-  @apply px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium
-    transition-all duration-150 hover:bg-gray-200
-    focus:outline-none focus:ring-2 focus:ring-amber-500;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-14);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.type-btn:active {
+  background: var(--color-bg-active);
 }
 
 .type-btn.active {
-  @apply bg-amber-500 text-white hover:bg-amber-600;
+  background: var(--color-warning-solid);
+  color: white;
+}
+
+.type-btn.active:active {
+  background: #d97706;
 }
 
 /* Presets Grid */
 .presets-grid {
-  @apply grid grid-cols-3 gap-2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
 }
 
 .preset-btn {
-  @apply px-3 py-2 bg-amber-50 text-amber-700 rounded-lg text-sm font-medium
-    hover:bg-amber-100 transition-colors
-    focus:outline-none focus:ring-2 focus:ring-amber-500;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.preset-btn:active {
+  background: var(--color-warning-border);
 }
 
 /* Duration Inputs */
 .duration-inputs {
-  @apply flex gap-3;
+  display: flex;
+  gap: var(--space-3);
 }
 
 .duration-input-group {
-  @apply flex-1 flex items-center gap-2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .duration-input {
-  @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-center
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent
-    text-lg font-semibold text-gray-900;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.duration-input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .duration-label {
-  @apply text-sm font-medium text-gray-500;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
 }
 
 /* Pomodoro Settings */
 .pomodoro-settings {
-  @apply space-y-3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .setting-row {
-  @apply flex items-center gap-3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .setting-label {
-  @apply flex-1 text-sm text-gray-700;
+  flex: 1;
+  font-size: var(--font-size-13);
+  color: var(--color-text-primary);
 }
 
 .setting-input {
-  @apply w-20 px-3 py-2 border border-gray-300 rounded-lg text-center
-    focus:outline-none focus:ring-2 focus:ring-amber-500;
+  width: 80px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: var(--font-size-14);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.setting-input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .setting-unit {
-  @apply text-sm text-gray-500 w-8;
+  width: 32px;
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
 }
 
 .setting-checkbox {
-  @apply w-5 h-5 text-amber-500 border-gray-300 rounded
-    focus:ring-2 focus:ring-amber-500;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-warning-solid);
+  cursor: pointer;
 }
 
 /* Modal Actions */
 .modal-actions {
-  @apply sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 rounded-b-2xl
-    flex gap-3 justify-end;
+  position: sticky;
+  bottom: 0;
+  background: var(--color-bg-primary);
+  border-top: var(--depth-1-border);
+  padding: var(--space-4) var(--space-6);
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
 }
 
 .btn-secondary {
-  @apply px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg
-    hover:bg-gray-300 transition-all duration-150 active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.btn-secondary:active {
+  transform: scale(0.96);
+  background: var(--color-bg-active);
+}
+
+.btn-secondary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
 }
 
 .btn-primary {
-  @apply px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg
-    hover:bg-amber-600 transition-all duration-150 active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
-    disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-warning-solid);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-14);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.96);
+  background: #d97706;
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Modal Transition */
 .modal-enter-active,
 .modal-leave-active {
-  @apply transition-all duration-300 ease-out;
+  transition: opacity var(--duration-slow) var(--ease-in-out);
 }
 
 .modal-enter-from,
 .modal-leave-to {
-  @apply opacity-0;
+  opacity: 0;
 }
 
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
-  @apply scale-95 translate-y-4;
+  transform: scale(0.96) translateY(var(--space-4));
+  transition: transform var(--duration-slow) var(--ease-in-out);
+}
+
+.modal-enter-active .modal-container,
+.modal-leave-active .modal-container {
+  transition: transform var(--duration-slow) var(--ease-in-out);
 }
 </style>

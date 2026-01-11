@@ -70,12 +70,18 @@ const circumference = computed(() => 2 * Math.PI * 20)
 
 <style scoped>
 .pull-indicator {
-  @apply absolute left-1/2 flex items-center justify-center pointer-events-none;
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
   top: -10px;
   transform-origin: center;
   margin-left: -20px;
   z-index: 1000;
-  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  transition: transform var(--duration-fast) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-out);
 }
 
 .progress-circle {
@@ -85,19 +91,17 @@ const circumference = computed(() => 2 * Math.PI * 20)
 }
 
 .circle-bg {
-  stroke: #e5e7eb; /* gray-200 */
+  stroke: var(--color-border-secondary);
 }
 
 .circle-progress {
-  stroke: #10b981; /* emerald-500 */
-  stroke-linecap: round;
+  stroke: var(--color-success-solid);
   stroke-dasharray: v-bind(circumference);
-  transition: stroke-dashoffset 0.2s ease-out;
+  transition: stroke-dashoffset var(--duration-fast) var(--ease-out);
 }
 
 .circle-refresh {
-  stroke: #10b981; /* emerald-500 */
-  stroke-linecap: round;
+  stroke: var(--color-success-solid);
   stroke-dasharray: 80;
   stroke-dashoffset: 60;
 }

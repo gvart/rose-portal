@@ -46,7 +46,7 @@ const customStyle = computed(() => {
 
 <style scoped>
 .skeleton {
-  @apply bg-gray-200;
+  background: var(--color-bg-tertiary);
   overflow: hidden;
   position: relative;
 }
@@ -79,27 +79,28 @@ const customStyle = computed(() => {
 
 /* Variants */
 .skeleton.text {
-  @apply h-4 rounded;
+  height: 16px;
+  border-radius: var(--radius-xs);
   width: 100%;
 }
 
 .skeleton.rectangular {
-  @apply rounded-lg;
+  border-radius: var(--radius-md);
 }
 
 .skeleton.circular {
-  @apply rounded-full;
+  border-radius: var(--radius-full);
 }
 
 .skeleton.card {
-  @apply rounded-2xl;
+  border-radius: var(--radius-lg);
   min-height: 120px;
 }
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .skeleton {
-    @apply bg-gray-700;
+    background: var(--color-bg-tertiary);
   }
 
   .skeleton.animated::after {

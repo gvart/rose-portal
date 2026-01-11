@@ -63,39 +63,69 @@ const groupedDishes = computed(() => {
 
 <style scoped>
 .weekly-menu-view {
-  @apply w-full;
+  width: 100%;
 }
 
 .empty-state {
-  @apply flex items-center justify-center p-12 bg-gray-50 rounded-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
 }
 
 .empty-message {
-  @apply text-lg text-gray-600;
+  font-size: var(--font-size-18);
+  color: var(--color-text-secondary);
 }
 
 .menu-sections {
-  @apply flex flex-col gap-8;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
 }
 
 .meal-section {
-  @apply flex flex-col gap-4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .section-header {
-  @apply flex items-center justify-between pb-3 border-b-2 border-emerald-500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-success-solid);
 }
 
 .section-title {
-  @apply text-2xl font-bold text-gray-800;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 .dish-count {
-  @apply px-3 py-1 bg-emerald-100 text-emerald-700
-         rounded-full text-sm font-semibold;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .dishes-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .dishes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

@@ -70,49 +70,70 @@ const currentIconPath = computed(() => iconPaths[props.icon] || iconPaths.folder
 
 <style scoped>
 .empty-state {
-  @apply flex flex-col items-center justify-center py-16 px-6 text-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
   min-height: 240px;
 }
 
 .empty-state__icon {
-  @apply text-gray-300 mb-6;
-  animation: fadeInScale 0.4s var(--spring-smooth);
+  color: var(--color-border-secondary);
+  margin-bottom: var(--space-6);
+  animation: fadeInScale 0.4s var(--ease-in-out);
 }
 
 .empty-state__icon :deep(svg) {
-  @apply w-16 h-16 mx-auto;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
 }
 
 .empty-state__title {
-  @apply text-xl font-semibold text-gray-700 mb-3;
-  animation: fadeInUp 0.5s var(--spring-smooth);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+  animation: fadeInUp 0.5s var(--ease-in-out);
   animation-delay: 0.1s;
   animation-fill-mode: both;
 }
 
 .empty-state__description {
-  @apply text-gray-500 text-base max-w-md;
-  animation: fadeInUp 0.5s var(--spring-smooth);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-14);
+  max-width: 448px;
+  animation: fadeInUp 0.5s var(--ease-in-out);
   animation-delay: 0.2s;
   animation-fill-mode: both;
 }
 
 .empty-state__action {
-  @apply mt-6;
-  animation: fadeInUp 0.5s var(--spring-smooth);
+  margin-top: var(--space-6);
+  animation: fadeInUp 0.5s var(--ease-in-out);
   animation-delay: 0.3s;
   animation-fill-mode: both;
 }
 
 .empty-state__button {
-  @apply btn-touch px-6 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-xl font-medium;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  transition: all 0.3s var(--spring-bounce);
+  min-width: var(--space-11);
+  min-height: var(--space-11);
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--duration-normal) var(--ease-in-out);
+  cursor: pointer;
 }
 
 .empty-state__button:active {
-  @apply transform scale-95;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  transform: scale(0.96);
+  background: var(--color-accent-primary-active);
 }
 
 @keyframes fadeInScale {
@@ -129,26 +150,11 @@ const currentIconPath = computed(() => iconPaths[props.icon] || iconPaths.folder
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(var(--space-3));
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .empty-state__icon {
-    @apply text-gray-600;
-  }
-
-  .empty-state__title {
-    @apply text-gray-300;
-  }
-
-  .empty-state__description {
-    @apply text-gray-400;
   }
 }
 </style>
