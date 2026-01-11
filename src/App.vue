@@ -3,9 +3,11 @@
     <InstallPrompt />
     <UpdatePrompt />
     <ConfigurationModal />
+    <AuthOrchestrator />
     <TimerFloatingPill />
     <TimerCompletionModal />
     <ScreensaverOverlay />
+    <PwaMigrationModal :show="showPwaMigration" @close="showPwaMigration = false" />
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'slide'" mode="out-in">
         <component :is="Component" :key="route.path" />
@@ -15,18 +17,40 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import InstallPrompt from '@/components/pwa/InstallPrompt.vue'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt.vue'
 import ConfigurationModal from '@/components/common/ConfigurationModal.vue'
+import AuthOrchestrator from '@/components/auth/AuthOrchestrator.vue'
 import TimerFloatingPill from '@/components/timer/TimerFloatingPill.vue'
 import TimerCompletionModal from '@/components/timer/TimerCompletionModal.vue'
 import ScreensaverOverlay from '@/components/screensaver/ScreensaverOverlay.vue'
+import PwaMigrationModal from '@/components/pwa/PwaMigrationModal.vue'
 import { useTimerStore } from '@/apps/timer/stores/timerStore'
 import { useTimerEngine } from '@/apps/timer/composables/useTimerEngine'
+import { useAuthStore } from '@/stores/authStore'
+import { usePwaStorage } from '@/composables/usePwaStorage'
 
 // Initialize timer engine globally
 const timerStore = useTimerStore()
 useTimerEngine(timerStore)
+
+// Initialize PWA storage handling
+const pwaStorage = usePwaStorage()
+const showPwaMigration = ref(false)
+
+// Initialize authentication
+const authStore = useAuthStore()
+onMounted(async () => {
+  // Initialize PWA storage first
+  pwaStorage.initialize()
+
+  // Show migration modal if needed
+  showPwaMigration.value = pwaStorage.needsMigration.value
+
+  // Initialize auth
+  await authStore.initializeAuth()
+})
 </script>
 
 <style scoped>

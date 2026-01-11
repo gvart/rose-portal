@@ -38,6 +38,7 @@
           >
             <span class="event-time">{{ formatEventTime(event) }}</span>
             <span class="event-name">{{ event.eventName }}</span>
+            <span v-if="event.createdBy?.name" class="event-creator">by {{ event.createdBy.name }}</span>
           </div>
 
           <!-- More indicator -->
@@ -101,6 +102,7 @@
             >
               <span class="event-time-full">{{ formatEventTimeRange(event) }}</span>
               <span class="event-name-full">{{ event.eventName }}</span>
+              <span v-if="event.createdBy?.name" class="event-creator-full">by {{ event.createdBy.name }}</span>
             </button>
 
             <button
@@ -499,6 +501,14 @@ watch(() => props.selectedDate, () => {
   white-space: nowrap;
 }
 
+.event-creator {
+  font-size: var(--font-size-11);
+  opacity: 0.65;
+  font-weight: var(--font-weight-medium);
+  margin-left: var(--space-1);
+  flex-shrink: 0;
+}
+
 .more-events {
   font-size: var(--font-size-12);
   color: var(--color-text-muted);
@@ -604,6 +614,13 @@ watch(() => props.selectedDate, () => {
 
 .event-name-full {
   font-weight: var(--font-weight-medium);
+}
+
+.event-creator-full {
+  font-size: var(--font-size-12);
+  opacity: 0.65;
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-1);
 }
 
 .add-event-btn {

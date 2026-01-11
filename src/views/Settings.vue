@@ -180,6 +180,23 @@
             :class="['status-indicator', offlineReady ? 'status-active' : 'status-inactive']"
           />
         </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">Transfer Settings to PWA</label>
+            <p class="setting-description">
+              {{ pwaDataCopied ? '✓ Link copied! Open it after installing the PWA' : 'Copy a link to transfer your settings when installing the PWA' }}
+            </p>
+          </div>
+
+          <button
+            v-haptic
+            @click="handleExportPwaData"
+            class="btn-primary"
+          >
+            {{ pwaDataCopied ? 'Copied!' : 'Copy Link' }}
+          </button>
+        </div>
       </div>
 
       <div class="settings-section">
@@ -283,6 +300,7 @@ import { usePWA } from '@/composables/usePWA'
 import { usePushNotifications } from '@/composables/usePushNotifications'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import { useDarkMode } from '@/composables/useDarkMode'
+import { usePwaStorage } from '@/composables/usePwaStorage'
 import axios from 'axios'
 
 const settingsStore = useSettingsStore()
@@ -395,6 +413,23 @@ const handleTestNotification = async () => {
     tag: 'test-notification',
     requireInteraction: false
   })
+}
+
+// PWA Data Export
+const pwaStorage = usePwaStorage()
+const pwaDataCopied = ref(false)
+
+const handleExportPwaData = async () => {
+  try {
+    await pwaStorage.copyMigrationUrl()
+    pwaDataCopied.value = true
+    setTimeout(() => {
+      pwaDataCopied.value = false
+    }, 5000)
+  } catch (error) {
+    console.error('Failed to export PWA data:', error)
+    alert('Failed to copy link. Please try again.')
+  }
 }
 </script>
 

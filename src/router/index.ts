@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home.vue'
 import { appRegistry } from '@/config/apps'
+import { useAuthStore } from '@/stores/authStore'
+import { useConfiguration } from '@/composables/useConfiguration'
 
 const appRoutes = appRegistry
   .filter(app => app.enabled)
@@ -97,6 +99,36 @@ router.beforeEach((to, from) => {
   } else {
     to.meta.transition = isBack ? 'slide-back' : 'slide'
   }
+})
+
+// Authentication guard
+router.beforeEach((to, from, next) => {
+  // Skip auth check for install page
+  if (to.path === '/install') {
+    return next()
+  }
+
+  const { isConfigured } = useConfiguration()
+
+  // Skip auth if app not configured yet
+  if (!isConfigured.value) {
+    return next()
+  }
+
+  const authStore = useAuthStore()
+
+  // Allow navigation if authenticated
+  if (authStore.isAuthenticated) {
+    return next()
+  }
+
+  // Allow navigation to home (where AuthOrchestrator will show modal)
+  if (to.path === '/') {
+    return next()
+  }
+
+  // Redirect to home if not authenticated
+  next('/')
 })
 
 export default router

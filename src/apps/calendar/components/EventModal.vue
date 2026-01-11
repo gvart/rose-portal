@@ -5,9 +5,14 @@
         <div class="modal-container" @click.stop>
           <!-- Modal Header -->
           <div class="modal-header">
-            <h2 class="modal-title">
-              {{ mode === 'create' ? 'Create Event' : 'Edit Event' }}
-            </h2>
+            <div class="header-content">
+              <h2 class="modal-title">
+                {{ mode === 'create' ? 'Create Event' : 'Edit Event' }}
+              </h2>
+              <div v-if="mode === 'edit' && selectedEvent?.createdBy?.name" class="event-meta">
+                Created by {{ selectedEvent.createdBy.name }}
+              </div>
+            </div>
             <button
               v-haptic:light
               type="button"
@@ -454,11 +459,23 @@ function confirmDelete() {
   border-bottom: var(--depth-2-border);
 }
 
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
 .modal-title {
   font-size: var(--font-size-24);
   font-weight: var(--font-weight-bold);
   letter-spacing: var(--letter-spacing-tight);
   color: var(--color-text-primary);
+}
+
+.event-meta {
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
 }
 
 .close-button {

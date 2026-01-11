@@ -7,6 +7,8 @@
 
 import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { getApiBaseUrl, API_TIMEOUT } from '@/config/api'
+import { useAuthStore } from '@/stores/authStore'
+import { useAuthFlow } from '@/composables/useAuthFlow'
 
 // ============================================================================
 // Request Deduplication
@@ -157,6 +159,18 @@ export function createApiClient(options: ApiClientOptions = {}): AxiosInstance {
     )
   }
 
+  // Request interceptor for JWT authentication
+  client.interceptors.request.use(
+    (config) => {
+      const authStore = useAuthStore()
+      if (authStore.token) {
+        config.headers.Authorization = `Bearer ${authStore.token}`
+      }
+      return config
+    },
+    (error) => Promise.reject(error)
+  )
+
   // Response interceptor for cleanup and error handling
   client.interceptors.response.use(
     (response) => {
@@ -173,6 +187,19 @@ export function createApiClient(options: ApiClientOptions = {}): AxiosInstance {
       // Handle request cancellation (not an error)
       if (axios.isCancel(error) || error.message === 'Duplicate request') {
         return Promise.reject(error)
+      }
+
+      // Handle 401 Unauthorized - token expired or invalid
+      if (error.response?.status === 401) {
+        const authStore = useAuthStore()
+        if (authStore.token) {
+          // User was authenticated but token is now invalid
+          authStore.logout()
+
+          // Trigger user selection modal
+          const { triggerUserSelection } = useAuthFlow()
+          triggerUserSelection()
+        }
       }
 
       // Transform error if error handling is enabled
@@ -206,6 +233,12 @@ export const apiClients = {
 
   /** Weather API - /api/v1/weather */
   weather: createApiClient({ basePath: '/api/v1/weather' }),
+
+  /** Notes API - /api/v1 */
+  notes: createApiClient({ basePath: '/api/v1' }),
+
+  /** Chores API - /api/v1/chores */
+  chores: createApiClient({ basePath: '/api/v1/chores' }),
 
   /** System Monitor API - /actuator */
   actuator: createApiClient({

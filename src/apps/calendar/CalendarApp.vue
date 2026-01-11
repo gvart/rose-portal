@@ -7,11 +7,15 @@
         :current-view="store.currentView"
         :is-today="store.isToday"
         :loading="store.loading"
+        :available-usernames="store.availableUsernames"
+        :selected-usernames="store.selectedUsernames"
         @previous="store.navigatePrevious()"
         @next="store.navigateNext()"
         @today="store.goToToday()"
         @view-change="store.setView($event)"
         @create-event="store.openCreateModal()"
+        @toggle-filter="store.toggleUsernameFilter($event)"
+        @clear-filter="store.clearUsernameFilter()"
       />
 
       <!-- Calendar Views -->

@@ -66,5 +66,27 @@ export const appRegistry: AppConfig[] = [
     color: '#3B82F6',
     enabled: true,
     order: 6
+  },
+  {
+    id: 'notes',
+    name: 'Notes',
+    icon: '/icons/notes.svg',
+    description: 'Rich text notes with tags',
+    route: '/notes',
+    component: () => import('@/apps/notes/NotesApp.vue'),
+    color: '#8B5CF6',
+    enabled: true,
+    order: 7
+  },
+  {
+    id: 'chores',
+    name: 'Chores',
+    icon: '/icons/chores.svg',
+    description: 'Manage tasks with Kanban board',
+    route: '/chores',
+    component: () => import('@/apps/chores/ChoresApp.vue'),
+    color: '#EC4899',
+    enabled: true,
+    order: 8
   }
 ]

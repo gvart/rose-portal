@@ -49,6 +49,9 @@ export const useCalendarStore = defineStore('calendar', () => {
     color: 'indigo'
   })
 
+  // Filter state
+  const selectedUsernames = ref<string[]>([])
+
   // Cache tracking - avoid duplicate API calls
   const fetchedRanges = ref<DateRange[]>([])
 
@@ -57,15 +60,42 @@ export const useCalendarStore = defineStore('calendar', () => {
   // ============================================================================
 
   /**
+   * Get unique usernames from all events
+   */
+  const availableUsernames = computed(() => {
+    const usernames = new Set<string>()
+    events.value.forEach(event => {
+      if (event.createdBy?.name) {
+        usernames.add(event.createdBy.name)
+      }
+    })
+    return Array.from(usernames).sort()
+  })
+
+  /**
+   * Helper to apply username filter
+   */
+  function applyUsernameFilter(eventsList: CalendarEvent[]): CalendarEvent[] {
+    if (selectedUsernames.value.length === 0) {
+      return eventsList
+    }
+    return eventsList.filter(event => {
+      return selectedUsernames.value.includes(event.createdBy?.name || '')
+    })
+  }
+
+  /**
    * Get events for the currently selected month
    */
   const monthEvents = computed(() => {
     const start = startOfMonth(selectedDate.value)
     const end = endOfMonth(selectedDate.value)
 
-    return events.value.filter((event) => {
+    const filtered = events.value.filter((event) => {
       return eventInRange(event, start, end)
     })
+
+    return applyUsernameFilter(filtered)
   })
 
   /**
@@ -75,31 +105,36 @@ export const useCalendarStore = defineStore('calendar', () => {
     const start = startOfWeek(selectedDate.value)
     const end = endOfWeek(selectedDate.value)
 
-    return events.value.filter((event) => {
+    const filtered = events.value.filter((event) => {
       return eventInRange(event, start, end)
     })
+
+    return applyUsernameFilter(filtered)
   })
 
   /**
    * Get events for the currently selected day
    */
   const dayEvents = computed(() => {
-    return events.value.filter((event) => {
+    const filtered = events.value.filter((event) => {
       return isSameDay(event.from, selectedDate.value) ||
              isSameDay(event.to, selectedDate.value) ||
              (event.from < selectedDate.value && event.to > selectedDate.value)
     })
+
+    return applyUsernameFilter(filtered)
   })
 
   /**
    * Get events for a specific date
    */
   function getEventsForDate(date: Date): CalendarEvent[] {
-    return events.value.filter((event) => {
+    const filtered = events.value.filter((event) => {
       return isSameDay(event.from, date) ||
              isSameDay(event.to, date) ||
              (event.from < date && event.to > date)
     })
+    return applyUsernameFilter(filtered)
   }
 
   /**
@@ -594,6 +629,36 @@ export const useCalendarStore = defineStore('calendar', () => {
   }
 
   // ============================================================================
+  // Actions - Username Filter
+  // ============================================================================
+
+  /**
+   * Toggle a username in the filter
+   */
+  function toggleUsernameFilter(username: string) {
+    const index = selectedUsernames.value.indexOf(username)
+    if (index === -1) {
+      selectedUsernames.value.push(username)
+    } else {
+      selectedUsernames.value.splice(index, 1)
+    }
+  }
+
+  /**
+   * Clear all username filters
+   */
+  function clearUsernameFilter() {
+    selectedUsernames.value = []
+  }
+
+  /**
+   * Set username filter to specific list
+   */
+  function setUsernameFilter(usernames: string[]) {
+    selectedUsernames.value = [...usernames]
+  }
+
+  // ============================================================================
   // Return Public API
   // ============================================================================
 
@@ -609,6 +674,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     showEventModal,
     modalMode,
     eventFormData,
+    selectedUsernames,
 
     // Computed
     monthEvents,
@@ -616,6 +682,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     dayEvents,
     viewTitle,
     isToday,
+    availableUsernames,
 
     // Functions
     getEventsForDate,
@@ -640,6 +707,11 @@ export const useCalendarStore = defineStore('calendar', () => {
     openCreateModal,
     openEditModal,
     closeModal,
-    clearError
+    clearError,
+
+    // Filters
+    toggleUsernameFilter,
+    clearUsernameFilter,
+    setUsernameFilter
   }
 })

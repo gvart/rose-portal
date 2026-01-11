@@ -132,8 +132,8 @@ function transformApiEventToInternal(apiEvent: ApiEventResponse): CalendarEvent 
     createdAt: new Date(apiEvent.createdAt),
     updatedAt: new Date(apiEvent.updatedAt),
     createdBy: {
-      id: apiEvent.createdBy.id,
-      name: apiEvent.createdBy.name
+      id: apiEvent.username, // Use username as ID
+      name: apiEvent.username
     }
   }
 }

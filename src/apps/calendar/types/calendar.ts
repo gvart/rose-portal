@@ -38,7 +38,7 @@ export interface ApiEventResponse {
   eventId: number
   createdAt: string // ISO 8601 string
   updatedAt: string // ISO 8601 string
-  createdBy: ApiUser
+  username: string // Username of creator (from authentication)
   eventName: string
   from: string // ISO 8601 string
   to: string // ISO 8601 string

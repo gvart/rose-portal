@@ -28,9 +28,9 @@
                 class="text-input"
                 placeholder="Enter plant name"
                 maxlength="50"
-                readonly
-                @click="showKeyboard = true"
-                @focus="showKeyboard = true"
+                :readonly="!isMobileOrTablet"
+                @click="!isMobileOrTablet && (showKeyboard = true)"
+                @focus="!isMobileOrTablet && (showKeyboard = true)"
               />
             </div>
 
@@ -187,8 +187,9 @@
       </div>
     </Transition>
 
-    <!-- Floating Keyboard -->
+    <!-- Floating Keyboard (Desktop only) -->
     <FloatingKeyboard
+      v-if="!isMobileOrTablet"
       v-model="localConfig.name"
       v-model:show="showKeyboard"
     />
@@ -197,6 +198,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import type { Plant, PlantConfig, ConfigValidationError } from '../types/plant'
 import { CONFIG_LIMITS, SAFE_THRESHOLD_RANGE, rawToPercentage, percentageToRaw } from '../types/plant'
 import ThresholdStepper from './ThresholdStepper.vue'
@@ -214,6 +216,8 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   'save': [config: PlantConfig & { name: string }]
 }>()
+
+const { isMobileOrTablet } = useDeviceDetection()
 
 const localConfig = ref({
   name: '',

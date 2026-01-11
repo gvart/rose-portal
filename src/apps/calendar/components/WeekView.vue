@@ -40,7 +40,8 @@
           :class="getEventClasses(event)"
           @click.stop="$emit('select-event', event)"
         >
-          {{ event.eventName }}
+          <span>{{ event.eventName }}</span>
+          <span v-if="event.createdBy?.name" class="event-creator-small"> by {{ event.createdBy.name }}</span>
         </button>
       </div>
     </div>
@@ -92,6 +93,7 @@
           <div class="event-content">
             <span class="event-time">{{ formatEventTime(event) }}</span>
             <span class="event-name">{{ event.eventName }}</span>
+            <span v-if="event.createdBy?.name" class="event-creator-overlay">by {{ event.createdBy.name }}</span>
           </div>
         </div>
       </div>
@@ -452,6 +454,13 @@ onUnmounted(() => {
   opacity: 0.8;
 }
 
+.event-creator-small {
+  font-size: var(--font-size-11);
+  opacity: 0.65;
+  font-weight: var(--font-weight-medium);
+  margin-left: var(--space-1);
+}
+
 /* Time Grid */
 .time-grid {
   flex: 1;
@@ -567,6 +576,13 @@ onUnmounted(() => {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.event-creator-overlay {
+  font-size: 10px;
+  opacity: 0.65;
+  font-weight: var(--font-weight-medium);
+  margin-top: 1px;
 }
 
 /* Responsive */

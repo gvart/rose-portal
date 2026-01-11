@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 export function useDeviceDetection() {
   const isMobile = ref(false)
@@ -34,10 +34,12 @@ export function useDeviceDetection() {
     window.addEventListener('resize', detectDevice)
   })
 
+  const isMobileOrTablet = computed(() => isMobile.value || isTablet.value)
+
   return {
     isMobile,
     isTablet,
     isDesktop,
-    isMobileOrTablet: ref(() => isMobile.value || isTablet.value)
+    isMobileOrTablet
   }
 }

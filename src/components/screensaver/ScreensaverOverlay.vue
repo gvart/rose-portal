@@ -43,11 +43,13 @@ import { useScreensaver } from '@/composables/useScreensaver'
 import { useDarkMode } from '@/composables/useDarkMode'
 import { useClock } from '@/composables/useClock'
 import { useHapticFeedback } from '@/composables/useHapticFeedback'
+import { useAuthFlow } from '@/composables/useAuthFlow'
 
 const screensaver = useScreensaver()
 const { isDark } = useDarkMode()
 const { currentTime } = useClock()
 const { vibrate } = useHapticFeedback()
+const { triggerUserSelection } = useAuthFlow()
 
 // Track if screensaver is currently showing (prevents race conditions)
 const isShowing = ref(false)
@@ -151,6 +153,9 @@ function handleDismiss() {
 
   // Force reset isIdle to false (bypasses shouldIgnoreActivity check)
   screensaver.forceResetIdle()
+
+  // Trigger user selection after screensaver dismissal
+  triggerUserSelection()
 
   // Restart idle tracking for next cycle
   screensaver.startIdleTracking()
