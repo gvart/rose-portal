@@ -2,6 +2,29 @@
   <AppLayout title="Settings" theme-color="#6B7280">
     <div class="settings">
       <div class="settings-section">
+        <h2 class="section-title">Appearance</h2>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="theme-selector" class="setting-label">Theme</label>
+            <p class="setting-description">Choose your preferred color scheme</p>
+          </div>
+
+          <div class="theme-selector">
+            <button
+              v-for="theme in themes"
+              :key="theme.value"
+              :class="['theme-btn', { active: currentTheme === theme.value }]"
+              v-haptic:light
+              @click="setTheme(theme.value)"
+            >
+              {{ theme.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
         <h2 class="section-title">Haptic Feedback</h2>
 
         <div class="setting-item">
@@ -259,9 +282,18 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import { usePWA } from '@/composables/usePWA'
 import { usePushNotifications } from '@/composables/usePushNotifications'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
+import { useDarkMode } from '@/composables/useDarkMode'
 import axios from 'axios'
 
 const settingsStore = useSettingsStore()
+
+// Dark mode / Theme
+const { currentTheme, setTheme } = useDarkMode()
+const themes = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'auto', label: 'Auto' }
+] as const
 
 function handleToggle() {
   settingsStore.toggleHaptic()
@@ -516,5 +548,35 @@ const handleTestNotification = async () => {
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
+}
+
+.theme-selector {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.theme-btn {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-btn.active {
+  color: var(--color-text-primary);
+  background: var(--color-bg-active);
+  border-color: var(--color-border-focus);
+  font-weight: var(--font-weight-semibold);
+}
+
+.theme-btn:active:not(.active) {
+  transform: scale(0.96);
 }
 </style>
