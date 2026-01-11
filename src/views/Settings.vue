@@ -28,6 +28,62 @@
         </div>
       </div>
 
+      <div class="settings-section">
+        <h2 class="section-title">Screensaver</h2>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="screensaver-toggle" class="setting-label">Enable screensaver</label>
+            <p class="setting-description">Show particle animation after period of inactivity</p>
+          </div>
+
+          <button
+            id="screensaver-toggle"
+            role="switch"
+            :aria-checked="settingsStore.screensaverEnabled"
+            class="toggle-switch"
+            :class="{ active: settingsStore.screensaverEnabled }"
+            v-haptic:medium
+            @click="settingsStore.toggleScreensaver"
+          >
+            <span class="toggle-slider" :class="{ active: settingsStore.screensaverEnabled }"></span>
+          </button>
+        </div>
+
+        <div v-if="settingsStore.screensaverEnabled" class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">Activate after</label>
+            <p class="setting-description">Minutes of inactivity before screensaver appears</p>
+          </div>
+
+          <div class="timeout-controls">
+            <button
+              v-haptic:light
+              @click="decreaseTimeout"
+              class="timeout-btn"
+              :disabled="settingsStore.screensaverTimeout <= 1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+              </svg>
+            </button>
+
+            <span class="timeout-value">{{ settingsStore.screensaverTimeout }} min</span>
+
+            <button
+              v-haptic:light
+              @click="increaseTimeout"
+              class="timeout-btn"
+              :disabled="settingsStore.screensaverTimeout >= 60"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div v-if="isMobile || isTablet" class="settings-section">
         <h2 class="section-title">Progressive Web App</h2>
 
@@ -209,6 +265,17 @@ const settingsStore = useSettingsStore()
 
 function handleToggle() {
   settingsStore.toggleHaptic()
+}
+
+// Screensaver Timeout Controls
+function increaseTimeout() {
+  const current = settingsStore.screensaverTimeout
+  settingsStore.setScreensaverTimeout(Math.min(60, current + 1))
+}
+
+function decreaseTimeout() {
+  const current = settingsStore.screensaverTimeout
+  settingsStore.setScreensaverTimeout(Math.max(1, current - 1))
 }
 
 // Device Detection
@@ -401,5 +468,53 @@ const handleTestNotification = async () => {
 
 .qr-code-url {
   @apply text-xs text-gray-500 text-center mt-2 break-all px-4;
+}
+
+.timeout-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.timeout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  min-width: var(--space-11);
+  min-height: var(--space-11);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.timeout-btn:active:not(:disabled) {
+  transform: scale(0.96);
+  background: var(--color-bg-active);
+}
+
+.timeout-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timeout-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.timeout-value {
+  min-width: 60px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
 }
 </style>

@@ -6,12 +6,19 @@ import './assets/styles/main.css'
 import { hapticDirective } from './directives/haptic'
 import { swipeBackDirective } from './directives/swipeBack'
 import { MotionPlugin } from '@vueuse/motion'
+import Particles from '@tsparticles/vue3'
+import { loadSlim } from '@tsparticles/slim'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 app.use(MotionPlugin)
+app.use(Particles, {
+  init: async (engine) => {
+    await loadSlim(engine)
+  }
+})
 app.directive('haptic', hapticDirective)
 app.directive('swipe-back', swipeBackDirective)
 

@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 import { useHapticFeedback } from '@/composables/useHapticFeedback'
 import { useConfiguration } from '@/composables/useConfiguration'
+import { useScreensaverSettings } from '@/composables/useScreensaverSettings'
 
 export const useSettingsStore = defineStore('settings', () => {
   const haptic = useHapticFeedback()
   const config = useConfiguration()
+  const screensaver = useScreensaverSettings()
 
   return {
     // Haptic feedback state
@@ -24,6 +26,14 @@ export const useSettingsStore = defineStore('settings', () => {
     // Configuration actions
     setBackendUrl: config.setBackendUrl,
     setVoskUrl: config.setVoskUrl,
-    clearConfiguration: config.clearConfiguration
+    clearConfiguration: config.clearConfiguration,
+
+    // Screensaver state
+    screensaverEnabled: screensaver.isEnabled,
+    screensaverTimeout: screensaver.timeoutMinutes,
+
+    // Screensaver actions
+    toggleScreensaver: screensaver.toggleEnabled,
+    setScreensaverTimeout: screensaver.setTimeoutMinutes
   }
 })

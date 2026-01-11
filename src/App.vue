@@ -5,6 +5,7 @@
     <ConfigurationModal />
     <TimerFloatingPill />
     <TimerCompletionModal />
+    <ScreensaverOverlay />
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'slide'" mode="out-in">
         <component :is="Component" :key="route.path" />
@@ -19,6 +20,7 @@ import UpdatePrompt from '@/components/pwa/UpdatePrompt.vue'
 import ConfigurationModal from '@/components/common/ConfigurationModal.vue'
 import TimerFloatingPill from '@/components/timer/TimerFloatingPill.vue'
 import TimerCompletionModal from '@/components/timer/TimerCompletionModal.vue'
+import ScreensaverOverlay from '@/components/screensaver/ScreensaverOverlay.vue'
 import { useTimerStore } from '@/apps/timer/stores/timerStore'
 import { useTimerEngine } from '@/apps/timer/composables/useTimerEngine'
 
