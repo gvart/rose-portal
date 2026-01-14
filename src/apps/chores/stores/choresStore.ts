@@ -40,6 +40,11 @@ export const useChoresStore = defineStore('chores', () => {
   const inProgressPagination = ref<PaginationState>({ ...DEFAULT_PAGINATION })
   const donePagination = ref<PaginationState>({ ...DEFAULT_PAGINATION })
 
+  // Onboarding state
+  const hasSeenLongPressTooltip = ref<boolean>(
+    localStorage.getItem('chores:seenLongPressTooltip') === 'true'
+  )
+
   // ============================================================================
   // Computed - Chores by Status
   // ============================================================================
@@ -413,6 +418,19 @@ export const useChoresStore = defineStore('chores', () => {
   }
 
   // ============================================================================
+  // Actions - Onboarding
+  // ============================================================================
+
+  function markLongPressTooltipSeen(): void {
+    hasSeenLongPressTooltip.value = true
+    localStorage.setItem('chores:seenLongPressTooltip', 'true')
+  }
+
+  function shouldShowOnboarding(): boolean {
+    return !hasSeenLongPressTooltip.value && chores.value.length > 0
+  }
+
+  // ============================================================================
   // Return Public API
   // ============================================================================
 
@@ -453,6 +471,9 @@ export const useChoresStore = defineStore('chores', () => {
     togglePriorityFilter,
     setAssigneeFilter,
     clearFilters,
-    clearError
+    clearError,
+    hasSeenLongPressTooltip,
+    markLongPressTooltipSeen,
+    shouldShowOnboarding
   }
 })

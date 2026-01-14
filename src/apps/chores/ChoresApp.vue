@@ -66,6 +66,13 @@
         @confirm="handleConfirmDelete"
       />
 
+      <!-- Onboarding Tooltip -->
+      <OnboardingTooltip
+        v-model="showOnboarding"
+        :target-element="firstChoreElement"
+        @dismiss="handleDismissOnboarding"
+      />
+
       <!-- FAB (mobile only) -->
       <button
         v-if="isMobile"
@@ -110,22 +117,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, nextTick, watch } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ChoresHeader from './components/ChoresHeader.vue'
 import KanbanBoard from './components/KanbanBoard.vue'
 import ChoreModal from './components/ChoreModal.vue'
 import ChoreContextMenu from './components/ChoreContextMenu.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import OnboardingTooltip from './components/OnboardingTooltip.vue'
 import { useChoresStore } from './stores/choresStore'
 import type { ChoreFormData, Chore } from './types/chores'
 import { ChoreStatus, canEditChore } from './types/chores'
+import { usePWA } from '@/composables/usePWA'
 
 const store = useChoresStore()
+const { isInstalled } = usePWA()
 const showDeleteDialog = ref(false)
 const choreToDelete = ref<Chore | null>(null)
 const showContextMenu = ref(false)
 const selectedChoreForMenu = ref<Chore | null>(null)
+const showOnboarding = ref(false)
+const firstChoreElement = ref<HTMLElement | null>(null)
 
 const hasActiveFilters = computed(() => {
   return (
@@ -145,6 +157,39 @@ const canEditSelectedChoreForMenu = computed(() => {
 })
 
 const isMobile = computed(() => window.innerWidth < 768)
+
+const shouldShowOnboardingTooltip = computed(() => {
+  // Only show onboarding in PWA mode
+  return isInstalled.value && store.shouldShowOnboarding()
+})
+
+// Show onboarding after chores load
+watch(() => store.loading, async (loading) => {
+  if (!loading && shouldShowOnboardingTooltip.value) {
+    await nextTick()
+
+    // Find first chore card element
+    const firstCard = document.querySelector('.chore-card-wrapper') as HTMLElement
+    if (firstCard) {
+      firstChoreElement.value = firstCard
+      showOnboarding.value = true
+
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        if (showOnboarding.value) {
+          handleDismissOnboarding()
+        }
+      }, 10000)
+    }
+  }
+})
+
+// Dismiss when user performs first long press
+watch(() => showContextMenu.value, (isShowing) => {
+  if (isShowing && showOnboarding.value) {
+    handleDismissOnboarding()
+  }
+})
 
 onMounted(async () => {
   await store.fetchChores()
@@ -218,6 +263,11 @@ async function handleConfirmDelete(): Promise<void> {
     }
     choreToDelete.value = null
   }
+}
+
+function handleDismissOnboarding(): void {
+  showOnboarding.value = false
+  store.markLongPressTooltipSeen()
 }
 </script>
 

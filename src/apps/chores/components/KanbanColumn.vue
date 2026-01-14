@@ -15,7 +15,7 @@
         item-key="id"
         tag="div"
         class="kanban-column-cards"
-        :group="isMobile ? { name: 'chores', pull: false, put: false } : 'chores'"
+        :group="isDragEnabled ? 'chores' : { name: 'chores', pull: false, put: false }"
         handle=".chore-card-drag-handle"
         :animation="200"
         :delay="0"
@@ -102,6 +102,8 @@ import ChoreCardSkeleton from './ChoreCardSkeleton.vue'
 import { ChoreStatus, canEditChore, type Chore } from '../types/chores'
 import { useChoresStore } from '../stores/choresStore'
 import { useHapticFeedback } from '@/composables/useHapticFeedback'
+import { usePWA } from '@/composables/usePWA'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
 
 interface Props {
   status: ChoreStatus
@@ -125,11 +127,18 @@ const emit = defineEmits<{
 
 const store = useChoresStore()
 const { vibrate } = useHapticFeedback()
+const { isInstalled } = usePWA()
+const { isDesktop } = useDeviceDetection()
 const isDragOver = ref(false)
 const isDragging = ref(false)
 
 const isMobile = computed(() => {
   return window.innerWidth < 768
+})
+
+// Enable drag-and-drop only on desktop web (not PWA, not mobile)
+const isDragEnabled = computed(() => {
+  return isDesktop.value && !isInstalled.value
 })
 
 // Create a local copy of chores for v-model binding

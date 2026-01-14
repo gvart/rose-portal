@@ -15,6 +15,7 @@
             <button
               v-if="chore.status !== ChoreStatus.TODO"
               class="context-menu-item"
+              data-action="move"
               @click="handleAction('move-to-todo')"
             >
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,6 +26,7 @@
             <button
               v-if="chore.status !== ChoreStatus.IN_PROGRESS"
               class="context-menu-item"
+              data-action="move"
               @click="handleAction('move-to-in-progress')"
             >
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,6 +37,7 @@
             <button
               v-if="chore.status !== ChoreStatus.DONE"
               class="context-menu-item"
+              data-action="move"
               @click="handleAction('move-to-done')"
             >
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,6 +52,7 @@
             <button
               v-if="canEdit"
               class="context-menu-item"
+              data-action="edit"
               @click="handleAction('edit')"
             >
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +176,10 @@ function close(): void {
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 8px 12px 4px;
+  padding: 8px 12px;
+  background: #f0f9ff;
+  border-radius: 4px;
+  margin-bottom: 4px;
 }
 
 .context-menu-item {
@@ -188,12 +195,7 @@ function close(): void {
   text-align: left;
   cursor: pointer;
   border-radius: 8px;
-  transition: background-color 150ms;
-}
-
-.context-menu-item:active {
-  background-color: #f3f4f6;
-  transform: scale(0.98);
+  transition: all 150ms;
 }
 
 .context-menu-item svg {
@@ -202,8 +204,46 @@ function close(): void {
   flex-shrink: 0;
 }
 
+/* Move actions - Blue */
+.context-menu-item[data-action="move"] {
+  color: #3B82F6;
+}
+
+.context-menu-item[data-action="move"]:active {
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: scale(0.98);
+}
+
+.context-menu-item[data-action="move"] svg {
+  color: #3B82F6;
+}
+
+/* Edit action - Amber */
+.context-menu-item[data-action="edit"] {
+  color: #F59E0B;
+}
+
+.context-menu-item[data-action="edit"]:active {
+  background-color: rgba(245, 158, 11, 0.1);
+  transform: scale(0.98);
+}
+
+.context-menu-item[data-action="edit"] svg {
+  color: #F59E0B;
+}
+
+/* Delete action - Red */
 .context-menu-item--danger {
-  color: #ef4444;
+  color: #EF4444;
+}
+
+.context-menu-item--danger:active {
+  background-color: rgba(239, 68, 68, 0.1);
+  transform: scale(0.98);
+}
+
+.context-menu-item--danger svg {
+  color: #EF4444;
 }
 
 .context-menu-cancel {
