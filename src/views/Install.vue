@@ -6,7 +6,7 @@
         <div class="success-icon">✓</div>
         <h2 class="success-title">Configuration Saved!</h2>
         <p class="success-message">
-          Your backend and Vosk URLs have been configured successfully.
+          Your backend URL has been configured successfully.
         </p>
       </div>
 
@@ -97,8 +97,8 @@ onMounted(() => {
   const backendUrl = route.query.backendUrl as string
   const voskUrl = route.query.voskUrl as string
 
-  if (!backendUrl || !voskUrl) {
-    error.value = 'Missing backend or Vosk URL parameters'
+  if (!backendUrl) {
+    error.value = 'Missing backend URL parameter'
     return
   }
 
@@ -107,14 +107,20 @@ onMounted(() => {
     return
   }
 
-  if (!validateUrl(voskUrl)) {
+  // Validate Vosk URL only if provided (it's optional)
+  if (voskUrl && !validateUrl(voskUrl)) {
     error.value = `Invalid Vosk URL: ${voskUrl}`
     return
   }
 
   try {
     setBackendUrl(backendUrl)
-    setVoskUrl(voskUrl)
+
+    // Only set Vosk URL if provided
+    if (voskUrl) {
+      setVoskUrl(voskUrl)
+    }
+
     configurationSaved.value = true
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error'
