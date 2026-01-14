@@ -27,10 +27,7 @@
           @status-change="handleStatusChange"
           @select-chore="handleSelectChore"
           @load-more="store.loadMoreForStatus($event)"
-          @swipe-move-next="handleSwipeMoveNext"
-          @swipe-edit="handleSelectChore"
-          @swipe-assign="handleSwipeAssign"
-          @swipe-delete="handleSwipeDelete"
+          @long-press="handleLongPress"
         />
       </div>
 
@@ -45,6 +42,18 @@
         :can-delete="canDeleteChore"
         @save="handleSave"
         @delete="handleDelete"
+      />
+
+      <!-- Context Menu for Long Press -->
+      <ChoreContextMenu
+        v-model="showContextMenu"
+        :chore="selectedChoreForMenu"
+        :can-edit="canEditSelectedChoreForMenu"
+        @move-to-todo="handleMoveToStatus(ChoreStatus.TODO)"
+        @move-to-in-progress="handleMoveToStatus(ChoreStatus.IN_PROGRESS)"
+        @move-to-done="handleMoveToStatus(ChoreStatus.DONE)"
+        @edit="handleEditFromMenu"
+        @delete="handleDeleteFromMenu"
       />
 
       <!-- Confirm Delete Dialog -->
@@ -106,6 +115,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import ChoresHeader from './components/ChoresHeader.vue'
 import KanbanBoard from './components/KanbanBoard.vue'
 import ChoreModal from './components/ChoreModal.vue'
+import ChoreContextMenu from './components/ChoreContextMenu.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { useChoresStore } from './stores/choresStore'
 import type { ChoreFormData, Chore } from './types/chores'
@@ -114,6 +124,8 @@ import { ChoreStatus, canEditChore } from './types/chores'
 const store = useChoresStore()
 const showDeleteDialog = ref(false)
 const choreToDelete = ref<Chore | null>(null)
+const showContextMenu = ref(false)
+const selectedChoreForMenu = ref<Chore | null>(null)
 
 const hasActiveFilters = computed(() => {
   return (
@@ -125,6 +137,11 @@ const hasActiveFilters = computed(() => {
 const canDeleteChore = computed(() => {
   if (!store.selectedChore || store.currentUserId === null) return false
   return canEditChore(store.selectedChore, store.currentUserId)
+})
+
+const canEditSelectedChoreForMenu = computed(() => {
+  if (!selectedChoreForMenu.value || store.currentUserId === null) return false
+  return canEditChore(selectedChoreForMenu.value, store.currentUserId)
 })
 
 const isMobile = computed(() => window.innerWidth < 768)
@@ -167,34 +184,27 @@ function handleDelete(): void {
   showDeleteDialog.value = true
 }
 
-// Swipe action handlers
-async function handleSwipeMoveNext(chore: Chore): Promise<void> {
-  // Move chore to next status
-  const nextStatus = getNextStatus(chore.status)
-  if (nextStatus) {
-    await store.updateChoreStatus(chore.id, nextStatus)
+// Long press action handler
+function handleLongPress(chore: Chore): void {
+  selectedChoreForMenu.value = chore
+  showContextMenu.value = true
+}
+
+async function handleMoveToStatus(newStatus: ChoreStatus): Promise<void> {
+  if (selectedChoreForMenu.value) {
+    await store.updateChoreStatus(selectedChoreForMenu.value.id, newStatus)
   }
 }
 
-async function handleSwipeAssign(chore: Chore): Promise<void> {
-  // Open a simple assignment dialog
-  const users = store.usersFromChores
-  if (users.length === 0) return
-
-  // For now, cycle through users or prompt
-  // In a real implementation, you'd show a modal or dropdown
-  // For simplicity, let's just toggle assignment to current user
-  const currentUserId = store.currentUserId
-  if (currentUserId !== null) {
-    const newAssigneeId = chore.assignedTo?.id === currentUserId ? null : currentUserId
-    await store.quickAssignChore(chore.id, newAssigneeId)
+function handleEditFromMenu(): void {
+  if (selectedChoreForMenu.value) {
+    handleSelectChore(selectedChoreForMenu.value)
   }
 }
 
-function handleSwipeDelete(chore: Chore): void {
-  // Only allow deletion if user can edit
-  if (store.currentUserId !== null && canEditChore(chore, store.currentUserId)) {
-    choreToDelete.value = chore
+function handleDeleteFromMenu(): void {
+  if (selectedChoreForMenu.value) {
+    choreToDelete.value = selectedChoreForMenu.value
     showDeleteDialog.value = true
   }
 }
@@ -207,21 +217,6 @@ async function handleConfirmDelete(): Promise<void> {
       store.closeModal()
     }
     choreToDelete.value = null
-  }
-}
-
-function getNextStatus(currentStatus: ChoreStatus): ChoreStatus | null {
-  const { TODO, IN_PROGRESS, DONE } = ChoreStatus
-
-  switch (currentStatus) {
-    case TODO:
-      return IN_PROGRESS
-    case IN_PROGRESS:
-      return DONE
-    case DONE:
-      return null // Already at the end
-    default:
-      return null
   }
 }
 </script>

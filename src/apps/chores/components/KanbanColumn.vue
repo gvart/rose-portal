@@ -36,10 +36,7 @@
             :chore="element"
             :can-edit="canEdit(element)"
             @click="$emit('select-chore', element)"
-            @swipe-move-next="$emit('swipe-move-next', element)"
-            @swipe-edit="$emit('swipe-edit', element)"
-            @swipe-assign="$emit('swipe-assign', element)"
-            @swipe-delete="$emit('swipe-delete', element)"
+            @long-press="$emit('long-press', element)"
           />
         </template>
       </draggable>
@@ -123,10 +120,7 @@ const emit = defineEmits<{
   drop: [choreId: number, newStatus: ChoreStatus]
   'select-chore': [chore: Chore]
   'load-more': []
-  'swipe-move-next': [chore: Chore]
-  'swipe-edit': [chore: Chore]
-  'swipe-assign': [chore: Chore]
-  'swipe-delete': [chore: Chore]
+  'long-press': [chore: Chore]
 }>()
 
 const store = useChoresStore()

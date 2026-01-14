@@ -14,10 +14,7 @@
       @drop="handleDrop"
       @select-chore="handleSelectChore"
       @load-more="handleLoadMore(ChoreStatus.TODO)"
-      @swipe-move-next="$emit('swipe-move-next', $event)"
-      @swipe-edit="$emit('swipe-edit', $event)"
-      @swipe-assign="$emit('swipe-assign', $event)"
-      @swipe-delete="$emit('swipe-delete', $event)"
+      @long-press="$emit('long-press', $event)"
     />
 
     <!-- IN PROGRESS Column -->
@@ -33,10 +30,7 @@
       @drop="handleDrop"
       @select-chore="handleSelectChore"
       @load-more="handleLoadMore(ChoreStatus.IN_PROGRESS)"
-      @swipe-move-next="$emit('swipe-move-next', $event)"
-      @swipe-edit="$emit('swipe-edit', $event)"
-      @swipe-assign="$emit('swipe-assign', $event)"
-      @swipe-delete="$emit('swipe-delete', $event)"
+      @long-press="$emit('long-press', $event)"
     />
 
     <!-- DONE Column -->
@@ -52,10 +46,7 @@
       @drop="handleDrop"
       @select-chore="handleSelectChore"
       @load-more="handleLoadMore(ChoreStatus.DONE)"
-      @swipe-move-next="$emit('swipe-move-next', $event)"
-      @swipe-edit="$emit('swipe-edit', $event)"
-      @swipe-assign="$emit('swipe-assign', $event)"
-      @swipe-delete="$emit('swipe-delete', $event)"
+      @long-press="$emit('long-press', $event)"
     />
     </div>
 
@@ -95,10 +86,7 @@ const emit = defineEmits<{
   'status-change': [choreId: number, newStatus: ChoreStatusType]
   'select-chore': [chore: Chore]
   'load-more': [status: ChoreStatusType]
-  'swipe-move-next': [chore: Chore]
-  'swipe-edit': [chore: Chore]
-  'swipe-assign': [chore: Chore]
-  'swipe-delete': [chore: Chore]
+  'long-press': [chore: Chore]
 }>()
 
 function handleDrop(choreId: number, newStatus: ChoreStatusType): void {
