@@ -47,6 +47,7 @@ onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search)
   const backendUrl = urlParams.get('backendUrl')
   const voskUrl = urlParams.get('voskUrl')
+  let autoConfigured = false
 
   if (backendUrl) {
     const { setBackendUrl, setVoskUrl, validateUrl } = useConfiguration()
@@ -61,6 +62,7 @@ onMounted(async () => {
 
         // Mark PWA as migrated/configured
         localStorage.setItem('rose_pwa_migrated', 'true')
+        autoConfigured = true
 
         // Clean URL params after configuration
         window.history.replaceState({}, document.title, window.location.pathname)
@@ -73,8 +75,8 @@ onMounted(async () => {
   // STEP 2: Initialize PWA storage
   pwaStorage.initialize()
 
-  // Show migration modal if needed
-  showPwaMigration.value = pwaStorage.needsMigration.value
+  // Show migration modal only if not auto-configured and migration is needed
+  showPwaMigration.value = !autoConfigured && pwaStorage.needsMigration.value
 
   // STEP 3: Initialize auth
   await authStore.initializeAuth()
