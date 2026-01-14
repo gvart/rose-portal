@@ -4,7 +4,7 @@
     <AuthModal
       v-model:show="showInitialAuth"
       :mode="initialAuthMode"
-      :is-required="!hasUsers && isConfigured && !isInstallPage"
+      :is-required="!hasUsers && isConfigured && hasProjectKey && !isInstallPage"
       @success="handleAuthSuccess"
     />
 
@@ -44,7 +44,7 @@ import type { StoredUser } from '@/types/auth'
 const route = useRoute()
 const authStore = useAuthStore()
 const multiUser = useMultiUserAuth()
-const { isConfigured } = useConfiguration()
+const { isConfigured, projectKey, getProjectKey } = useConfiguration()
 const { shouldShowUserSelection, clearUserSelection } = useAuthFlow()
 
 // Initial auth (for first-time users)
@@ -62,6 +62,7 @@ const authFlowUserId = ref('')
 const cameFromUserSelection = ref(false)
 
 const hasUsers = computed(() => multiUser.hasUsers.value)
+const hasProjectKey = computed(() => !!projectKey.value)
 const isInstallPage = computed(() => route.path === '/install')
 
 // Watch for trigger from screensaver dismissal
@@ -74,11 +75,23 @@ watch(shouldShowUserSelection, (should) => {
 
 // Helper function to check if auth selection should show
 function shouldShowAuthSelection(): boolean {
-  return (
+  const result = (
     isConfigured.value &&
+    hasProjectKey.value &&
     !isInstallPage.value &&
     !authStore.isAuthenticated
   )
+
+  console.log('[AuthOrchestrator] shouldShowAuthSelection check:', {
+    isConfigured: isConfigured.value,
+    hasProjectKey: hasProjectKey.value,
+    projectKeyValue: projectKey.value,
+    isInstallPage: isInstallPage.value,
+    isAuthenticated: authStore.isAuthenticated,
+    result
+  })
+
+  return result
 }
 
 // Watch for configuration changes to show user selection
@@ -88,19 +101,31 @@ watch(isConfigured, (configured) => {
   }
 })
 
+// Watch for project key changes to show appropriate auth modal
+watch(projectKey, (key) => {
+  console.log('[AuthOrchestrator] Project key changed:', key)
+  if (key && shouldShowAuthSelection()) {
+    console.log('[AuthOrchestrator] Should show auth selection. Has users:', hasUsers.value)
+    // Always show user selection modal (it has both "Sign In" and "New User" options)
+    if (!showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
+      console.log('[AuthOrchestrator] Showing user selection modal')
+      showUserSelection.value = true
+    }
+  }
+}, { immediate: true })
+
 // Watch for route changes to recheck auth selection need
 watch(() => route.path, () => {
   if (shouldShowAuthSelection() && !showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
+    // Always show user selection modal (it has both "Sign In" and "New User" options)
     showUserSelection.value = true
   }
 })
 
 onMounted(() => {
-  // Show user selection if:
-  // 1. App is configured
-  // 2. Not on install page
-  // 3. Not already authenticated
+  // Show appropriate auth modal if conditions are met
   if (shouldShowAuthSelection()) {
+    // Always show user selection modal (it has both "Sign In" and "New User" options)
     showUserSelection.value = true
   }
 })

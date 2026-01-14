@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authService } from '@/services/authService'
 import { useMultiUserAuth } from '@/composables/useMultiUserAuth'
+import { useConfiguration } from '@/composables/useConfiguration'
 import type { User, LoginCredentials, SignupCredentials, StoredUser } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -48,13 +49,26 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Sign up new user
    */
-  async function signup(credentials: SignupCredentials): Promise<void> {
+  async function signup(credentials: Omit<SignupCredentials, 'projectKey'>): Promise<void> {
     isLoading.value = true
     error.value = null
 
     try {
+      const { getProjectKey } = useConfiguration()
+      const projectKey = getProjectKey()
+
+      if (!projectKey) {
+        throw new Error('Project key not configured')
+      }
+
+      // Include projectKey in signup
+      const signupData: SignupCredentials = {
+        ...credentials,
+        projectKey
+      }
+
       // Create user
-      const user = await authService.signup(credentials)
+      const user = await authService.signup(signupData)
 
       // Login immediately after signup
       await login({ username: credentials.username, pin: credentials.pin })

@@ -25,6 +25,7 @@ export interface LoginCredentials {
 export interface SignupCredentials {
   username: string
   pin: string
+  projectKey: string
 }
 
 export interface AuthResponse {

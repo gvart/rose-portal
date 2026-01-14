@@ -199,35 +199,19 @@
         </div>
       </div>
 
-      <div class="settings-section">
-        <h2 class="section-title">Backend Configuration</h2>
+      <div v-if="isDesktop" class="settings-section">
+        <h2 class="section-title">Project Configuration</h2>
 
         <div class="setting-item">
           <div class="setting-info">
-            <label class="setting-label">Backend API URL</label>
+            <label class="setting-label">Project Key</label>
             <p class="setting-description">
-              {{ settingsStore.backendUrl || 'Not configured' }}
+              {{ currentProjectKey || 'Not configured' }}
             </p>
           </div>
           <button
             v-haptic
-            @click="showBackendEdit = true"
-            class="btn-primary"
-          >
-            Edit
-          </button>
-        </div>
-
-        <div class="setting-item">
-          <div class="setting-info">
-            <label class="setting-label">Vosk WebSocket URL</label>
-            <p class="setting-description">
-              {{ settingsStore.voskUrl || 'Not configured' }}
-            </p>
-          </div>
-          <button
-            v-haptic
-            @click="showVoskEdit = true"
+            @click="showProjectKeyEdit = true"
             class="btn-primary"
           >
             Edit
@@ -242,9 +226,8 @@
           <div class="setting-info">
             <label class="setting-label">QR Code Setup</label>
             <p class="setting-description">
-              Scan this QR code with your phone's camera to install ROSE as a PWA.
-              After installation, <strong>scan the same code again</strong> to automatically
-              transfer your settings to the installed app.
+              Scan this QR code with your phone's camera to open the installation page.
+              The page will provide a setup code for the PWA installation.
             </p>
           </div>
         </div>
@@ -261,6 +244,34 @@
           />
         </div>
 
+        <!-- Invite Code Display -->
+        <div v-if="inviteCodeLoading" class="invite-code-section">
+          <p class="loading-text">Generating setup code...</p>
+        </div>
+
+        <div v-else-if="inviteCodeError" class="invite-code-section error">
+          <p class="error-text">{{ inviteCodeError }}</p>
+          <button v-haptic @click="fetchInviteCode" class="btn-retry">
+            Retry
+          </button>
+        </div>
+
+        <div v-else-if="inviteCode" class="invite-code-section">
+          <h3 class="invite-code-title">Setup Code for PWA</h3>
+          <p class="invite-code-description">
+            After installing the PWA, enter this code to complete setup:
+          </p>
+          <div class="code-display">
+            <span class="code-text">{{ inviteCode.code }}</span>
+            <button v-haptic @click="copyInviteCode" class="btn-copy">
+              {{ codeCopied ? '✓ Copied' : 'Copy' }}
+            </button>
+          </div>
+          <p class="expiration-text">
+            Code expires {{ formatExpiration(inviteCode.expiresAt) }}
+          </p>
+        </div>
+
         <p class="qr-code-url">{{ installUrl }}</p>
       </div>
 
@@ -275,34 +286,29 @@
 
     <!-- Configuration Edit Modals -->
     <ConfigurationEditModal
-      v-model="showBackendEdit"
-      title="Edit Backend API URL"
-      :current-value="settingsStore.backendUrl"
-      placeholder="https://your-server.com:8080"
-      @save="handleBackendSave"
-    />
-
-    <ConfigurationEditModal
-      v-model="showVoskEdit"
-      title="Edit Vosk WebSocket URL"
-      :current-value="settingsStore.voskUrl"
-      placeholder="wss://your-server.com:2700"
-      @save="handleVoskSave"
+      v-model="showProjectKeyEdit"
+      title="Edit Project Key"
+      :current-value="currentProjectKey"
+      placeholder="Enter project key"
+      @save="handleProjectKeySave"
     />
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ConfigurationEditModal from '@/components/common/ConfigurationEditModal.vue'
 import Qrcode from 'qrcode-vue3'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useConfiguration } from '@/composables/useConfiguration'
 import { usePWA } from '@/composables/usePWA'
 import { usePushNotifications } from '@/composables/usePushNotifications'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import { useDarkMode } from '@/composables/useDarkMode'
 import { usePwaStorage } from '@/composables/usePwaStorage'
+import { projectService } from '@/services/projectService'
+import type { InviteCodeResponse } from '@/types/project'
 import axios from 'axios'
 
 const settingsStore = useSettingsStore()
@@ -333,27 +339,82 @@ function decreaseTimeout() {
 // Device Detection
 const { isMobile, isTablet, isDesktop } = useDeviceDetection()
 
-// Configuration Edit Modals
-const showBackendEdit = ref(false)
-const showVoskEdit = ref(false)
+// Project Key Management
+const { getProjectKey, setProjectKey } = useConfiguration()
+const showProjectKeyEdit = ref(false)
+const currentProjectKey = computed(() => getProjectKey() || '')
+
+async function handleProjectKeySave(newKey: string) {
+  try {
+    const exists = await projectService.validateKey(newKey)
+    if (exists) {
+      setProjectKey(newKey)
+      showProjectKeyEdit.value = false
+    } else {
+      alert('Invalid project key. Please check and try again.')
+    }
+  } catch (error) {
+    alert('Failed to validate project key. Please try again.')
+    console.error('Project key validation error:', error)
+  }
+}
 
 // QR Code Install URL
 const installUrl = computed(() => {
   const base = window.location.origin
-  const backend = encodeURIComponent(settingsStore.backendUrl || '')
-  const vosk = encodeURIComponent(settingsStore.voskUrl || '')
-  return `${base}/?action=install&backendUrl=${backend}&voskUrl=${vosk}`
+  return `${base}/?action=install`
 })
 
-function handleBackendSave(newUrl: string) {
-  settingsStore.setBackendUrl(newUrl)
-  showBackendEdit.value = false
+// Invite Code Management (for PWA setup)
+const inviteCode = ref<InviteCodeResponse | null>(null)
+const inviteCodeLoading = ref(false)
+const inviteCodeError = ref<string | null>(null)
+const codeCopied = ref(false)
+
+async function fetchInviteCode() {
+  inviteCodeLoading.value = true
+  inviteCodeError.value = null
+
+  try {
+    inviteCode.value = await projectService.getInviteCode()
+  } catch (err) {
+    inviteCodeError.value = 'Failed to generate code'
+    console.error('Failed to get invite code:', err)
+  } finally {
+    inviteCodeLoading.value = false
+  }
 }
 
-function handleVoskSave(newUrl: string) {
-  settingsStore.setVoskUrl(newUrl)
-  showVoskEdit.value = false
+async function copyInviteCode() {
+  if (!inviteCode.value) return
+
+  try {
+    await navigator.clipboard.writeText(inviteCode.value.code)
+    codeCopied.value = true
+    setTimeout(() => {
+      codeCopied.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Failed to copy code:', err)
+  }
 }
+
+function formatExpiration(expiresAt: string): string {
+  const expiresDate = new Date(expiresAt)
+  const now = new Date()
+  const diffMs = expiresDate.getTime() - now.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+
+  if (diffMins < 1) return 'soon'
+  if (diffMins === 1) return 'in 1 minute'
+  return `in ${diffMins} minutes`
+}
+
+onMounted(() => {
+  if (isDesktop.value) {
+    fetchInviteCode()
+  }
+})
 
 // PWA & Notifications (only relevant for mobile/tablet)
 const { isInstallable, isInstalled, install, offlineReady } = usePWA()
@@ -615,5 +676,84 @@ const handleExportPwaData = async () => {
 
 .theme-btn:active:not(.active) {
   transform: scale(0.96);
+}
+
+.invite-code-section {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.invite-code-title {
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.invite-code-description {
+  font-size: var(--font-size-13);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.code-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+}
+
+.code-text {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-primary);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.btn-copy {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy:hover {
+  background: var(--color-accent-primary-hover);
+}
+
+.expiration-text {
+  font-size: var(--font-size-12);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.error-text {
+  color: var(--color-error-text);
+  margin-bottom: var(--space-2);
+}
+
+.btn-retry {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
 </style>

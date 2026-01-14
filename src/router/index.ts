@@ -105,14 +105,8 @@ router.beforeEach((to, from) => {
 router.beforeEach((to, from, next) => {
   // Handle install flow from query parameter
   if (to.query.action === 'install' && to.path !== '/install') {
-    // Redirect to install page with the query parameters
-    return next({
-      path: '/install',
-      query: {
-        backendUrl: to.query.backendUrl,
-        voskUrl: to.query.voskUrl
-      }
-    })
+    // Redirect to install page (no URL params needed)
+    return next({ path: '/install' })
   }
 
   // Skip auth check for install page
@@ -120,10 +114,11 @@ router.beforeEach((to, from, next) => {
     return next()
   }
 
-  const { isConfigured } = useConfiguration()
+  const { isConfigured, getProjectKey } = useConfiguration()
 
-  // Skip auth if app not configured yet
-  if (!isConfigured.value) {
+  // Skip auth if app not configured yet OR no project key
+  // (allows ProjectKeyModal and ProjectJoinModal to show)
+  if (!isConfigured.value || !getProjectKey()) {
     return next()
   }
 

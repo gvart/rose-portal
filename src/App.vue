@@ -2,7 +2,8 @@
   <div id="app">
     <InstallPrompt />
     <UpdatePrompt />
-    <ConfigurationModal />
+    <ProjectKeyModal />
+    <ProjectJoinModal />
     <AuthOrchestrator />
     <TimerFloatingPill />
     <TimerCompletionModal />
@@ -20,7 +21,8 @@
 import { onMounted, ref } from 'vue'
 import InstallPrompt from '@/components/pwa/InstallPrompt.vue'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt.vue'
-import ConfigurationModal from '@/components/common/ConfigurationModal.vue'
+import ProjectKeyModal from '@/components/common/ProjectKeyModal.vue'
+import ProjectJoinModal from '@/components/pwa/ProjectJoinModal.vue'
 import AuthOrchestrator from '@/components/auth/AuthOrchestrator.vue'
 import TimerFloatingPill from '@/components/timer/TimerFloatingPill.vue'
 import TimerCompletionModal from '@/components/timer/TimerCompletionModal.vue'
@@ -43,42 +45,13 @@ const showPwaMigration = ref(false)
 // Initialize authentication
 const authStore = useAuthStore()
 onMounted(async () => {
-  // STEP 1: Check for deep link configuration parameters
-  const urlParams = new URLSearchParams(window.location.search)
-  const backendUrl = urlParams.get('backendUrl')
-  const voskUrl = urlParams.get('voskUrl')
-  let autoConfigured = false
-
-  if (backendUrl) {
-    const { setBackendUrl, setVoskUrl, validateUrl } = useConfiguration()
-
-    try {
-      if (validateUrl(backendUrl)) {
-        setBackendUrl(backendUrl)
-
-        if (voskUrl && validateUrl(voskUrl)) {
-          setVoskUrl(voskUrl)
-        }
-
-        // Mark PWA as migrated/configured
-        localStorage.setItem('rose_pwa_migrated', 'true')
-        autoConfigured = true
-
-        // Clean URL params after configuration
-        window.history.replaceState({}, document.title, window.location.pathname)
-      }
-    } catch (error) {
-      console.error('Failed to auto-configure from URL:', error)
-    }
-  }
-
-  // STEP 2: Initialize PWA storage
+  // STEP 1: Initialize PWA storage
   pwaStorage.initialize()
 
-  // Show migration modal only if not auto-configured and migration is needed
-  showPwaMigration.value = !autoConfigured && pwaStorage.needsMigration.value
+  // Show migration modal if needed
+  showPwaMigration.value = pwaStorage.needsMigration.value
 
-  // STEP 3: Initialize auth
+  // STEP 2: Initialize auth
   await authStore.initializeAuth()
 })
 </script>
