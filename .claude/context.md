@@ -799,6 +799,166 @@ padding-top: calc(68px + var(--space-6));
 
 ---
 
+## Touch-Based Drag & Drop (Chores App)
+
+The chores app uses **vue.draggable.next** (vuedraggable) for touch-friendly drag and drop on mobile devices.
+
+### Libraries
+
+- **vuedraggable@next** (vue.draggable.next): Vue 3 wrapper for SortableJS
+- **sortablejs**: Core drag & drop library with excellent mobile support
+
+### Key Features
+
+1. **Long-press to drag**: 300ms delay on mobile to initiate drag
+2. **Visual feedback**:
+   - Chosen state: Scale 1.02, accent border, shadow
+   - Dragging: Scale 1.05, rotate 2deg, elevated shadow
+   - Ghost placeholder: Opacity 0.4, dashed border
+3. **Haptic feedback**: Vibration on drag start/end (uses `useHapticFeedback`)
+4. **Edge scrolling**: Auto-scroll when dragging near screen edges
+5. **Optimistic updates**: UI updates immediately, rollback on API error
+
+### Implementation Pattern
+
+```vue
+<draggable
+  v-model="items"
+  item-key="id"
+  group="items"
+  :animation="200"
+  :delay="300"
+  :delay-on-touch-only="true"
+  :force-fallback="true"
+  ghost-class="item-ghost"
+  drag-class="item-dragging"
+  chosen-class="item-chosen"
+  @start="handleDragStart"
+  @end="handleDragEnd"
+  @change="handleChange"
+>
+  <template #item="{ element }">
+    <ItemCard :item="element" />
+  </template>
+</draggable>
+```
+
+---
+
+## Mobile Swipe Gestures (Chores App)
+
+### useSwipeActions Composable
+
+Location: `src/apps/chores/composables/useSwipeActions.ts`
+
+Reusable composable for detecting swipe gestures with haptic feedback.
+
+**Features**:
+- Touch event handling (touchstart, touchmove, touchend)
+- Swipe direction detection (left/right)
+- Configurable thresholds (default: 80px right, 120px left)
+- Velocity detection for fling gestures
+- Haptic feedback on threshold cross
+- Vertical vs horizontal scroll detection
+- Elastic resistance beyond threshold
+
+**Usage**:
+```ts
+const { swipeOffset, direction, handleTouchStart, handleTouchMove, handleTouchEnd } =
+  useSwipeActions(containerRef, {
+    thresholdRight: 80,
+    thresholdLeft: 120,
+    onSwipeRight: () => console.log('Swiped right'),
+    onSwipeLeft: () => console.log('Swiped left'),
+    hapticEnabled: true
+  })
+```
+
+**Swipe Actions in Chores**:
+- **Right swipe (80px)**: Quick-move card to next column (TODO → IN_PROGRESS → DONE)
+- **Left swipe (120px)**: Reveal action buttons (Edit, Assign, Delete)
+
+---
+
+## Horizontal Column Navigation (Chores App)
+
+On mobile (< 768px), the kanban board uses horizontal scroll with scroll-snap for column navigation.
+
+**Features**:
+- Full-width columns (100vw each)
+- CSS scroll-snap for smooth column-by-column scrolling
+- Column indicator dots (fixed bottom, centered)
+- Tap dots to jump to specific column
+- Active dot highlighted (scale 1.2x, full opacity)
+- Hidden scrollbar for cleaner UI
+
+**CSS Pattern**:
+```css
+@media (max-width: 768px) {
+  .kanban-board {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .kanban-column {
+    flex: 0 0 100vw;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+```
+
+---
+
+## Rich Text Editor (Chores App)
+
+The chores app uses **TipTap** for WYSIWYG editing of chore descriptions with markdown output.
+
+### Components
+
+- **ChoreDescriptionEditor**: WYSIWYG editor with minimal toolbar
+  - Location: `src/apps/chores/components/ChoreDescriptionEditor.vue`
+  - Extensions: StarterKit, Link, Placeholder
+  - Toolbar: Bold, Italic, Link, Bullet List, Ordered List
+  - Outputs markdown for storage
+  - Touch-optimized buttons (min 44px)
+
+- **MarkdownRenderer**: Safe markdown viewer with clickable links
+  - Location: `src/apps/chores/components/MarkdownRenderer.vue`
+  - Uses markdown-it (already installed)
+  - Line clamping support (1-5 lines)
+  - Links open in new tab with `target="_blank"` and `rel="noopener noreferrer"`
+  - Prevents event propagation on link clicks
+
+### Reusable Infrastructure
+
+- **useTipTapEditor**: Located in notes app (`src/apps/notes/composables/useTipTapEditor.ts`)
+- **markdownConverter**: Markdown ↔ TipTap JSON conversion (`src/apps/notes/utils/markdownConverter.ts`)
+
+---
+
+## Floating Action Button (FAB) Pattern
+
+Mobile apps use FABs instead of header buttons for primary actions.
+
+**Design Specs**:
+- Size: 56px × 56px (circular)
+- Position: Fixed bottom-right with safe area insets
+- Bottom: `calc(var(--safe-bottom) + var(--space-4))`
+- Right: `var(--space-4)`
+- Z-index: 40 (below modals, above content)
+- Shadow: `box-shadow: 0 4px 12px rgba(0,0,0,0.15)`
+- Color: Primary action color (#EC4899 for chores)
+- Active state: Scale 0.95
+- Desktop: Hidden (header button used instead)
+
+**Usage**: Add `v-haptic` directive for touch feedback
+
+---
+
 ## Resources
 
 - **Design Tokens**: `src/assets/styles/tokens.css`
@@ -809,4 +969,4 @@ padding-top: calc(68px + var(--space-6));
 
 ---
 
-**Last Updated:** 2026-01-11
+**Last Updated:** 2026-01-14

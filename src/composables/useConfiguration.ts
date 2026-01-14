@@ -23,11 +23,16 @@ export function useConfiguration() {
   }
 
   function setVoskUrl(url: string) {
-    if (!validateUrl(url)) {
+    // Allow empty Vosk URL (optional)
+    if (url.trim() !== '' && !validateUrl(url)) {
       throw new Error('Invalid Vosk URL format')
     }
     voskUrl.value = url
-    localStorage.setItem(VOSK_URL_KEY, url)
+    if (url.trim() !== '') {
+      localStorage.setItem(VOSK_URL_KEY, url)
+    } else {
+      localStorage.removeItem(VOSK_URL_KEY)
+    }
   }
 
   function getBackendUrl(): string {
@@ -46,7 +51,7 @@ export function useConfiguration() {
   }
 
   const isConfigured = computed(() => {
-    return backendUrl.value !== '' && voskUrl.value !== ''
+    return backendUrl.value !== ''
   })
 
   return {

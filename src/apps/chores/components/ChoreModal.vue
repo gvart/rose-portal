@@ -42,14 +42,10 @@
             <!-- Description -->
             <div class="form-group">
               <label for="chore-description" class="form-label">Description</label>
-              <textarea
-                id="chore-description"
+              <ChoreDescriptionEditor
                 v-model="localFormData.description"
-                class="form-textarea"
-                placeholder="Enter description (optional)"
-                rows="3"
-                maxlength="5000"
-              ></textarea>
+                placeholder="Add details about this chore..."
+              />
             </div>
 
             <!-- Priority -->
@@ -89,8 +85,9 @@
               />
             </div>
 
-            <!-- Assigned To -->
+            <!-- Assigned To (Edit mode only) -->
             <AssignmentSelector
+              v-if="mode === 'edit'"
               v-model="localFormData.assignedToId"
               :users="availableUsers"
             />
@@ -132,6 +129,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import AssignmentSelector from './AssignmentSelector.vue'
+import ChoreDescriptionEditor from './ChoreDescriptionEditor.vue'
 import type { ChoreFormData, ModalMode, User, Chore } from '../types/chores'
 import { PRIORITY_CONFIGS } from '../types/chores'
 
@@ -295,8 +293,7 @@ function close(): void {
   color: #ef4444;
 }
 
-.form-input,
-.form-textarea {
+.form-input {
   width: 100%;
   padding: 0.625rem 0.75rem;
   background: white;
@@ -307,8 +304,7 @@ function close(): void {
   transition: all 0.2s ease;
 }
 
-.form-input:focus,
-.form-textarea:focus {
+.form-input:focus {
   outline: none;
   border-color: #EC4899;
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
@@ -316,11 +312,6 @@ function close(): void {
 
 .form-input-error {
   border-color: #ef4444;
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 80px;
 }
 
 .form-error {

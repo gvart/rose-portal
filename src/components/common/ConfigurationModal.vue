@@ -7,7 +7,7 @@
           <div class="modal-header">
             <h2 class="modal-title">Configure ROSE</h2>
             <p class="modal-subtitle">
-              Set your backend API and Vosk WebSocket URLs to get started
+              Set your backend API URL to get started. Vosk WebSocket URL is optional for voice features.
             </p>
           </div>
 
@@ -35,7 +35,10 @@
 
             <!-- Vosk URL Input -->
             <div class="input-section">
-              <label class="input-label" for="vosk-url">Vosk WebSocket URL</label>
+              <label class="input-label" for="vosk-url">
+                Vosk WebSocket URL
+                <span class="optional-badge">Optional</span>
+              </label>
               <input
                 id="vosk-url"
                 v-model="voskUrl"
@@ -45,7 +48,7 @@
                 @keydown.enter="handleSave"
               />
               <p class="input-hint">
-                Example: wss://192.168.1.100:2700 or ws://raspberrypi.local:2700
+                Only required for voice features. Example: wss://192.168.1.100:2700
               </p>
               <p v-if="voskError" class="input-error">
                 {{ voskError }}
@@ -86,12 +89,11 @@ const voskError = ref('')
 const backendInputRef = ref<HTMLInputElement | null>(null)
 
 const isValid = computed(() => {
-  return (
-    backendUrl.value.trim() !== '' &&
-    voskUrl.value.trim() !== '' &&
-    validateUrl(backendUrl.value) &&
-    validateUrl(voskUrl.value)
-  )
+  const hasValidBackend = backendUrl.value.trim() !== '' && validateUrl(backendUrl.value)
+  const voskUrlEmpty = voskUrl.value.trim() === ''
+  const voskUrlValid = voskUrlEmpty || validateUrl(voskUrl.value)
+
+  return hasValidBackend && voskUrlValid
 })
 
 onMounted(async () => {
@@ -119,7 +121,12 @@ function handleSave() {
 
   try {
     setBackendUrl(backendUrl.value)
-    setVoskUrl(voskUrl.value)
+
+    // Only set Vosk URL if provided
+    if (voskUrl.value.trim() !== '') {
+      setVoskUrl(voskUrl.value)
+    }
+
     shouldShow.value = false
   } catch (error) {
     // Handle validation errors
@@ -204,6 +211,17 @@ function handleSave() {
   font-size: var(--font-size-13);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+}
+
+.optional-badge {
+  display: inline-block;
+  margin-left: var(--space-2);
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+  background: var(--color-bg-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
 }
 
 .text-input {

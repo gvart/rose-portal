@@ -293,6 +293,13 @@ export const useChoresStore = defineStore('chores', () => {
   }
 
   /**
+   * Quick assign chore (for swipe actions) - convenience wrapper
+   */
+  async function quickAssignChore(id: number, assignedToId: number | null): Promise<boolean> {
+    return await updateChoreAssignment(id, assignedToId)
+  }
+
+  /**
    * Delete chore
    */
   async function deleteChore(id: number): Promise<boolean> {
@@ -437,6 +444,7 @@ export const useChoresStore = defineStore('chores', () => {
     updateChore,
     updateChoreStatus,
     updateChoreAssignment,
+    quickAssignChore,
     deleteChore,
     openCreateModal,
     openEditModal,

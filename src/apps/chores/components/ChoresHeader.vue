@@ -247,8 +247,7 @@ function handleAssigneeChange(event: Event): void {
   }
 
   .create-button {
-    width: 100%;
-    justify-content: center;
+    display: none; /* Hide on mobile, use FAB instead */
   }
 }
 </style>

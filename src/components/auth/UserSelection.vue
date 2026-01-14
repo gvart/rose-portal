@@ -1,9 +1,9 @@
 <template>
   <div class="user-selection">
-    <h3 class="selection-title">Welcome Back</h3>
-    <p class="selection-subtitle">Select your profile or sign in</p>
+    <h3 class="selection-title">{{ sortedUsers.length > 0 ? 'Welcome Back' : 'Welcome to ROSE' }}</h3>
+    <p class="selection-subtitle">{{ sortedUsers.length > 0 ? 'Select your profile or sign in' : 'Create an account or sign in to get started' }}</p>
 
-    <div class="user-list">
+    <div v-if="sortedUsers.length > 0" class="user-list">
       <button
         v-for="user in sortedUsers"
         :key="user.id"
@@ -28,7 +28,7 @@
       </button>
     </div>
 
-    <div class="action-buttons">
+    <div class="action-buttons" :class="{ 'no-users': sortedUsers.length === 0 }">
       <button
         v-haptic
         class="btn-secondary"
@@ -245,6 +245,10 @@ function formatLastLogin(dateString: string): string {
   flex-direction: column;
   gap: var(--space-3);
   margin-top: var(--space-4);
+}
+
+.action-buttons.no-users {
+  margin-top: 0;
 }
 
 .btn-secondary {

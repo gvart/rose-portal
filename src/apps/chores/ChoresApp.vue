@@ -27,6 +27,10 @@
           @status-change="handleStatusChange"
           @select-chore="handleSelectChore"
           @load-more="store.loadMoreForStatus($event)"
+          @swipe-move-next="handleSwipeMoveNext"
+          @swipe-edit="handleSelectChore"
+          @swipe-assign="handleSwipeAssign"
+          @swipe-delete="handleSwipeDelete"
         />
       </div>
 
@@ -42,6 +46,19 @@
         @save="handleSave"
         @delete="handleDelete"
       />
+
+      <!-- FAB (mobile only) -->
+      <button
+        v-if="isMobile"
+        v-haptic
+        class="chores-fab"
+        aria-label="Create new chore"
+        @click="store.openCreateModal()"
+      >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
 
       <!-- Error Banner -->
       <Transition name="error-fade">
@@ -80,8 +97,8 @@ import ChoresHeader from './components/ChoresHeader.vue'
 import KanbanBoard from './components/KanbanBoard.vue'
 import ChoreModal from './components/ChoreModal.vue'
 import { useChoresStore } from './stores/choresStore'
-import type { ChoreStatus, ChoreFormData, Chore } from './types/chores'
-import { canEditChore } from './types/chores'
+import type { ChoreFormData, Chore } from './types/chores'
+import { ChoreStatus, canEditChore } from './types/chores'
 
 const store = useChoresStore()
 
@@ -96,6 +113,8 @@ const canDeleteChore = computed(() => {
   if (!store.selectedChore || store.currentUserId === null) return false
   return canEditChore(store.selectedChore, store.currentUserId)
 })
+
+const isMobile = computed(() => window.innerWidth < 768)
 
 onMounted(async () => {
   await store.fetchChores()
@@ -134,6 +153,54 @@ async function handleDelete(): Promise<void> {
   const success = await store.deleteChore(store.selectedChore.id)
   if (success) {
     store.closeModal()
+  }
+}
+
+// Swipe action handlers
+async function handleSwipeMoveNext(chore: Chore): Promise<void> {
+  // Move chore to next status
+  const nextStatus = getNextStatus(chore.status)
+  if (nextStatus) {
+    await store.updateChoreStatus(chore.id, nextStatus)
+  }
+}
+
+async function handleSwipeAssign(chore: Chore): Promise<void> {
+  // Open a simple assignment dialog
+  const users = store.usersFromChores
+  if (users.length === 0) return
+
+  // For now, cycle through users or prompt
+  // In a real implementation, you'd show a modal or dropdown
+  // For simplicity, let's just toggle assignment to current user
+  const currentUserId = store.currentUserId
+  if (currentUserId !== null) {
+    const newAssigneeId = chore.assignedTo?.id === currentUserId ? null : currentUserId
+    await store.quickAssignChore(chore.id, newAssigneeId)
+  }
+}
+
+async function handleSwipeDelete(chore: Chore): Promise<void> {
+  // Only allow deletion if user can edit
+  if (store.currentUserId !== null && canEditChore(chore, store.currentUserId)) {
+    if (confirm(`Are you sure you want to delete "${chore.title}"? This action cannot be undone.`)) {
+      await store.deleteChore(chore.id)
+    }
+  }
+}
+
+function getNextStatus(currentStatus: ChoreStatus): ChoreStatus | null {
+  const { TODO, IN_PROGRESS, DONE } = ChoreStatus
+
+  switch (currentStatus) {
+    case TODO:
+      return IN_PROGRESS
+    case IN_PROGRESS:
+      return DONE
+    case DONE:
+      return null // Already at the end
+    default:
+      return null
   }
 }
 </script>
@@ -244,6 +311,41 @@ async function handleDelete(): Promise<void> {
   .error-fade-enter-from,
   .error-fade-leave-to {
     transform: translateY(1rem);
+  }
+}
+
+/* FAB (Floating Action Button) */
+.chores-fab {
+  position: fixed;
+  bottom: calc(var(--safe-bottom, 0px) + var(--space-4, 16px));
+  right: var(--space-4, 16px);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #EC4899;
+  border: var(--depth-2-border, 1px solid #cbd5e1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  cursor: pointer;
+  transition: transform var(--duration-fast, 150ms) cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.chores-fab svg {
+  width: 24px;
+  height: 24px;
+}
+
+.chores-fab:active {
+  transform: scale(0.95);
+}
+
+@media (min-width: 769px) {
+  .chores-fab {
+    display: none; /* Desktop uses header button */
   }
 }
 </style>

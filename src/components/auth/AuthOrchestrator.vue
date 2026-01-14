@@ -8,12 +8,13 @@
       @success="handleAuthSuccess"
     />
 
-    <!-- User Selection Modal (shown after screensaver dismissal) -->
+    <!-- User Selection Modal (shown for initial auth or after screensaver dismissal) -->
     <UserSelectionModal
       v-model:show="showUserSelection"
       @select-user="handleUserSelected"
       @new-user="handleNewUserFromSelection"
       @sign-in="handleSignInFromSelection"
+      @remove-user="handleRemoveUser"
     />
 
     <!-- Quick Login / Sign In Modal -->
@@ -71,15 +72,36 @@ watch(shouldShowUserSelection, (should) => {
   }
 })
 
+// Helper function to check if auth selection should show
+function shouldShowAuthSelection(): boolean {
+  return (
+    isConfigured.value &&
+    !isInstallPage.value &&
+    !authStore.isAuthenticated
+  )
+}
+
+// Watch for configuration changes to show user selection
+watch(isConfigured, (configured) => {
+  if (configured && shouldShowAuthSelection() && !showUserSelection.value) {
+    showUserSelection.value = true
+  }
+})
+
+// Watch for route changes to recheck auth selection need
+watch(() => route.path, () => {
+  if (shouldShowAuthSelection() && !showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
+    showUserSelection.value = true
+  }
+})
+
 onMounted(() => {
-  // Show initial auth if:
-  // 1. No users exist
-  // 2. App is configured
-  // 3. Not on install page
-  // 4. Not already authenticated
-  if (!hasUsers.value && isConfigured.value && !isInstallPage.value && !authStore.isAuthenticated) {
-    showInitialAuth.value = true
-    initialAuthMode.value = 'signup'
+  // Show user selection if:
+  // 1. App is configured
+  // 2. Not on install page
+  // 3. Not already authenticated
+  if (shouldShowAuthSelection()) {
+    showUserSelection.value = true
   }
 })
 
@@ -114,6 +136,12 @@ function handleBackToSelection(): void {
   showAuthFlow.value = false
   cameFromUserSelection.value = false
   showUserSelection.value = true
+}
+
+function handleRemoveUser(user: StoredUser): void {
+  // User was removed, no action needed here
+  // UserSelection component handles the removal
+  console.log(`User ${user.username} removed`)
 }
 
 function handleAuthSuccess(): void {

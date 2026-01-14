@@ -7,25 +7,41 @@
     </div>
 
     <!-- Drop Zone -->
-    <div
-      :class="['kanban-column-content', { 'kanban-column-dragover': isDragOver }]"
-      @dragover.prevent="handleDragOver"
-      @drop="handleDrop"
-      @dragleave="handleDragLeave"
-    >
+    <div :class="['kanban-column-content', { 'kanban-column-dragover': isDragOver }]">
       <!-- Chore Cards -->
-      <div v-if="!loading && chores.length > 0" class="kanban-column-cards">
-        <ChoreCard
-          v-for="chore in chores"
-          :key="chore.id"
-          :chore="chore"
-          :draggable="!isMobile"
-          :can-edit="canEdit(chore)"
-          @click="$emit('select-chore', chore)"
-          @dragstart="isDragging = true"
-          @dragend="isDragging = false"
-        />
-      </div>
+      <draggable
+        v-if="!loading && chores.length > 0"
+        v-model="choresList"
+        item-key="id"
+        tag="div"
+        class="kanban-column-cards"
+        group="chores"
+        :animation="200"
+        :delay="isMobile ? 300 : 0"
+        :delay-on-touch-only="true"
+        :force-fallback="true"
+        :fallback-tolerance="3"
+        :scroll-sensitivity="60"
+        :scroll-speed="10"
+        ghost-class="chore-card-ghost"
+        drag-class="chore-card-dragging"
+        chosen-class="chore-card-chosen"
+        @start="handleDragStart"
+        @end="handleDragEnd"
+        @change="handleDragChange"
+      >
+        <template #item="{ element }">
+          <ChoreCard
+            :chore="element"
+            :can-edit="canEdit(element)"
+            @click="$emit('select-chore', element)"
+            @swipe-move-next="$emit('swipe-move-next', element)"
+            @swipe-edit="$emit('swipe-edit', element)"
+            @swipe-assign="$emit('swipe-assign', element)"
+            @swipe-delete="$emit('swipe-delete', element)"
+          />
+        </template>
+      </draggable>
 
       <!-- Loading Skeletons -->
       <div v-else-if="loading" class="kanban-column-cards">
@@ -41,13 +57,29 @@
           viewBox="0 0 24 24"
         >
           <path
+            v-if="status === ChoreStatus.TODO"
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
           />
+          <path
+            v-else-if="status === ChoreStatus.IN_PROGRESS"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+          <path
+            v-else
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
-        <p class="kanban-column-empty-text">No chores</p>
+        <p class="kanban-column-empty-title">{{ emptyStateTitle }}</p>
+        <p class="kanban-column-empty-subtitle">{{ emptyStateSubtitle }}</p>
       </div>
 
       <!-- Load More Button -->
@@ -66,11 +98,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import draggable from 'vuedraggable'
 import ChoreCard from './ChoreCard.vue'
 import ChoreCardSkeleton from './ChoreCardSkeleton.vue'
-import type { Chore, ChoreStatus } from '../types/chores'
-import { canEditChore } from '../types/chores'
+import { ChoreStatus, canEditChore, type Chore } from '../types/chores'
 import { useChoresStore } from '../stores/choresStore'
+import { useHapticFeedback } from '@/composables/useHapticFeedback'
 
 interface Props {
   status: ChoreStatus
@@ -80,6 +113,7 @@ interface Props {
   loadingMore: boolean
   hasMore: boolean
   color: string
+  columnBg?: string
 }
 
 const props = defineProps<Props>()
@@ -88,9 +122,14 @@ const emit = defineEmits<{
   drop: [choreId: number, newStatus: ChoreStatus]
   'select-chore': [chore: Chore]
   'load-more': []
+  'swipe-move-next': [chore: Chore]
+  'swipe-edit': [chore: Chore]
+  'swipe-assign': [chore: Chore]
+  'swipe-delete': [chore: Chore]
 }>()
 
 const store = useChoresStore()
+const { vibrate } = useHapticFeedback()
 const isDragOver = ref(false)
 const isDragging = ref(false)
 
@@ -98,31 +137,61 @@ const isMobile = computed(() => {
   return window.innerWidth < 768
 })
 
+// Create a local copy of chores for v-model binding
+const choresList = computed({
+  get: () => props.chores,
+  set: () => {
+    // Don't allow direct mutation, changes are handled by @change event
+  }
+})
+
 function canEdit(chore: Chore): boolean {
   const userId = store.currentUserId
   return userId !== null && canEditChore(chore, userId)
 }
 
-function handleDragOver(event: DragEvent): void {
-  event.preventDefault()
-  isDragOver.value = true
+// Empty state messages
+const emptyStateTitle = computed(() => {
+  switch (props.status) {
+    case ChoreStatus.TODO:
+      return 'No tasks yet'
+    case ChoreStatus.IN_PROGRESS:
+      return 'Nothing in progress'
+    case ChoreStatus.DONE:
+      return 'No completed tasks'
+    default:
+      return 'No chores'
+  }
+})
+
+const emptyStateSubtitle = computed(() => {
+  switch (props.status) {
+    case ChoreStatus.TODO:
+      return 'Create a new task to get started'
+    case ChoreStatus.IN_PROGRESS:
+      return 'Drag a task here to start working'
+    case ChoreStatus.DONE:
+      return 'Complete tasks to see them here'
+    default:
+      return ''
+  }
+})
+
+function handleDragStart(): void {
+  isDragging.value = true
+  isDragOver.value = false
+  vibrate('medium')
 }
 
-function handleDragLeave(): void {
-  isDragOver.value = false
+function handleDragEnd(): void {
+  isDragging.value = false
+  vibrate('light')
 }
 
-function handleDrop(event: DragEvent): void {
-  event.preventDefault()
-  isDragOver.value = false
-
-  if (!event.dataTransfer) return
-
-  const choreIdStr = event.dataTransfer.getData('choreId')
-  if (!choreIdStr) return
-
-  const choreId = parseInt(choreIdStr, 10)
-  if (!isNaN(choreId)) {
+function handleDragChange(event: any): void {
+  // Handle when a card is added to this column
+  if (event.added) {
+    const choreId = event.added.element.id
     emit('drop', choreId, props.status)
   }
 }
@@ -133,7 +202,7 @@ function handleDrop(event: DragEvent): void {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #f9fafb;
+  background: v-bind('columnBg || "#f9fafb"');
   border-radius: 0.5rem;
   overflow: hidden;
 }
@@ -192,18 +261,27 @@ function handleDrop(event: DragEvent): void {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1rem;
-  color: #9ca3af;
+  padding: var(--space-8, 2rem) var(--space-4, 1rem);
+  text-align: center;
+  gap: var(--space-3, 12px);
 }
 
 .kanban-column-empty-icon {
-  width: 3rem;
-  height: 3rem;
-  margin-bottom: 0.75rem;
+  width: var(--space-12, 48px);
+  height: var(--space-12, 48px);
+  color: var(--color-text-faint, #9ca3af);
 }
 
-.kanban-column-empty-text {
-  font-size: 0.875rem;
+.kanban-column-empty-title {
+  font-size: var(--font-size-16, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-secondary, #475569);
+  margin: 0;
+}
+
+.kanban-column-empty-subtitle {
+  font-size: var(--font-size-13, 13px);
+  color: var(--color-text-muted, #64748b);
   margin: 0;
 }
 
@@ -257,6 +335,50 @@ function handleDrop(event: DragEvent): void {
   .kanban-column-content {
     max-height: none;
     overflow-y: visible;
+    min-height: 100px; /* Generous drop target on mobile */
+    padding: 1rem;
+  }
+}
+
+/* Drag & Drop Visual Feedback */
+/* Chosen state - long-press detected */
+.kanban-column :deep(.chore-card-chosen) {
+  transform: scale(1.02);
+  border: 2px solid var(--color-accent-primary, #3B82F6) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  transition: transform 150ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Dragging state - card being dragged */
+.kanban-column :deep(.chore-card-dragging) {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  opacity: 0.95;
+  cursor: grabbing;
+  z-index: 1000;
+}
+
+/* Ghost - placeholder in original position */
+.kanban-column :deep(.chore-card-ghost) {
+  opacity: 0.4;
+  border: 2px dashed var(--color-border-secondary, #CBD5E1);
+  background: var(--color-bg-tertiary, #F1F5F9);
+}
+
+/* Enhanced drag-over state for columns */
+.kanban-column-dragover {
+  background: rgba(219, 234, 254, 0.5);
+  border: 2px dashed var(--color-accent-primary, #3B82F6);
+  animation: drop-zone-pulse 1s ease-in-out infinite;
+}
+
+@keyframes drop-zone-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
   }
 }
 </style>
