@@ -47,6 +47,16 @@
         @delete="handleDelete"
       />
 
+      <!-- Confirm Delete Dialog -->
+      <ConfirmDialog
+        v-model="showDeleteDialog"
+        :title="`Delete ${choreToDelete?.title}?`"
+        message="This action cannot be undone."
+        confirm-text="Delete"
+        cancel-text="Cancel"
+        @confirm="handleConfirmDelete"
+      />
+
       <!-- FAB (mobile only) -->
       <button
         v-if="isMobile"
@@ -91,16 +101,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ChoresHeader from './components/ChoresHeader.vue'
 import KanbanBoard from './components/KanbanBoard.vue'
 import ChoreModal from './components/ChoreModal.vue'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { useChoresStore } from './stores/choresStore'
 import type { ChoreFormData, Chore } from './types/chores'
 import { ChoreStatus, canEditChore } from './types/chores'
 
 const store = useChoresStore()
+const showDeleteDialog = ref(false)
+const choreToDelete = ref<Chore | null>(null)
 
 const hasActiveFilters = computed(() => {
   return (
@@ -180,12 +193,18 @@ async function handleSwipeAssign(chore: Chore): Promise<void> {
   }
 }
 
-async function handleSwipeDelete(chore: Chore): Promise<void> {
+function handleSwipeDelete(chore: Chore): void {
   // Only allow deletion if user can edit
   if (store.currentUserId !== null && canEditChore(chore, store.currentUserId)) {
-    if (confirm(`Are you sure you want to delete "${chore.title}"? This action cannot be undone.`)) {
-      await store.deleteChore(chore.id)
-    }
+    choreToDelete.value = chore
+    showDeleteDialog.value = true
+  }
+}
+
+async function handleConfirmDelete(): Promise<void> {
+  if (choreToDelete.value) {
+    await store.deleteChore(choreToDelete.value.id)
+    choreToDelete.value = null
   }
 }
 

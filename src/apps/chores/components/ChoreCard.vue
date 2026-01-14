@@ -161,6 +161,7 @@ const swipeContainer = ref<HTMLElement | null>(null)
 const swipeOffset = ref(0)
 const leftSwipeOffset = ref(0)
 const rightSwipeOpacity = ref(0)
+const actionsRevealed = ref(false) // Track if action buttons are shown
 
 // Priority color for left border
 const priorityColor = computed(() => {
@@ -216,11 +217,18 @@ const {
   thresholdRight: 80,
   thresholdLeft: 120,
   onSwipeRight: () => {
-    emit('swipe-move-next')
-    resetSwipe()
+    if (actionsRevealed.value) {
+      // Close actions if swiping right while open
+      closeActions()
+    } else {
+      // Move to next status if actions not open
+      emit('swipe-move-next')
+      resetSwipe()
+    }
   },
   onSwipeLeft: () => {
-    // Left swipe doesn't trigger action, just reveals buttons
+    // Reveal action buttons and keep them open
+    actionsRevealed.value = true
   },
   hapticEnabled: true
 })
@@ -235,6 +243,11 @@ function handleTouchStart(event: TouchEvent): void {
     return
   }
 
+  // Don't start new swipe if clicking action buttons
+  if (target.closest('.chore-card-action-btn')) {
+    return
+  }
+
   onTouchStart(event)
 }
 
@@ -244,6 +257,13 @@ function handleTouchMove(event: TouchEvent): void {
   // Prevent swipe handlers on drag handle
   const target = event.target as HTMLElement
   if (target.closest('.chore-card-drag-handle')) {
+    return
+  }
+
+  // If actions are revealed and user is swiping right, allow closing
+  if (actionsRevealed.value && swipeOffsetValue.value > 0) {
+    swipeOffset.value = swipeOffsetValue.value
+    leftSwipeOffset.value = Math.min(swipeOffsetValue.value - 240, 0)
     return
   }
 
@@ -273,15 +293,37 @@ function handleTouchEnd(event: TouchEvent): void {
 
   onTouchEnd(event)
 
-  // Animate back to original position
-  setTimeout(() => {
-    swipeOffset.value = 0
-    leftSwipeOffset.value = 0
-    rightSwipeOpacity.value = 0
-  }, 100)
+  // If actions are revealed, keep them open
+  if (actionsRevealed.value) {
+    setTimeout(() => {
+      swipeOffset.value = -240 // Keep card swiped left
+      leftSwipeOffset.value = -240 // Show action buttons
+      rightSwipeOpacity.value = 0
+    }, 100)
+  } else {
+    // Animate back to original position
+    setTimeout(() => {
+      swipeOffset.value = 0
+      leftSwipeOffset.value = 0
+      rightSwipeOpacity.value = 0
+    }, 100)
+  }
+}
+
+function closeActions(): void {
+  actionsRevealed.value = false
+  swipeOffset.value = 0
+  leftSwipeOffset.value = 0
+  rightSwipeOpacity.value = 0
 }
 
 function handleClick(): void {
+  // Close actions if clicking on the card while actions are open
+  if (actionsRevealed.value) {
+    closeActions()
+    return
+  }
+
   if (props.canEdit) {
     emit('click')
   }
@@ -289,14 +331,17 @@ function handleClick(): void {
 
 // Swipe action handlers
 function handleEdit(): void {
+  closeActions()
   emit('swipe-edit')
 }
 
 function handleAssign(): void {
+  closeActions()
   emit('swipe-assign')
 }
 
 function handleDelete(): void {
+  closeActions()
   emit('swipe-delete')
 }
 </script>
