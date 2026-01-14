@@ -23,13 +23,23 @@
 
         <!-- iOS Instructions -->
         <div v-if="isIOS" class="platform-instructions">
-          <p class="platform-label">iOS Installation:</p>
+          <p class="platform-label">iOS Installation Steps:</p>
           <ol class="instruction-list">
-            <li>Tap the Share button (square with arrow) at the bottom of Safari</li>
+            <li>Tap the Share button <span class="icon-hint">(□↑)</span> at the bottom of Safari</li>
             <li>Scroll down and tap "Add to Home Screen"</li>
             <li>Tap "Add" in the top right corner</li>
             <li>ROSE will appear on your home screen</li>
           </ol>
+
+          <div class="important-note">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <strong>Next Step:</strong> After installation, scan the same QR code again.
+              iOS will ask "Open in ROSE?" — tap Open to complete setup automatically!
+            </div>
+          </div>
         </div>
 
         <!-- Android Instructions -->
@@ -214,5 +224,23 @@ const goHome = () => {
   @apply w-full px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg
          transition-all duration-150 active:scale-95 hover:bg-blue-600
          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Important Note */
+.important-note {
+  @apply mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200
+         dark:border-emerald-800 rounded-lg flex gap-3 items-start;
+}
+
+.important-note svg {
+  @apply flex-shrink-0 mt-0.5;
+}
+
+.important-note strong {
+  @apply text-emerald-900 dark:text-emerald-100;
+}
+
+.icon-hint {
+  @apply inline-block px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-xs font-mono;
 }
 </style>

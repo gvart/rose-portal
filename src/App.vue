@@ -30,6 +30,7 @@ import { useTimerStore } from '@/apps/timer/stores/timerStore'
 import { useTimerEngine } from '@/apps/timer/composables/useTimerEngine'
 import { useAuthStore } from '@/stores/authStore'
 import { usePwaStorage } from '@/composables/usePwaStorage'
+import { useConfiguration } from '@/composables/useConfiguration'
 
 // Initialize timer engine globally
 const timerStore = useTimerStore()
@@ -42,13 +43,40 @@ const showPwaMigration = ref(false)
 // Initialize authentication
 const authStore = useAuthStore()
 onMounted(async () => {
-  // Initialize PWA storage first
+  // STEP 1: Check for deep link configuration parameters
+  const urlParams = new URLSearchParams(window.location.search)
+  const backendUrl = urlParams.get('backendUrl')
+  const voskUrl = urlParams.get('voskUrl')
+
+  if (backendUrl) {
+    const { setBackendUrl, setVoskUrl, validateUrl } = useConfiguration()
+
+    try {
+      if (validateUrl(backendUrl)) {
+        setBackendUrl(backendUrl)
+
+        if (voskUrl && validateUrl(voskUrl)) {
+          setVoskUrl(voskUrl)
+        }
+
+        // Mark PWA as migrated/configured
+        localStorage.setItem('rose_pwa_migrated', 'true')
+
+        // Clean URL params after configuration
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+    } catch (error) {
+      console.error('Failed to auto-configure from URL:', error)
+    }
+  }
+
+  // STEP 2: Initialize PWA storage
   pwaStorage.initialize()
 
   // Show migration modal if needed
   showPwaMigration.value = pwaStorage.needsMigration.value
 
-  // Initialize auth
+  // STEP 3: Initialize auth
   await authStore.initializeAuth()
 })
 </script>

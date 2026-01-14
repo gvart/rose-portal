@@ -242,7 +242,9 @@
           <div class="setting-info">
             <label class="setting-label">QR Code Setup</label>
             <p class="setting-description">
-              Scan this QR code with your phone to install ROSE with pre-configured settings
+              Scan this QR code with your phone's camera to install ROSE as a PWA.
+              After installation, <strong>scan the same code again</strong> to automatically
+              transfer your settings to the installed app.
             </p>
           </div>
         </div>

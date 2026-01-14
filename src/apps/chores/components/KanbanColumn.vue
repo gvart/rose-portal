@@ -16,8 +16,9 @@
         tag="div"
         class="kanban-column-cards"
         group="chores"
+        handle=".chore-card-drag-handle"
         :animation="200"
-        :delay="isMobile ? 300 : 0"
+        :delay="0"
         :delay-on-touch-only="true"
         :force-fallback="true"
         :fallback-tolerance="3"
@@ -329,14 +330,14 @@ function handleDragChange(event: any): void {
 
 @media (max-width: 768px) {
   .kanban-column {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
 
   .kanban-column-content {
     max-height: none;
     overflow-y: visible;
     min-height: 100px; /* Generous drop target on mobile */
-    padding: 1rem;
+    padding: 0;
   }
 }
 
@@ -363,6 +364,22 @@ function handleDragChange(event: any): void {
   opacity: 0.4;
   border: 2px dashed var(--color-border-secondary, #CBD5E1);
   background: var(--color-bg-tertiary, #F1F5F9);
+}
+
+/* Drag Handle Animation */
+.kanban-column :deep(.chore-card-drag-handle) {
+  transition: transform 150ms ease-in-out;
+}
+
+/* Scale handle when drag is chosen */
+.kanban-column :deep(.chore-card-chosen .chore-card-drag-handle) {
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Visual feedback during drag */
+.kanban-column :deep(.chore-card-dragging .chore-card-drag-handle) {
+  transform: translateY(-50%) scale(1.1);
+  opacity: 1;
 }
 
 /* Enhanced drag-over state for columns */

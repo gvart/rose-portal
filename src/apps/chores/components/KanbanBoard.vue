@@ -237,7 +237,7 @@ onBeforeUnmount(() => {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     gap: 0;
-    padding: 1rem 0 5rem 0; /* Extra bottom padding for indicators */
+    padding: 0 0 5rem 0; /* Extra bottom padding for indicators */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
   }
@@ -249,9 +249,10 @@ onBeforeUnmount(() => {
 
   .kanban-board :deep(.kanban-column) {
     flex: 0 0 100vw;
-    scroll-snap-align: start;
+    scroll-snap-align: center;
     scroll-snap-stop: always;
-    padding: 0 var(--space-4, 16px);
+    padding: 1rem;
+    box-sizing: border-box;
   }
 }
 

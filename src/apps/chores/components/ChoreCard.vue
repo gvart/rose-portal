@@ -44,22 +44,36 @@
       }"
       @click="handleClick"
     >
-      <!-- Title and Priority -->
-      <div class="chore-card-header">
-        <h3 class="chore-card-title">{{ chore.title }}</h3>
-        <PriorityBadge :priority="chore.priority" size="sm" />
+      <!-- Drag Handle (Mobile only) -->
+      <div class="chore-card-drag-handle" aria-label="Drag to reorder">
+        <svg class="chore-card-drag-icon" fill="currentColor" viewBox="0 0 20 20">
+          <circle cx="7" cy="5" r="1.5" />
+          <circle cx="7" cy="10" r="1.5" />
+          <circle cx="7" cy="15" r="1.5" />
+          <circle cx="13" cy="5" r="1.5" />
+          <circle cx="13" cy="10" r="1.5" />
+          <circle cx="13" cy="15" r="1.5" />
+        </svg>
       </div>
 
-      <!-- Description with Markdown -->
-      <MarkdownRenderer
-        v-if="chore.description"
-        class="chore-card-description"
-        :markdown="chore.description"
-        :max-lines="2"
-      />
+      <!-- Card Content Wrapper -->
+      <div class="chore-card-content">
+        <!-- Title and Priority -->
+        <div class="chore-card-header">
+          <h3 class="chore-card-title">{{ chore.title }}</h3>
+          <PriorityBadge :priority="chore.priority" size="sm" />
+        </div>
 
-      <!-- Due Date with Visual Warnings -->
-      <div class="chore-card-meta">
+        <!-- Description with Markdown -->
+        <MarkdownRenderer
+          v-if="chore.description"
+          class="chore-card-description"
+          :markdown="chore.description"
+          :max-lines="2"
+        />
+
+        <!-- Due Date with Visual Warnings -->
+        <div class="chore-card-meta">
         <div v-if="overdueStatus" :class="['chore-card-due', overdueStatus.class]">
           <svg
             class="chore-card-icon"
@@ -96,24 +110,25 @@
         </div>
       </div>
 
-      <!-- Completion Info (DONE only) -->
-      <div v-if="chore.completedAt && chore.completedBy" class="chore-card-completion">
-        <svg
-          class="chore-card-icon"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span>
-          Completed by {{ chore.completedBy.username }} on {{ formatCompletedDate }}
-        </span>
+        <!-- Completion Info (DONE only) -->
+        <div v-if="chore.completedAt && chore.completedBy" class="chore-card-completion">
+          <svg
+            class="chore-card-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>
+            Completed by {{ chore.completedBy.username }} on {{ formatCompletedDate }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -213,11 +228,25 @@ const {
 // Touch handlers with mobile check
 function handleTouchStart(event: TouchEvent): void {
   if (!isMobile.value) return
+
+  // Prevent swipe handlers on drag handle
+  const target = event.target as HTMLElement
+  if (target.closest('.chore-card-drag-handle')) {
+    return
+  }
+
   onTouchStart(event)
 }
 
 function handleTouchMove(event: TouchEvent): void {
   if (!isMobile.value) return
+
+  // Prevent swipe handlers on drag handle
+  const target = event.target as HTMLElement
+  if (target.closest('.chore-card-drag-handle')) {
+    return
+  }
+
   onTouchMove(event)
 
   // Update visual offset
@@ -235,6 +264,13 @@ function handleTouchMove(event: TouchEvent): void {
 
 function handleTouchEnd(event: TouchEvent): void {
   if (!isMobile.value) return
+
+  // Prevent swipe handlers on drag handle
+  const target = event.target as HTMLElement
+  if (target.closest('.chore-card-drag-handle')) {
+    return
+  }
+
   onTouchEnd(event)
 
   // Animate back to original position
@@ -361,6 +397,46 @@ function handleDelete(): void {
   transform: scale(0.98);
 }
 
+/* Drag Handle */
+.chore-card-drag-handle {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  touch-action: none;
+  cursor: grab;
+  opacity: 0.6;
+  transition: opacity 150ms ease-in-out;
+}
+
+.chore-card-drag-handle:active {
+  cursor: grabbing;
+  opacity: 1;
+}
+
+.chore-card-drag-icon {
+  width: 20px;
+  height: 20px;
+  color: #94A3B8;
+  pointer-events: none;
+  transition: color 150ms ease-in-out;
+}
+
+.chore-card-drag-handle:active .chore-card-drag-icon {
+  color: #64748B;
+}
+
+/* Card Content Wrapper */
+.chore-card-content {
+  /* Content wrapper - will have padding on mobile to make room for handle */
+}
+
 .chore-card-header {
   display: flex;
   align-items: flex-start;
@@ -441,12 +517,20 @@ function handleDelete(): void {
   .chore-card {
     padding: 0.875rem;
   }
+
+  .chore-card-content {
+    padding-left: 44px; /* Make room for drag handle */
+  }
 }
 
 @media (min-width: 769px) {
-  /* Disable swipe on desktop */
+  /* Disable swipe and drag handle on desktop */
   .chore-card-swipe-bg-right,
   .chore-card-actions {
+    display: none;
+  }
+
+  .chore-card-drag-handle {
     display: none;
   }
 }
