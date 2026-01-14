@@ -15,7 +15,7 @@
         item-key="id"
         tag="div"
         class="kanban-column-cards"
-        group="chores"
+        :group="isMobile ? { name: 'chores', pull: false, put: false } : 'chores'"
         handle=".chore-card-drag-handle"
         :animation="200"
         :delay="0"

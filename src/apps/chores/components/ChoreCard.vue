@@ -306,6 +306,9 @@ function handleDelete(): void {
   position: relative;
   margin-bottom: 0.75rem;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none; /* Prevent default touch behaviors, use custom swipe handlers */
 }
 
 /* Swipe backgrounds */
@@ -519,18 +522,18 @@ function handleDelete(): void {
   }
 
   .chore-card-content {
-    padding-left: 44px; /* Make room for drag handle */
+    padding-left: 0; /* No drag handle on mobile */
+  }
+
+  .chore-card-drag-handle {
+    display: none; /* Hide drag handle on mobile */
   }
 }
 
 @media (min-width: 769px) {
-  /* Disable swipe and drag handle on desktop */
+  /* Disable swipe on desktop */
   .chore-card-swipe-bg-right,
   .chore-card-actions {
-    display: none;
-  }
-
-  .chore-card-drag-handle {
     display: none;
   }
 }

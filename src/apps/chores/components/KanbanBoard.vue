@@ -251,7 +251,7 @@ onBeforeUnmount(() => {
     flex: 0 0 100vw;
     scroll-snap-align: center;
     scroll-snap-stop: always;
-    padding: 1rem;
+    padding: 0.5rem 0.75rem;
     box-sizing: border-box;
   }
 }
