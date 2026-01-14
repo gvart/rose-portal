@@ -160,13 +160,11 @@ async function handleSave(formData: ChoreFormData): Promise<void> {
   }
 }
 
-async function handleDelete(): Promise<void> {
+function handleDelete(): void {
   if (!store.selectedChore) return
 
-  const success = await store.deleteChore(store.selectedChore.id)
-  if (success) {
-    store.closeModal()
-  }
+  choreToDelete.value = store.selectedChore
+  showDeleteDialog.value = true
 }
 
 // Swipe action handlers
@@ -203,7 +201,11 @@ function handleSwipeDelete(chore: Chore): void {
 
 async function handleConfirmDelete(): Promise<void> {
   if (choreToDelete.value) {
-    await store.deleteChore(choreToDelete.value.id)
+    const success = await store.deleteChore(choreToDelete.value.id)
+    if (success && store.showChoreModal) {
+      // Close the modal if we deleted from the card details view
+      store.closeModal()
+    }
     choreToDelete.value = null
   }
 }
