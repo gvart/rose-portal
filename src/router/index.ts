@@ -138,4 +138,20 @@ router.beforeEach((to, from, next) => {
   next('/')
 })
 
+// Handle GitHub Pages SPA redirect
+// When 404.html redirects to /?redirect=/some/path, navigate to that path
+router.isReady().then(() => {
+  const redirect = new URLSearchParams(window.location.search).get('redirect')
+
+  if (redirect) {
+    // Remove the redirect parameter from URL and navigate to the original route
+    const url = new URL(window.location.href)
+    url.searchParams.delete('redirect')
+    window.history.replaceState({}, '', url.pathname + url.search + url.hash)
+
+    // Navigate to the original route
+    router.push(redirect)
+  }
+})
+
 export default router
