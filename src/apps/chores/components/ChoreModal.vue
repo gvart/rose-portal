@@ -22,75 +22,65 @@
 
           <!-- Content -->
           <div class="modal-content">
-            <!-- Title -->
-            <div class="form-group">
-              <label for="chore-title" class="form-label">
-                Title <span class="form-required">*</span>
-              </label>
-              <input
-                id="chore-title"
-                v-model="localFormData.title"
-                type="text"
-                class="form-input"
-                :class="{ 'form-input-error': errors.title }"
-                placeholder="Enter chore title"
-                maxlength="255"
-              />
-              <p v-if="errors.title" class="form-error">{{ errors.title }}</p>
-            </div>
+            <!-- Main Content Area (Left Column on Desktop) -->
+            <div class="content-main">
+              <!-- Title -->
+              <div class="form-group">
+                <input
+                  id="chore-title"
+                  v-model="localFormData.title"
+                  type="text"
+                  class="form-input form-input-title"
+                  :class="{ 'form-input-error': errors.title }"
+                  placeholder="Chore title"
+                  maxlength="255"
+                />
+                <p v-if="errors.title" class="form-error">{{ errors.title }}</p>
+              </div>
 
-            <!-- Description -->
-            <div class="form-group">
-              <label for="chore-description" class="form-label">Description</label>
-              <ChoreDescriptionEditor
-                v-model="localFormData.description"
-                placeholder="Add details about this chore..."
-              />
-            </div>
-
-            <!-- Priority -->
-            <div class="form-group">
-              <label class="form-label">Priority</label>
-              <div class="priority-buttons">
-                <button
-                  v-for="priority in priorities"
-                  :key="priority.value"
-                  type="button"
-                  :class="[
-                    'priority-button',
-                    {
-                      'priority-button-active': localFormData.priority === priority.value
-                    }
-                  ]"
-                  :style="{
-                    '--priority-color': priority.color,
-                    '--priority-bg': priority.bgColor,
-                    '--priority-text': priority.textColor
-                  }"
-                  @click="localFormData.priority = priority.value"
-                >
-                  {{ priority.label }}
-                </button>
+              <!-- Description -->
+              <div class="form-group">
+                <label for="chore-description" class="form-label">Description</label>
+                <ChoreDescriptionEditor
+                  v-model="localFormData.description"
+                  placeholder="Add details about this chore..."
+                />
               </div>
             </div>
 
-            <!-- Due Date -->
-            <div class="form-group">
-              <label for="chore-due-date" class="form-label">Due Date</label>
-              <input
-                id="chore-due-date"
-                v-model="dueDateString"
-                type="date"
-                class="form-input"
+            <!-- Details Sidebar (Right Column on Desktop) -->
+            <div class="content-sidebar">
+              <!-- Priority -->
+              <div class="form-group">
+                <label class="form-label">Priority</label>
+                <PrioritySegmentedControl v-model="localFormData.priority" />
+              </div>
+
+              <!-- Due Date -->
+              <div class="form-group">
+                <label class="form-label">Due Date</label>
+                <VueDatePicker
+                  v-model="localFormData.dueDate"
+                  :enable-time-picker="false"
+                  format="MMM dd, yyyy"
+                  auto-apply
+                  :teleport="true"
+                >
+                  <template #dp-input="{ value }">
+                    <div class="date-picker-input">
+                      {{ value }}
+                    </div>
+                  </template>
+                </VueDatePicker>
+              </div>
+
+              <!-- Assigned To (Edit mode only) -->
+              <AssignmentSelector
+                v-if="mode === 'edit'"
+                v-model="localFormData.assignedToId"
+                :users="availableUsers"
               />
             </div>
-
-            <!-- Assigned To (Edit mode only) -->
-            <AssignmentSelector
-              v-if="mode === 'edit'"
-              v-model="localFormData.assignedToId"
-              :users="availableUsers"
-            />
           </div>
 
           <!-- Actions -->
@@ -128,10 +118,12 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { VueDatePicker } from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import AssignmentSelector from './AssignmentSelector.vue'
 import ChoreDescriptionEditor from './ChoreDescriptionEditor.vue'
+import PrioritySegmentedControl from './PrioritySegmentedControl.vue'
 import type { ChoreFormData, ModalMode, User, Chore } from '../types/chores'
-import { PRIORITY_CONFIGS } from '../types/chores'
 
 interface Props {
   modelValue: boolean
@@ -153,18 +145,6 @@ const emit = defineEmits<{
 
 const localFormData = ref<ChoreFormData>({ ...props.formData })
 const errors = ref<Record<string, string>>({})
-
-const priorities = computed(() => Object.values(PRIORITY_CONFIGS))
-
-const dueDateString = computed({
-  get: () => {
-    const date = localFormData.value.dueDate
-    return date.toISOString().split('T')[0]
-  },
-  set: (value: string) => {
-    localFormData.value.dueDate = new Date(value)
-  }
-})
 
 const isValid = computed(() => {
   return localFormData.value.title.trim().length > 0
@@ -230,7 +210,7 @@ function close(): void {
   background: white;
   border-radius: 0.75rem;
   width: 100%;
-  max-width: 32rem;
+  max-width: 56rem;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -274,19 +254,44 @@ function close(): void {
 .modal-content {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 2rem;
+  display: flex;
+  gap: 2rem;
+}
+
+.content-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.content-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
+}
+
+.content-main .form-group:last-child,
+.content-sidebar .form-group:last-child {
+  margin-bottom: 0;
 }
 
 .form-label {
   display: block;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: #374151;
+  color: #6b7280;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
 .form-required {
@@ -302,6 +307,25 @@ function close(): void {
   font-size: 0.875rem;
   color: #111827;
   transition: all 0.2s ease;
+}
+
+.form-input-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 0.75rem 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+}
+
+.form-input-title:hover {
+  border-bottom-color: #e5e7eb;
+}
+
+.form-input-title:focus {
+  border-bottom-color: #EC4899;
+  box-shadow: none;
 }
 
 .form-input:focus {
@@ -320,32 +344,23 @@ function close(): void {
   color: #ef4444;
 }
 
-.priority-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.priority-button {
-  flex: 1;
-  padding: 0.75rem;
+.date-picker-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
   background: white;
-  border: 2px solid #d1d5db;
+  border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #6b7280;
+  color: #111827;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
-.priority-button:hover {
+.date-picker-input:hover {
   border-color: #9ca3af;
-}
-
-.priority-button-active {
-  background: var(--priority-bg);
-  border-color: var(--priority-color);
-  color: var(--priority-text);
 }
 
 .modal-actions {
@@ -420,22 +435,101 @@ function close(): void {
   transform: scale(0.95);
 }
 
+/* Desktop sidebar styling */
+@media (min-width: 769px) {
+  .content-sidebar {
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .content-sidebar .form-group {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .content-sidebar .form-group:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+/* Mobile responsive */
 @media (max-width: 768px) {
   .modal-container {
     max-height: 100vh;
     border-radius: 0;
   }
 
-  .priority-buttons {
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
     flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .content-main,
+  .content-sidebar {
+    width: 100%;
+  }
+
+  .content-sidebar {
+    gap: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .content-main .form-group {
+    gap: 1rem;
+  }
+
+  .content-sidebar .form-group {
+    gap: 1rem;
+  }
+
+  .form-label {
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .form-input {
+    font-size: 16px;
+    padding: 0.75rem;
+  }
+
+  .form-input-title {
+    font-size: 1.125rem;
   }
 
   .modal-actions {
-    flex-direction: column-reverse;
+    padding: 1rem;
+    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
   }
 
-  .modal-button {
-    width: 100%;
+  .modal-button-primary {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .modal-button-secondary {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .modal-button-danger {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 }
 </style>

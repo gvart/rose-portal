@@ -9,6 +9,7 @@
     <TimerCompletionModal />
     <ScreensaverOverlay />
     <PwaMigrationModal :show="showPwaMigration" @close="showPwaMigration = false" />
+    <ToastContainer />
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'slide'" mode="out-in">
         <component :is="Component" :key="route.path" />
@@ -28,6 +29,7 @@ import TimerFloatingPill from '@/components/timer/TimerFloatingPill.vue'
 import TimerCompletionModal from '@/components/timer/TimerCompletionModal.vue'
 import ScreensaverOverlay from '@/components/screensaver/ScreensaverOverlay.vue'
 import PwaMigrationModal from '@/components/pwa/PwaMigrationModal.vue'
+import ToastContainer from '@/components/common/ToastContainer.vue'
 import { useTimerStore } from '@/apps/timer/stores/timerStore'
 import { useTimerEngine } from '@/apps/timer/composables/useTimerEngine'
 import { useAuthStore } from '@/stores/authStore'

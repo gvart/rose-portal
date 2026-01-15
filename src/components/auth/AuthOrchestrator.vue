@@ -4,7 +4,6 @@
     <AuthModal
       v-model:show="showInitialAuth"
       :mode="initialAuthMode"
-      :is-required="!hasUsers && isConfigured && hasProjectKey && !isInstallPage"
       @success="handleAuthSuccess"
     />
 

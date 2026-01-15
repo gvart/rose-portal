@@ -1,35 +1,41 @@
 <template>
   <div
     class="note-card"
-    :class="{ 'note-card--selected': selected }"
-    @click="$emit('click')"
+    :class="{ 'note-card--selected': selected, 'note-card--long-press': isLongPressing }"
+    @click="handleClick"
+    @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleTouchEnd"
+    @touchcancel="handleTouchCancel"
   >
     <div class="note-card__content">
       <div class="note-card__header">
         <h3 class="note-card__title">{{ note.name || 'Untitled' }}</h3>
-        <button class="delete-btn" @click.stop="handleDelete" title="Delete note">
+        <button
+          class="menu-btn"
+          @click.stop="handleMenuClick"
+          title="Note options"
+          aria-label="Note options"
+        >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="3"/>
+            <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
           </svg>
         </button>
       </div>
 
+      <p v-if="notePreview" class="note-card__preview">
+        {{ notePreview }}
+      </p>
+
       <div class="note-card__footer">
         <div v-if="note.tags.length > 0" class="note-card__tags">
-          <TagChip v-for="tag in note.tags" :key="tag.id" :tag="tag" />
+          <TagChip v-for="tag in note.tags" :key="tag.id" :tag="tag" :filled="true" />
         </div>
         <span class="note-card__date">{{ formattedDate }}</span>
       </div>
     </div>
-
-    <ConfirmDialog
-      v-model="showDeleteConfirm"
-      title="Delete Note?"
-      message="This note will be permanently deleted. This action cannot be undone."
-      confirm-text="Delete"
-      cancel-text="Cancel"
-      @confirm="confirmDelete"
-    />
   </div>
 </template>
 
@@ -37,7 +43,7 @@
 import { ref, computed } from 'vue'
 import type { Note } from '../types/notes'
 import TagChip from './TagChip.vue'
-import ConfirmDialog from './ConfirmDialog.vue'
+import { useHapticFeedback } from '@/composables/useHapticFeedback'
 
 const props = defineProps<{
   note: Note
@@ -46,18 +52,92 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   click: []
-  delete: [id: number]
+  'long-press': []
+  menu: []
 }>()
 
-const showDeleteConfirm = ref(false)
+const { vibrate } = useHapticFeedback()
 
-function handleDelete() {
-  showDeleteConfirm.value = true
+// Long press detection
+const LONG_PRESS_DURATION = 500 // ms
+const MOVEMENT_THRESHOLD = 10 // px
+
+const isLongPressing = ref(false)
+let longPressTimer: NodeJS.Timeout | null = null
+let touchStartPos = { x: 0, y: 0 }
+let longPressTriggered = false
+
+function handleTouchStart(event: TouchEvent) {
+  if (event.touches.length !== 1) return
+
+  const touch = event.touches[0]
+  touchStartPos = { x: touch.clientX, y: touch.clientY }
+  longPressTriggered = false
+  isLongPressing.value = true
+
+  longPressTimer = setTimeout(() => {
+    if (isLongPressing.value) {
+      longPressTriggered = true
+      vibrate('medium')
+      emit('long-press')
+    }
+  }, LONG_PRESS_DURATION)
 }
 
-function confirmDelete() {
-  emit('delete', props.note.id)
+function handleTouchMove(event: TouchEvent) {
+  if (!longPressTimer) return
+  if (event.touches.length !== 1) return
+
+  const touch = event.touches[0]
+  const deltaX = Math.abs(touch.clientX - touchStartPos.x)
+  const deltaY = Math.abs(touch.clientY - touchStartPos.y)
+
+  // Cancel long press if finger moved too much
+  if (deltaX > MOVEMENT_THRESHOLD || deltaY > MOVEMENT_THRESHOLD) {
+    cancelLongPress()
+  }
 }
+
+function handleTouchEnd(event: TouchEvent) {
+  cancelLongPress()
+
+  // If long press was triggered, don't emit click
+  if (longPressTriggered) {
+    event.preventDefault()
+  }
+}
+
+function handleTouchCancel() {
+  cancelLongPress()
+}
+
+function cancelLongPress() {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer)
+    longPressTimer = null
+  }
+  isLongPressing.value = false
+}
+
+function handleClick() {
+  if (!longPressTriggered) {
+    emit('click')
+  }
+}
+
+function handleMenuClick() {
+  emit('menu')
+}
+
+// Content preview - extract first ~80 chars without markdown
+const notePreview = computed(() => {
+  const content = props.note.content.slice(0, 100)
+  const plainText = content
+    .replace(/[#*_`~\[\]()]/g, '') // Remove markdown
+    .trim()
+  const preview = plainText.slice(0, 80)
+  return preview.length > 0 ? (plainText.length > 80 ? preview + '...' : preview) : ''
+})
 
 const formattedDate = computed(() => {
   const date = props.note.updatedAt
@@ -87,7 +167,7 @@ const formattedDate = computed(() => {
   padding: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .note-card:hover {
@@ -97,6 +177,11 @@ const formattedDate = computed(() => {
 .note-card--selected {
   background-color: rgba(139, 92, 246, 0.1);
   border-left: 3px solid #8b5cf6;
+}
+
+.note-card--long-press {
+  transform: scale(0.98);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .note-card__content {
@@ -123,27 +208,43 @@ const formattedDate = computed(() => {
   white-space: nowrap;
 }
 
-.delete-btn {
+.menu-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
   background: transparent;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  color: #ef4444;
+  color: #6b7280;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
-.delete-btn:hover,
-.delete-btn:active {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: #dc2626;
+.menu-btn:hover,
+.menu-btn:active {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #4b5563;
   transform: scale(1.05);
+}
+
+.menu-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.note-card__preview {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 4px 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .note-card__footer {
@@ -165,5 +266,19 @@ const formattedDate = computed(() => {
   color: #9ca3af;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+/* Remove default focus outline */
+.note-card:focus,
+.menu-btn:focus {
+  outline: none;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .note-card,
+  .menu-btn {
+    transition: none !important;
+  }
 }
 </style>

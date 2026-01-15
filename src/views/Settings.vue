@@ -144,29 +144,23 @@
             v-haptic
             @click="handleEnableNotifications"
             class="btn-primary"
-            :disabled="isNotificationsDenied"
+            :disabled="isNotificationsDenied || notificationLoading"
           >
-            Enable
+            {{ notificationLoading ? 'Enabling...' : 'Enable' }}
           </button>
           <button
             v-else-if="isNotificationsGranted"
             v-haptic
             @click="handleDisableNotifications"
             class="btn-secondary"
+            :disabled="notificationLoading"
           >
-            Disable
+            {{ notificationLoading ? 'Disabling...' : 'Disable' }}
           </button>
         </div>
 
-        <div v-if="isNotificationsGranted" class="setting-item">
-          <button
-            v-haptic
-            @click="handleTestNotification"
-            class="btn-test w-full"
-          >
-            Send Test Notification
-          </button>
-        </div>
+        <!-- Notification Preferences (only shown when notifications are enabled) -->
+        <NotificationPreferences v-if="isNotificationsGranted" />
 
         <div class="setting-item">
           <div class="setting-info">
@@ -299,6 +293,7 @@
 import { ref, computed, onMounted } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ConfigurationEditModal from '@/components/common/ConfigurationEditModal.vue'
+import NotificationPreferences from '@/components/notifications/NotificationPreferences.vue'
 import Qrcode from 'qrcode-vue3'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useConfiguration } from '@/composables/useConfiguration'
@@ -308,10 +303,12 @@ import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import { useDarkMode } from '@/composables/useDarkMode'
 import { usePwaStorage } from '@/composables/usePwaStorage'
 import { projectService } from '@/services/projectService'
+import { apiClients } from '@/services/apiClient'
+import { useToast } from '@/composables/useToast'
 import type { InviteCodeResponse } from '@/types/project'
-import axios from 'axios'
 
 const settingsStore = useSettingsStore()
+const toast = useToast()
 
 // Dark mode / Theme
 const { currentTheme, setTheme } = useDarkMode()
@@ -350,11 +347,12 @@ async function handleProjectKeySave(newKey: string) {
     if (exists) {
       setProjectKey(newKey)
       showProjectKeyEdit.value = false
+      toast.success('Project key updated successfully')
     } else {
-      alert('Invalid project key. Please check and try again.')
+      toast.error('Invalid project key. Please check and try again.')
     }
   } catch (error) {
-    alert('Failed to validate project key. Please try again.')
+    toast.error('Failed to validate project key. Please try again.')
     console.error('Project key validation error:', error)
   }
 }
@@ -435,47 +433,114 @@ const notificationStatus = computed(() => {
   return 'Not enabled'
 })
 
+const notificationLoading = ref(false)
+
 const handleInstall = async () => {
   await install()
 }
 
 const handleEnableNotifications = async () => {
-  const granted = await requestPermission()
+  notificationLoading.value = true
 
-  if (granted) {
-    try {
-      // Get VAPID public key from backend
-      const { data } = await axios.get('/api/v1/notifications/vapid-public-key')
+  try {
+    // Step 1: Request browser permission
+    const granted = await requestPermission()
 
-      if (data.publicKey) {
-        const subscription = await subscribe(data.publicKey)
-
-        if (subscription) {
-          // Send subscription to backend
-          await axios.post('/api/v1/notifications/subscribe', subscription)
-          console.log('✅ Subscribed to push notifications')
-        }
-      } else {
-        console.warn('⚠️ VAPID public key not configured on server')
-      }
-    } catch (error) {
-      console.error('❌ Failed to subscribe:', error)
+    if (!granted) {
+      toast.warning('Notification permission denied. Please enable notifications in your browser settings.')
+      notificationLoading.value = false
+      return
     }
+
+    // Step 2: Get VAPID public key from backend
+    const { data } = await apiClients.notifications.get('/vapid-public-key')
+
+    if (!data.publicKey) {
+      console.warn('⚠️ VAPID public key not configured on server')
+      toast.error('Push notifications are not configured on the server. Please contact support.')
+      notificationLoading.value = false
+      return
+    }
+
+    // Step 3: Subscribe to push notifications
+    const subscription = await subscribe(data.publicKey)
+
+    if (!subscription) {
+      throw new Error('Failed to create push subscription')
+    }
+
+    // Step 4: Send subscription to backend
+    await apiClients.notifications.post('/subscribe', subscription)
+
+    console.log('✅ Subscribed to push notifications successfully')
+
+    toast.success('Notifications enabled! You will now receive push notifications.')
+  } catch (error) {
+    console.error('❌ Failed to enable notifications:', error)
+
+    // User-friendly error message
+    let errorMessage = 'Failed to enable notifications. '
+    if (error.response) {
+      if (error.response.status === 401) {
+        errorMessage += 'Please log in and try again.'
+      } else if (error.response.status === 500) {
+        errorMessage += 'Server error. Please try again later.'
+      } else {
+        errorMessage += error.response.data?.message || 'Please try again.'
+      }
+    } else if (error.message) {
+      errorMessage += error.message
+    } else {
+      errorMessage += 'Please try again.'
+    }
+
+    toast.error(errorMessage)
+  } finally {
+    notificationLoading.value = false
   }
 }
 
 const handleDisableNotifications = async () => {
-  await unsubscribe()
-}
+  notificationLoading.value = true
 
-const handleTestNotification = async () => {
-  await showNotification('ROSE Smart Hub', {
-    body: 'Push notifications are working! 🎉',
-    icon: '/icons/pwa/icon-192x192.png',
-    badge: '/icons/pwa/icon-72x72.png',
-    tag: 'test-notification',
-    requireInteraction: false
-  })
+  try {
+    // Step 1: Get current subscription before unsubscribing
+    const registration = await navigator.serviceWorker.ready
+    const subscription = await registration.pushManager.getSubscription()
+
+    if (subscription) {
+      // Convert subscription to JSON format for backend
+      const subscriptionJson = subscription.toJSON()
+
+      // Step 2: Unsubscribe from backend (POST with subscription data)
+      await apiClients.notifications.post('/unsubscribe', {
+        endpoint: subscriptionJson.endpoint,
+        keys: {
+          p256dh: subscriptionJson.keys.p256dh,
+          auth: subscriptionJson.keys.auth
+        }
+      })
+    }
+
+    // Step 3: Unsubscribe locally
+    await unsubscribe()
+
+    console.log('✅ Unsubscribed from push notifications')
+    toast.success('Notifications disabled. You will no longer receive push notifications.')
+  } catch (error) {
+    console.error('❌ Failed to disable notifications:', error)
+
+    // Even if backend call fails, try to unsubscribe locally
+    try {
+      await unsubscribe()
+    } catch (localError) {
+      console.error('Failed to unsubscribe locally:', localError)
+    }
+
+    toast.error('Failed to fully disable notifications. Please try again.')
+  } finally {
+    notificationLoading.value = false
+  }
 }
 
 // PWA Data Export
@@ -486,12 +551,13 @@ const handleExportPwaData = async () => {
   try {
     await pwaStorage.copyMigrationUrl()
     pwaDataCopied.value = true
+    toast.success('Migration link copied to clipboard')
     setTimeout(() => {
       pwaDataCopied.value = false
     }, 5000)
   } catch (error) {
     console.error('Failed to export PWA data:', error)
-    alert('Failed to copy link. Please try again.')
+    toast.error('Failed to copy link. Please try again.')
   }
 }
 </script>

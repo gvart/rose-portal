@@ -1,7 +1,12 @@
 <template>
   <div v-if="note" class="mobile-note-view">
     <div class="mobile-note-view__header">
-      <button class="back-btn" @click="$emit('back')">
+      <button
+        class="back-btn"
+        aria-label="Back to notes list"
+        title="Back to notes list (Esc)"
+        @click="$emit('back')"
+      >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
@@ -56,14 +61,14 @@
 </template>
 
 <script setup lang="ts">
-import { watch, onUnmounted, onBeforeUnmount } from 'vue'
+import { watch, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
 import { EditorContent } from '@tiptap/vue-3'
-import { useTipTapEditor } from '../composables/useTipTapEditor'
-import { markdownToTipTap, tipTapToMarkdown } from '../utils/markdownConverter'
+import { useTipTapEditor } from '@/components/editor/composables/useTipTapEditor'
+import { markdownToTipTap, tipTapToMarkdown } from '@/components/editor/utils/markdownConverter'
 import { useNotesStore } from '../stores/notesStore'
 import { useTagsStore } from '../stores/tagsStore'
 import { useAutoSave } from '../composables/useAutoSave'
-import EditorToolbar from './EditorToolbar.vue'
+import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import TagSelector from './TagSelector.vue'
 import type { Note } from '../types/notes'
 
@@ -81,6 +86,21 @@ const emit = defineEmits<{
 
 const notesStore = useNotesStore()
 const tagsStore = useTagsStore()
+
+// Keyboard navigation: Escape key goes back
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    emit('back')
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
 
 const { editor } = useTipTapEditor({
   initialMarkdown: props.content,
@@ -307,5 +327,87 @@ onUnmounted(() => {
   font-size: 18px;
   font-weight: 600;
   margin: 14px 0 8px 0;
+}
+
+.editor-content :deep(.tiptap-editor ul),
+.editor-content :deep(.tiptap-editor ol) {
+  padding-left: 24px;
+  margin: 0 0 12px 0;
+}
+
+.editor-content :deep(.tiptap-editor ul) {
+  list-style-type: disc;
+}
+
+.editor-content :deep(.tiptap-editor ol) {
+  list-style-type: decimal;
+}
+
+.editor-content :deep(.tiptap-editor li) {
+  margin-bottom: 4px;
+  display: list-item;
+}
+
+.editor-content :deep(.tiptap-editor blockquote) {
+  border-left: 3px solid #8b5cf6;
+  padding-left: 16px;
+  margin: 12px 0;
+  color: #6b7280;
+}
+
+.editor-content :deep(.tiptap-editor code) {
+  background-color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.editor-content :deep(.tiptap-editor pre) {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.editor-content :deep(.tiptap-editor pre code) {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.editor-content :deep(.tiptap-editor .note-link) {
+  color: #8b5cf6;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.editor-content :deep(.tiptap-editor .task-item) {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+}
+
+.editor-content :deep(.tiptap-editor p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+  float: left;
+  color: #d1d5db;
+  pointer-events: none;
+  height: 0;
+}
+
+/* Strikethrough */
+.editor-content :deep(.tiptap-editor s) {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+/* Horizontal Rule */
+.editor-content :deep(.tiptap-editor hr) {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 20px 0;
 }
 </style>

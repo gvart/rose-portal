@@ -214,6 +214,8 @@ function handleClick(): void {
   margin-bottom: 0.75rem;
   user-select: none;
   -webkit-user-select: none;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .chore-card {
@@ -223,8 +225,11 @@ function handleClick(): void {
   border-radius: 0.5rem;
   padding: 1rem;
   position: relative;
-  transition: transform 200ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 200ms;
-  cursor: pointer;
+  transition: box-shadow 150ms ease;
+  will-change: transform;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .chore-card:active {
@@ -312,9 +317,29 @@ function handleClick(): void {
   border-top: 1px solid #e5e7eb;
 }
 
+/* Desktop - show drag cursor */
+@media (min-width: 769px) {
+  .chore-card-wrapper:hover .chore-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .chore-card {
+    cursor: grab;
+  }
+
+  .chore-card:active {
+    cursor: grabbing;
+  }
+}
+
 @media (max-width: 768px) {
+  .chore-card-wrapper {
+    cursor: pointer;
+  }
+
   .chore-card {
     padding: 0.875rem;
+    cursor: pointer;
   }
 }
 </style>

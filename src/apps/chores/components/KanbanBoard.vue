@@ -107,7 +107,7 @@ function handleLoadMore(status: ChoreStatusType): void {
 
 const boardContainer = ref<HTMLElement | null>(null)
 const activeColumnIndex = ref(0)
-const isMobile = computed(() => window.innerWidth < 768)
+const isMobile = ref(window.innerWidth < 768)
 
 const columns = [
   { title: 'To Do', status: ChoreStatus.TODO },
@@ -145,6 +145,9 @@ let resizeTimeout: NodeJS.Timeout | null = null
 function handleResize(): void {
   if (resizeTimeout) clearTimeout(resizeTimeout)
   resizeTimeout = setTimeout(() => {
+    // Update mobile state
+    isMobile.value = window.innerWidth < 768
+
     // Force scroll position update
     if (isMobile.value) {
       handleScroll()
@@ -154,6 +157,10 @@ function handleResize(): void {
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
+  // Update initial scroll position
+  if (isMobile.value) {
+    handleScroll()
+  }
 })
 
 onBeforeUnmount(() => {
@@ -191,8 +198,9 @@ onBeforeUnmount(() => {
   background: var(--color-bg-primary, white);
   border: var(--depth-1-border, 1px solid #e2e8f0);
   border-radius: 999px;
-  z-index: 30;
+  z-index: 100;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
 }
 
 .indicator-dot {

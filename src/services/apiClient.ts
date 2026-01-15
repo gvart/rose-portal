@@ -240,6 +240,9 @@ export const apiClients = {
   /** Chores API - /api/v1/chores */
   chores: createApiClient({ basePath: '/api/v1/chores' }),
 
+  /** Notifications API - /api/v1/notifications */
+  notifications: createApiClient({ basePath: '/api/v1/notifications' }),
+
   /** System Monitor API - /actuator */
   actuator: createApiClient({
     basePath: '/actuator',

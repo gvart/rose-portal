@@ -32,8 +32,21 @@
                     class="color-option"
                     :class="{ 'color-option--selected': newTagColor === color }"
                     :style="{ backgroundColor: color }"
+                    :aria-label="`Select ${color} color`"
                     @click="newTagColor = color"
-                  ></button>
+                  >
+                    <svg
+                      v-if="newTagColor === color"
+                      class="color-option__check"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="white"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
                 </div>
                 <button class="create-tag-btn" @click="handleCreateTag">Create</button>
               </div>
@@ -252,21 +265,43 @@ watch(
 }
 
 .color-option {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  position: relative;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 8px;
   border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .color-option:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .color-option--selected {
-  border-color: #374151;
-  transform: scale(1.15);
+  border: 3px solid #374151;
+  box-shadow: 0 0 0 2px white;
+  transform: scale(1.05);
+}
+
+.color-option__check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.color-option:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.color-option:focus {
+  outline: none;
 }
 
 .create-tag-btn {
@@ -375,5 +410,62 @@ watch(
 .modal-enter-from .modal,
 .modal-leave-to .modal {
   transform: scale(0.95);
+}
+
+/* Mobile: Bottom sheet */
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh;
+  }
+
+  .modal-enter-from .modal,
+  .modal-leave-to .modal {
+    transform: translateY(100%);
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+}
+
+/* Desktop: Centered modal (already the default) */
+@media (min-width: 769px) {
+  .modal-overlay {
+    align-items: center;
+  }
+
+  .modal {
+    border-radius: 12px;
+  }
+
+  .modal-enter-from .modal,
+  .modal-leave-to .modal {
+    transform: scale(0.95);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .color-option,
+  .modal-close-btn,
+  .create-tag-btn,
+  .tag-name-input,
+  .tag-item,
+  .tag-item__name,
+  .tag-item__delete {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 </style>

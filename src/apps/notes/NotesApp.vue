@@ -14,6 +14,7 @@
             @create="handleCreateNote"
             @load-more="notesStore.loadMore()"
             @delete="handleDeleteNote"
+            @refresh="handleRefreshNotes"
           />
         </aside>
 
@@ -55,6 +56,7 @@
           @create="handleCreateNote"
           @load-more="notesStore.loadMore()"
           @delete="handleDeleteNote"
+          @refresh="handleRefreshNotes"
         />
 
         <!-- Show detail if note selected -->
@@ -130,6 +132,10 @@ async function handleSaveNote() {
 
 async function handleDeleteNote(noteId: number) {
   await notesStore.deleteNote(noteId)
+}
+
+async function handleRefreshNotes() {
+  await notesStore.fetchNotes(true) // true = reset pagination
 }
 
 onMounted(() => {

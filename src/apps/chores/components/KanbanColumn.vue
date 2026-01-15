@@ -16,20 +16,19 @@
         tag="div"
         class="kanban-column-cards"
         :group="isDragEnabled ? 'chores' : { name: 'chores', pull: false, put: false }"
-        handle=".chore-card-drag-handle"
-        :animation="200"
-        :delay="0"
-        :delay-on-touch-only="true"
-        :force-fallback="true"
-        :fallback-tolerance="3"
-        :scroll-sensitivity="60"
-        :scroll-speed="10"
+        :animation="150"
+        :delay="50"
+        :delay-on-touch-only="false"
+        :force-fallback="false"
+        :scroll-sensitivity="100"
+        :scroll-speed="15"
         ghost-class="chore-card-ghost"
         drag-class="chore-card-dragging"
         chosen-class="chore-card-chosen"
         @start="handleDragStart"
         @end="handleDragEnd"
         @change="handleDragChange"
+        @move="handleDragMove"
       >
         <template #item="{ element }">
           <ChoreCard
@@ -46,38 +45,65 @@
         <ChoreCardSkeleton v-for="i in 3" :key="i" />
       </div>
 
-      <!-- Empty State -->
-      <div v-else class="kanban-column-empty">
-        <svg
-          class="kanban-column-empty-icon"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      <!-- Empty State with Draggable Drop Zone -->
+      <div v-else class="kanban-column-empty-wrapper">
+        <draggable
+          v-model="choresList"
+          item-key="id"
+          tag="div"
+          class="kanban-column-empty-draggable"
+          :group="isDragEnabled ? 'chores' : { name: 'chores', pull: false, put: false }"
+          :animation="150"
+          ghost-class="chore-card-ghost"
+          drag-class="chore-card-dragging"
+          chosen-class="chore-card-chosen"
+          @start="handleDragStart"
+          @end="handleDragEnd"
+          @change="handleDragChange"
+          @move="handleDragMove"
         >
-          <path
-            v-if="status === ChoreStatus.TODO"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-          />
-          <path
-            v-else-if="status === ChoreStatus.IN_PROGRESS"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-          <path
-            v-else
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <p class="kanban-column-empty-title">{{ emptyStateTitle }}</p>
-        <p class="kanban-column-empty-subtitle">{{ emptyStateSubtitle }}</p>
+          <template #item="{ element }">
+            <ChoreCard
+              :chore="element"
+              :can-edit="canEdit(element)"
+              @click="$emit('select-chore', element)"
+              @long-press="$emit('long-press', element)"
+            />
+          </template>
+        </draggable>
+
+        <div class="kanban-column-empty">
+          <svg
+            class="kanban-column-empty-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              v-if="status === ChoreStatus.TODO"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            />
+            <path
+              v-else-if="status === ChoreStatus.IN_PROGRESS"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+            <path
+              v-else
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="kanban-column-empty-title">{{ emptyStateTitle }}</p>
+          <p class="kanban-column-empty-subtitle">{{ emptyStateSubtitle }}</p>
+        </div>
       </div>
 
       <!-- Load More Button -->
@@ -136,9 +162,9 @@ const isMobile = computed(() => {
   return window.innerWidth < 768
 })
 
-// Enable drag-and-drop only on desktop web (not PWA, not mobile)
+// Enable drag-and-drop on desktop (both web and PWA)
 const isDragEnabled = computed(() => {
-  return isDesktop.value && !isInstalled.value
+  return isDesktop.value
 })
 
 // Create a local copy of chores for v-model binding
@@ -189,10 +215,23 @@ function handleDragStart(): void {
 
 function handleDragEnd(): void {
   isDragging.value = false
+  isDragOver.value = false
   vibrate('light')
 }
 
+function handleDragMove(event: any): void {
+  // Show visual feedback when dragging over this column
+  if (event.to !== event.from) {
+    isDragOver.value = true
+  } else {
+    isDragOver.value = false
+  }
+  return true // Allow the move
+}
+
 function handleDragChange(event: any): void {
+  isDragOver.value = false
+
   // Handle when a card is added to this column
   if (event.added) {
     const choreId = event.added.element.id
@@ -206,6 +245,7 @@ function handleDragChange(event: any): void {
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-width: 100%;
   background: v-bind('columnBg || "#f9fafb"');
   border-radius: 0.5rem;
   overflow: hidden;
@@ -247,6 +287,7 @@ function handleDragChange(event: any): void {
   flex: 1;
   padding: 1rem;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 200px;
   transition: background-color 0.2s ease;
 }
@@ -258,6 +299,28 @@ function handleDragChange(event: any): void {
 .kanban-column-cards {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.kanban-column-empty-wrapper {
+  position: relative;
+  min-height: 300px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.kanban-column-empty-draggable {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: hidden;
 }
 
 .kanban-column-empty {
@@ -268,6 +331,10 @@ function handleDragChange(event: any): void {
   padding: var(--space-8, 2rem) var(--space-4, 1rem);
   text-align: center;
   gap: var(--space-3, 12px);
+  flex: 1;
+  pointer-events: none;
+  position: relative;
+  z-index: 0;
 }
 
 .kanban-column-empty-icon {
@@ -345,60 +412,54 @@ function handleDragChange(event: any): void {
 }
 
 /* Drag & Drop Visual Feedback */
-/* Chosen state - long-press detected */
+/* Chosen state - mouse down / about to drag */
 .kanban-column :deep(.chore-card-chosen) {
-  transform: scale(1.02);
   border: 2px solid var(--color-accent-primary, #3B82F6) !important;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  transition: transform 150ms cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Dragging state - card being dragged */
 .kanban-column :deep(.chore-card-dragging) {
-  transform: scale(1.05) rotate(2deg);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  opacity: 0.95;
-  cursor: grabbing;
-  z-index: 1000;
+  transform: rotate(3deg);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0.9;
+  cursor: grabbing !important;
+  z-index: 9999;
 }
 
 /* Ghost - placeholder in original position */
 .kanban-column :deep(.chore-card-ghost) {
-  opacity: 0.4;
-  border: 2px dashed var(--color-border-secondary, #CBD5E1);
-  background: var(--color-bg-tertiary, #F1F5F9);
-}
-
-/* Drag Handle Animation */
-.kanban-column :deep(.chore-card-drag-handle) {
-  transition: transform 150ms ease-in-out;
-}
-
-/* Scale handle when drag is chosen */
-.kanban-column :deep(.chore-card-chosen .chore-card-drag-handle) {
-  transform: translateY(-50%) scale(1.1);
-}
-
-/* Visual feedback during drag */
-.kanban-column :deep(.chore-card-dragging .chore-card-drag-handle) {
-  transform: translateY(-50%) scale(1.1);
-  opacity: 1;
+  opacity: 0.3;
+  border: 2px dashed var(--color-border-secondary, #CBD5E1) !important;
+  background: var(--color-bg-tertiary, #F1F5F9) !important;
 }
 
 /* Enhanced drag-over state for columns */
 .kanban-column-dragover {
-  background: rgba(219, 234, 254, 0.5);
-  border: 2px dashed var(--color-accent-primary, #3B82F6);
-  animation: drop-zone-pulse 1s ease-in-out infinite;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.kanban-column-dragover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px dashed #3B82F6;
+  border-radius: 0.5rem;
+  pointer-events: none;
+  animation: drop-zone-pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes drop-zone-pulse {
   0%,
   100% {
-    opacity: 0.5;
+    opacity: 0.6;
+    transform: scale(1);
   }
   50% {
     opacity: 1;
+    transform: scale(1.02);
   }
 }
 </style>

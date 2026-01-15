@@ -97,13 +97,13 @@ const isValid = computed(() => {
 })
 
 onMounted(async () => {
-  // Only show in production mode if not configured
-  // In development, Vite proxy handles API calls
+  // NEVER show in production mode (backend is hardcoded)
+  // Only show in development mode if not configured
   // Don't show on /install page as it handles configuration from query params
   // Don't show if action=install query param is present (during redirect)
   const isInstallFlow = route.path === '/install' || route.query.action === 'install'
 
-  if (!isConfigured.value && import.meta.env.PROD && !isInstallFlow) {
+  if (!import.meta.env.PROD && !isConfigured.value && !isInstallFlow) {
     shouldShow.value = true
     // Auto-focus the first input when modal opens
     await nextTick()

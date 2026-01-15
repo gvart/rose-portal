@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show" class="modal-overlay" @click.self="handleClose">
+      <div v-if="show" class="modal-overlay">
         <div class="modal-container">
           <!-- Modal Header -->
           <div class="modal-header">
@@ -16,17 +16,7 @@
               </svg>
             </button>
             <h2 class="modal-title">{{ modalTitle }}</h2>
-            <button
-              v-if="!isRequired"
-              v-haptic
-              class="close-button"
-              @click="handleClose"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <div v-else class="header-spacer"></div>
+            <div class="header-spacer"></div>
           </div>
 
           <!-- Modal Content -->
@@ -108,14 +98,12 @@ type AuthStep = 'username' | 'pin' | 'loading'
 interface Props {
   show: boolean
   mode: AuthMode
-  isRequired?: boolean
   prefilledUsername?: string
   userId?: string // For quick-login mode
   showBackToSelection?: boolean // Show back button to return to user selection
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isRequired: false,
   prefilledUsername: '',
   userId: '',
   showBackToSelection: false
@@ -124,7 +112,6 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:show': [value: boolean]
   success: []
-  close: []
   'back-to-selection': []
 }>()
 
@@ -229,13 +216,6 @@ async function handlePinComplete(completedPin: string): Promise<void> {
     pinError.value = error instanceof Error ? error.message : 'Authentication failed'
   }
 }
-
-function handleClose(): void {
-  if (!props.isRequired) {
-    emit('update:show', false)
-    emit('close')
-  }
-}
 </script>
 
 <style scoped>
@@ -276,8 +256,7 @@ function handleClose(): void {
   z-index: 1;
 }
 
-.back-button,
-.close-button {
+.back-button {
   padding: var(--space-2);
   border-radius: var(--radius-sm);
   background: transparent;
@@ -288,8 +267,7 @@ function handleClose(): void {
   flex-shrink: 0;
 }
 
-.back-button:active,
-.close-button:active {
+.back-button:active {
   background: var(--color-bg-tertiary);
 }
 

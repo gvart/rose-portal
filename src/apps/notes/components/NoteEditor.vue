@@ -51,12 +51,12 @@
 import { watch, onUnmounted, onBeforeUnmount } from 'vue'
 import { EditorContent } from '@tiptap/vue-3'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
-import { useTipTapEditor } from '../composables/useTipTapEditor'
-import { markdownToTipTap, tipTapToMarkdown } from '../utils/markdownConverter'
+import { useTipTapEditor } from '@/components/editor/composables/useTipTapEditor'
+import { markdownToTipTap, tipTapToMarkdown } from '@/components/editor/utils/markdownConverter'
 import { useNotesStore } from '../stores/notesStore'
 import { useTagsStore } from '../stores/tagsStore'
 import { useAutoSave } from '../composables/useAutoSave'
-import EditorToolbar from './EditorToolbar.vue'
+import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import TagSelector from './TagSelector.vue'
 import type { Note } from '../types/notes'
 
@@ -268,8 +268,17 @@ onUnmounted(() => {
   margin: 0 0 16px 0;
 }
 
+.note-editor__content :deep(.tiptap-editor ul) {
+  list-style-type: disc;
+}
+
+.note-editor__content :deep(.tiptap-editor ol) {
+  list-style-type: decimal;
+}
+
 .note-editor__content :deep(.tiptap-editor li) {
   margin-bottom: 4px;
+  display: list-item;
 }
 
 .note-editor__content :deep(.tiptap-editor blockquote) {
@@ -320,5 +329,18 @@ onUnmounted(() => {
   color: #d1d5db;
   pointer-events: none;
   height: 0;
+}
+
+/* Strikethrough */
+.note-editor__content :deep(.tiptap-editor s) {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+/* Horizontal Rule */
+.note-editor__content :deep(.tiptap-editor hr) {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 24px 0;
 }
 </style>

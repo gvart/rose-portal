@@ -1,18 +1,36 @@
 <template>
   <span
     class="tag-chip"
-    :style="{ backgroundColor: tag.color + '20', color: tag.color, borderColor: tag.color }"
+    :class="{ 'tag-chip--filled': filled }"
+    :style="chipStyles"
   >
     {{ tag.name }}
   </span>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Tag } from '../types/notes'
 
-defineProps<{
+const props = defineProps<{
   tag: Tag
+  filled?: boolean
 }>()
+
+const chipStyles = computed(() => {
+  if (props.filled) {
+    return {
+      backgroundColor: props.tag.color,
+      color: 'white',
+      borderColor: props.tag.color
+    }
+  }
+  return {
+    backgroundColor: props.tag.color + '20',
+    color: props.tag.color,
+    borderColor: props.tag.color
+  }
+})
 </script>
 
 <style scoped>
@@ -26,5 +44,17 @@ defineProps<{
   border: 1px solid;
   white-space: nowrap;
   transition: all 0.2s ease;
+}
+
+.tag-chip--filled {
+  opacity: 0.9;
+  font-weight: 500;
+  border: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag-chip {
+    transition: none !important;
+  }
 }
 </style>

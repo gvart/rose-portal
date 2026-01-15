@@ -9,7 +9,9 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      registerType: 'prompt',
+      strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'sw.js',
       includeAssets: ['icons/**/*.svg', 'apple-touch-icon.png'],
 
       manifest: {
@@ -61,64 +63,14 @@ export default defineConfig({
         ]
       },
 
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-
-        // Network-first strategy for API calls
-        runtimeCaching: [
-          {
-            urlPattern: /^https?:\/\/.*\/api\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 // 24 hours
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              },
-              networkTimeoutSeconds: 10
-            }
-          },
-          {
-            urlPattern: /^https?:\/\/.*\/actuator\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'actuator-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 5 // 5 minutes
-              },
-              networkTimeoutSeconds: 5
-            }
-          },
-          // Images, fonts - Cache First
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|woff2)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'assets-cache',
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              }
-            }
-          }
-        ],
-
-        // Clean up old caches
-        cleanupOutdatedCaches: true,
-
-        // Skip waiting and claim clients immediately
-        skipWaiting: true,
-        clientsClaim: true
+        // Caching strategies are now defined in custom sw.js
       },
 
       devOptions: {
         enabled: true, // Enable PWA in dev mode for testing
-        type: 'module',
-        navigateFallback: 'index.html'
+        type: 'module'
       }
     })
   ],

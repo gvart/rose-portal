@@ -11,6 +11,10 @@ export interface UseTipTapEditorOptions {
   onUpdate: (markdown: string) => void
   isMobile?: boolean
   placeholder?: string
+  customExtensions?: any[] // Allow apps to add custom extensions
+  enableHeadings?: boolean
+  enableTasks?: boolean
+  enableHorizontalRule?: boolean
 }
 
 /**
@@ -23,35 +27,47 @@ export function useTipTapEditor(options: UseTipTapEditorOptions) {
     initialMarkdown,
     onUpdate,
     isMobile = false,
-    placeholder = 'Start writing your note...'
+    placeholder = 'Start writing your note...',
+    customExtensions = [],
+    enableHeadings = true,
+    enableTasks = true,
+    enableHorizontalRule = true
   } = options
 
-  const editor = new Editor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3]
-        }
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'note-link',
-          target: '_blank',
-          rel: 'noopener noreferrer'
-        }
-      }),
+  const extensions = [
+    StarterKit.configure({
+      heading: enableHeadings ? { levels: [1, 2, 3] } : false,
+      horizontalRule: enableHorizontalRule ? {} : false
+    }),
+    Link.configure({
+      openOnClick: false,
+      HTMLAttributes: {
+        class: 'editor-link',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }
+    }),
+    Placeholder.configure({
+      placeholder
+    }),
+    ...customExtensions
+  ]
+
+  // Add task extensions if enabled
+  if (enableTasks) {
+    extensions.push(
       TaskList,
       TaskItem.configure({
         nested: true,
         HTMLAttributes: {
           class: 'task-item'
         }
-      }),
-      Placeholder.configure({
-        placeholder
       })
-    ],
+    )
+  }
+
+  const editor = new Editor({
+    extensions,
     content: markdownToTipTap(initialMarkdown),
     editable: true,
     editorProps: {

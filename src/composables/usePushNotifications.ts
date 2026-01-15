@@ -86,6 +86,10 @@ export function usePushNotifications() {
         await pushSubscription.unsubscribe()
         subscription.value = null
         console.log('[Notifications] Unsubscribed')
+
+        // Check permission again to update reactive state
+        await checkSubscriptionStatus()
+
         return true
       }
 
@@ -93,6 +97,31 @@ export function usePushNotifications() {
     } catch (error) {
       console.error('[Notifications] Unsubscribe error:', error)
       return false
+    }
+  }
+
+  // Check if user has an active subscription
+  const checkSubscriptionStatus = async (): Promise<void> => {
+    if (!isSupported.value) return
+
+    try {
+      const registration = await navigator.serviceWorker.ready
+      const pushSubscription = await registration.pushManager.getSubscription()
+
+      if (pushSubscription) {
+        const p256dh = arrayBufferToBase64(pushSubscription.getKey('p256dh')!)
+        const auth = arrayBufferToBase64(pushSubscription.getKey('auth')!)
+
+        subscription.value = {
+          endpoint: pushSubscription.endpoint,
+          keys: { p256dh, auth }
+        }
+      } else {
+        subscription.value = null
+      }
+    } catch (error) {
+      console.error('[Notifications] Check subscription error:', error)
+      subscription.value = null
     }
   }
 
@@ -147,8 +176,9 @@ export function usePushNotifications() {
 
   // Initialize
   checkSupport()
+  checkSubscriptionStatus() // Check if already subscribed
 
-  const isGranted = computed(() => permission.value === 'granted')
+  const isGranted = computed(() => permission.value === 'granted' && subscription.value !== null)
   const isDenied = computed(() => permission.value === 'denied')
 
   return {
@@ -161,6 +191,7 @@ export function usePushNotifications() {
     requestPermission,
     subscribe,
     unsubscribe,
-    showNotification
+    showNotification,
+    checkSubscriptionStatus
   }
 }

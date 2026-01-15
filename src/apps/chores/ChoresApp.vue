@@ -118,6 +118,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, nextTick, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ChoresHeader from './components/ChoresHeader.vue'
 import KanbanBoard from './components/KanbanBoard.vue'
@@ -131,6 +132,8 @@ import { ChoreStatus, canEditChore } from './types/chores'
 import { usePWA } from '@/composables/usePWA'
 
 const store = useChoresStore()
+const route = useRoute()
+const router = useRouter()
 const { isInstalled } = usePWA()
 const showDeleteDialog = ref(false)
 const choreToDelete = ref<Chore | null>(null)
@@ -192,7 +195,50 @@ watch(() => showContextMenu.value, (isShowing) => {
 })
 
 onMounted(async () => {
+  // Initial data fetch
   await store.fetchChores()
+
+  // Handle deep link from notification
+  const choreId = route.query.choreId as string | undefined
+
+  if (choreId) {
+    const numericId = parseInt(choreId, 10)
+
+    if (!isNaN(numericId)) {
+      console.log('[Chores] Deep link detected - choreId:', numericId)
+
+      // Find the chore in the store
+      let chore = store.chores.find(c => c.id === numericId)
+
+      if (chore) {
+        // Chore found in cache
+        console.log('[Chores] Chore found in cache:', chore)
+
+        // Open chore modal
+        store.openEditModal(chore)
+      } else {
+        // Chore not in cache - it should be fetched by now, but double check
+        console.warn('[Chores] Chore not found in cache, checking again')
+
+        // Wait a bit for chores to load
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        chore = store.chores.find(c => c.id === numericId)
+
+        if (chore) {
+          console.log('[Chores] Chore found after delay:', chore)
+          store.openEditModal(chore)
+        } else {
+          console.error('[Chores] Chore not found:', numericId)
+          // Show error message
+          store.error = 'Chore not found'
+        }
+      }
+
+      // Clean up query parameters
+      router.replace({ query: {} })
+    }
+  }
 })
 
 async function handleStatusChange(choreId: number, newStatus: ChoreStatus): Promise<void> {

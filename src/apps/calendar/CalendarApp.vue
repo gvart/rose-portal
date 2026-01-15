@@ -98,6 +98,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/layouts/AppLayout.vue'
 import CalendarHeader from './components/CalendarHeader.vue'
 import MonthView from './components/MonthView.vue'
@@ -109,6 +110,8 @@ import type { CalendarEvent, EventFormData } from './types/calendar'
 import { KEYBOARD_SHORTCUTS } from './types/calendar'
 
 const store = useCalendarStore()
+const route = useRoute()
+const router = useRouter()
 
 // ============================================================================
 // Event Handlers
@@ -198,9 +201,63 @@ function handleKeydown(event: KeyboardEvent) {
 // Lifecycle
 // ============================================================================
 
-onMounted(() => {
+onMounted(async () => {
   // Initial data fetch
-  store.fetchEventsForCurrentView()
+  await store.fetchEventsForCurrentView()
+
+  // Handle deep link from notification
+  const eventId = route.query.eventId as string | undefined
+  const viewParam = route.query.view as string | undefined
+
+  if (eventId) {
+    const numericId = parseInt(eventId, 10)
+
+    if (!isNaN(numericId)) {
+      console.log('[Calendar] Deep link detected - eventId:', numericId)
+
+      // Find the event in the store
+      let event = store.events.find(e => e.id === numericId)
+
+      if (event) {
+        // Event found in cache
+        console.log('[Calendar] Event found in cache:', event)
+
+        // Navigate to event date if specified view
+        if (viewParam === 'day' || viewParam === 'week') {
+          store.setView(viewParam)
+        }
+        store.navigateToDate(event.from)
+
+        // Open event modal
+        store.openEditModal(event)
+      } else {
+        // Event not in cache - it should be fetched by now, but double check
+        console.warn('[Calendar] Event not found in cache, checking again')
+
+        // Wait a bit for events to load
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        event = store.events.find(e => e.id === numericId)
+
+        if (event) {
+          console.log('[Calendar] Event found after delay:', event)
+
+          if (viewParam === 'day' || viewParam === 'week') {
+            store.setView(viewParam)
+          }
+          store.navigateToDate(event.from)
+          store.openEditModal(event)
+        } else {
+          console.error('[Calendar] Event not found:', numericId)
+          // Show error message
+          store.error = 'Event not found'
+        }
+      }
+
+      // Clean up query parameters
+      router.replace({ query: {} })
+    }
+  }
 
   // Register keyboard listeners
   window.addEventListener('keydown', handleKeydown)
