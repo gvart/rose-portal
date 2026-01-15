@@ -10,75 +10,74 @@ self.clients.claim()
 // WORKBOX SETUP (Production Only)
 // ========================================
 
-// In production, Workbox libraries are bundled by vite-plugin-pwa
-// In development, we skip Workbox entirely and just handle push notifications
-const isProduction = typeof self.__WB_MANIFEST !== 'undefined'
+// Import Workbox modules (only available in production build)
+import('workbox-precaching').then(({ precacheAndRoute, cleanupOutdatedCaches }) => {
+  // This will be replaced by the actual manifest during build
+  precacheAndRoute(self.__WB_MANIFEST)
+  cleanupOutdatedCaches()
+}).catch(() => {
+  console.log('[SW] Running in dev mode, Workbox not available')
+})
 
-if (isProduction) {
-  // Import Workbox modules (only available in production build)
-  import('workbox-precaching').then(({ precacheAndRoute, cleanupOutdatedCaches }) => {
-    precacheAndRoute(self.__WB_MANIFEST)
-    cleanupOutdatedCaches()
-  })
+import('workbox-routing').then(({ registerRoute }) => {
+  import('workbox-strategies').then(({ NetworkFirst, CacheFirst }) => {
+    import('workbox-expiration').then(({ ExpirationPlugin }) => {
+      import('workbox-cacheable-response').then(({ CacheableResponsePlugin }) => {
+        // API calls - Network First with 10s timeout
+        registerRoute(
+          ({ url }) => url.pathname.startsWith('/api/'),
+          new NetworkFirst({
+            cacheName: 'api-cache',
+            networkTimeoutSeconds: 10,
+            plugins: [
+              new ExpirationPlugin({
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 // 24 hours
+              }),
+              new CacheableResponsePlugin({
+                statuses: [0, 200]
+              })
+            ]
+          })
+        )
 
-  import('workbox-routing').then(({ registerRoute }) => {
-    import('workbox-strategies').then(({ NetworkFirst, CacheFirst }) => {
-      import('workbox-expiration').then(({ ExpirationPlugin }) => {
-        import('workbox-cacheable-response').then(({ CacheableResponsePlugin }) => {
-          // API calls - Network First with 10s timeout
-          registerRoute(
-            ({ url }) => url.pathname.startsWith('/api/'),
-            new NetworkFirst({
-              cacheName: 'api-cache',
-              networkTimeoutSeconds: 10,
-              plugins: [
-                new ExpirationPlugin({
-                  maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 * 24 // 24 hours
-                }),
-                new CacheableResponsePlugin({
-                  statuses: [0, 200]
-                })
-              ]
-            })
-          )
+        // Actuator endpoints - Network First with 5s timeout
+        registerRoute(
+          ({ url }) => url.pathname.startsWith('/actuator/'),
+          new NetworkFirst({
+            cacheName: 'actuator-cache',
+            networkTimeoutSeconds: 5,
+            plugins: [
+              new ExpirationPlugin({
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 5 // 5 minutes
+              })
+            ]
+          })
+        )
 
-          // Actuator endpoints - Network First with 5s timeout
-          registerRoute(
-            ({ url }) => url.pathname.startsWith('/actuator/'),
-            new NetworkFirst({
-              cacheName: 'actuator-cache',
-              networkTimeoutSeconds: 5,
-              plugins: [
-                new ExpirationPlugin({
-                  maxEntries: 50,
-                  maxAgeSeconds: 60 * 5 // 5 minutes
-                })
-              ]
-            })
-          )
-
-          // Images, fonts - Cache First
-          registerRoute(
-            ({ request }) =>
-              request.destination === 'image' ||
-              request.destination === 'font' ||
-              /\.(png|jpg|jpeg|svg|gif|webp|woff2)$/.test(request.url),
-            new CacheFirst({
-              cacheName: 'assets-cache',
-              plugins: [
-                new ExpirationPlugin({
-                  maxEntries: 200,
-                  maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-                })
-              ]
-            })
-          )
-        })
+        // Images, fonts - Cache First
+        registerRoute(
+          ({ request }) =>
+            request.destination === 'image' ||
+            request.destination === 'font' ||
+            /\.(png|jpg|jpeg|svg|gif|webp|woff2)$/.test(request.url),
+          new CacheFirst({
+            cacheName: 'assets-cache',
+            plugins: [
+              new ExpirationPlugin({
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              })
+            ]
+          })
+        )
       })
     })
   })
-}
+}).catch(() => {
+  console.log('[SW] Running in dev mode, Workbox routing not available')
+})
 
 // ========================================
 // PUSH NOTIFICATION HANDLING
