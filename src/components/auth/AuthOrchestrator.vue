@@ -62,6 +62,9 @@ const authFlowUsername = ref('')
 const authFlowUserId = ref('')
 const cameFromUserSelection = ref(false)
 
+// Guard flag to prevent multiple auto-login attempts
+const hasAttemptedAutoLogin = ref(false)
+
 const hasUsers = computed(() => multiUser.hasUsers.value)
 const hasProjectKey = computed(() => !!projectKey.value)
 const isInstallPage = computed(() => route.path === '/install')
@@ -95,22 +98,45 @@ function shouldShowAuthSelection(): boolean {
   return result
 }
 
+// Check if we should attempt auto-login for single user in PWA
+function shouldAttemptAutoLogin(): boolean {
+  if (hasAttemptedAutoLogin.value) {
+    return false
+  }
+
+  if (!isInstalled.value) {
+    return false
+  }
+
+  const users = multiUser.users.value
+  return users.length === 1
+}
+
+// Trigger auto-login for single user in PWA mode
+function triggerAutoLogin(): boolean {
+  if (!shouldAttemptAutoLogin()) {
+    return false
+  }
+
+  const singleUser = multiUser.users.value[0]
+  console.log('[AuthOrchestrator] PWA with single user detected - triggering auto-login')
+
+  hasAttemptedAutoLogin.value = true
+  authFlowMode.value = 'quick-login'
+  authFlowUsername.value = singleUser.username
+  authFlowUserId.value = singleUser.id
+  cameFromUserSelection.value = false
+  showAuthFlow.value = true
+
+  return true
+}
+
 // Watch for configuration changes to show user selection
 watch(isConfigured, (configured) => {
   if (configured && shouldShowAuthSelection() && !showUserSelection.value && !showAuthFlow.value) {
     // Check for single-user auto-login in PWA mode
-    if (isInstalled.value) {
-      const users = multiUser.users.value
-      if (users.length === 1) {
-        console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
-        const singleUser = users[0]
-        authFlowMode.value = 'quick-login'
-        authFlowUsername.value = singleUser.username
-        authFlowUserId.value = singleUser.id
-        cameFromUserSelection.value = false
-        showAuthFlow.value = true
-        return
-      }
+    if (triggerAutoLogin()) {
+      return
     }
 
     showUserSelection.value = true
@@ -125,18 +151,8 @@ watch(projectKey, (key) => {
 
     if (!showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
       // Check for single-user auto-login in PWA mode
-      if (isInstalled.value) {
-        const users = multiUser.users.value
-        if (users.length === 1) {
-          console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
-          const singleUser = users[0]
-          authFlowMode.value = 'quick-login'
-          authFlowUsername.value = singleUser.username
-          authFlowUserId.value = singleUser.id
-          cameFromUserSelection.value = false
-          showAuthFlow.value = true
-          return
-        }
+      if (triggerAutoLogin()) {
+        return
       }
 
       console.log('[AuthOrchestrator] Showing user selection modal')
@@ -149,18 +165,8 @@ watch(projectKey, (key) => {
 watch(() => route.path, () => {
   if (shouldShowAuthSelection() && !showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
     // Check for single-user auto-login in PWA mode
-    if (isInstalled.value) {
-      const users = multiUser.users.value
-      if (users.length === 1) {
-        console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
-        const singleUser = users[0]
-        authFlowMode.value = 'quick-login'
-        authFlowUsername.value = singleUser.username
-        authFlowUserId.value = singleUser.id
-        cameFromUserSelection.value = false
-        showAuthFlow.value = true
-        return
-      }
+    if (triggerAutoLogin()) {
+      return
     }
 
     // Always show user selection modal (it has both "Sign In" and "New User" options)
@@ -177,18 +183,8 @@ onMounted(() => {
   })
 
   // Check for single-user auto-login in PWA mode
-  if (isInstalled.value && shouldShowAuthSelection()) {
-    const users = multiUser.users.value
-
-    // If exactly one user exists, auto-login in PWA
-    if (users.length === 1) {
-      console.log('[AuthOrchestrator] PWA with single user detected - triggering auto-login')
-      const singleUser = users[0]
-      authFlowMode.value = 'quick-login'
-      authFlowUsername.value = singleUser.username
-      authFlowUserId.value = singleUser.id
-      cameFromUserSelection.value = false
-      showAuthFlow.value = true
+  if (shouldShowAuthSelection()) {
+    if (triggerAutoLogin()) {
       return
     }
   }
@@ -243,5 +239,7 @@ function handleAuthSuccess(): void {
   showInitialAuth.value = false
   showAuthFlow.value = false
   showUserSelection.value = false
+  // Reset guard flag to allow future auto-logins
+  hasAttemptedAutoLogin.value = false
 }
 </script>

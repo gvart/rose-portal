@@ -328,7 +328,8 @@ export const useCalendarStore = defineStore('calendar', () => {
         from,
         to,
         formData.color,
-        formData.isAllDay
+        formData.isAllDay,
+        formData.reminderTime
       )
 
       // Add to local state
@@ -360,7 +361,8 @@ export const useCalendarStore = defineStore('calendar', () => {
         from,
         to,
         formData.color,
-        formData.isAllDay
+        formData.isAllDay,
+        formData.reminderTime
       )
 
       // Update in local state

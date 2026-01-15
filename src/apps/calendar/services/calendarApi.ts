@@ -12,7 +12,8 @@ import type {
   ApiEventResponse,
   CreateEventRequest,
   UpdateEventRequest,
-  EventColor
+  EventColor,
+  ReminderTime
 } from '../types/calendar'
 
 // Use shared calendar API client
@@ -44,6 +45,7 @@ export async function getEvents(from: Date, to: Date): Promise<CalendarEvent[]> 
  * @param to - Event end time
  * @param color - Optional event color (stored client-side for now)
  * @param isAllDay - Whether this is an all-day event
+ * @param reminderTime - When to send reminder notification
  * @returns The created event
  */
 export async function createEvent(
@@ -51,13 +53,15 @@ export async function createEvent(
   from: Date,
   to: Date,
   color: EventColor = 'indigo',
-  isAllDay: boolean = false
+  isAllDay: boolean = false,
+  reminderTime: ReminderTime = 'NONE'
 ): Promise<CalendarEvent> {
   const request: CreateEventRequest = {
     eventName,
     from: from.toISOString(),
     to: to.toISOString(),
-    color
+    color,
+    reminderTime
   }
 
   const response = await api.post<ApiEventResponse>('/events', request)
@@ -78,6 +82,7 @@ export async function createEvent(
  * @param to - Updated end time
  * @param color - Optional updated color
  * @param isAllDay - Whether this is an all-day event
+ * @param reminderTime - When to send reminder notification
  * @returns The updated event
  */
 export async function updateEvent(
@@ -86,13 +91,15 @@ export async function updateEvent(
   from: Date,
   to: Date,
   color: EventColor = 'indigo',
-  isAllDay: boolean = false
+  isAllDay: boolean = false,
+  reminderTime: ReminderTime = 'NONE'
 ): Promise<CalendarEvent> {
   const request: UpdateEventRequest = {
     eventName,
     from: from.toISOString(),
     to: to.toISOString(),
-    color
+    color,
+    reminderTime
   }
 
   const response = await api.put<ApiEventResponse>(`/events/${id}`, request)
@@ -129,6 +136,7 @@ function transformApiEventToInternal(apiEvent: ApiEventResponse): CalendarEvent 
     to: new Date(apiEvent.to),
     color: (apiEvent.color as EventColor) || 'indigo',
     isAllDay: isAllDayEvent(new Date(apiEvent.from), new Date(apiEvent.to)),
+    reminderTime: apiEvent.reminderTime || 'NONE',
     createdAt: new Date(apiEvent.createdAt),
     updatedAt: new Date(apiEvent.updatedAt),
     createdBy: {

@@ -154,7 +154,7 @@ const emit = defineEmits<{
 const store = useChoresStore()
 const { vibrate } = useHapticFeedback()
 const { isInstalled } = usePWA()
-const { isDesktop } = useDeviceDetection()
+const { isDesktop, isPi5 } = useDeviceDetection()
 const isDragOver = ref(false)
 const isDragging = ref(false)
 
@@ -162,9 +162,21 @@ const isMobile = computed(() => {
   return window.innerWidth < 768
 })
 
-// Enable drag-and-drop on desktop (both web and PWA)
+// Enable drag-and-drop on:
+// 1. Desktop web browser (not PWA)
+// 2. Pi5 device (PWA or web)
+// Disable on:
+// 1. Mobile PWA
+// 2. Tablet PWA
+// 3. Desktop PWA (unless Pi5)
 const isDragEnabled = computed(() => {
-  return isDesktop.value
+  // Always enable on Pi5 regardless of PWA status
+  if (isPi5.value) {
+    return true
+  }
+
+  // Enable on desktop only if NOT installed as PWA
+  return isDesktop.value && !isInstalled.value
 })
 
 // Create a local copy of chores for v-model binding

@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/layouts/AppLayout.vue'
 import CalendarHeader from './components/CalendarHeader.vue'
@@ -112,6 +112,50 @@ import { KEYBOARD_SHORTCUTS } from './types/calendar'
 const store = useCalendarStore()
 const route = useRoute()
 const router = useRouter()
+
+// ============================================================================
+// Deep Link Handling
+// ============================================================================
+
+// Watch for eventId in URL query params (from notifications)
+watch(
+  () => route.query.eventId,
+  async (eventId) => {
+    if (eventId) {
+      const eventIdNum = parseInt(eventId as string, 10)
+      if (!isNaN(eventIdNum)) {
+        console.log('[Calendar] Deep link to event:', eventIdNum)
+
+        // Load events if not already loaded
+        if (store.events.length === 0) {
+          await store.loadInitialEvents()
+        }
+
+        // Find and open the event
+        const event = store.events.find(e => e.id === eventIdNum)
+        if (event) {
+          // Switch to the requested view if specified
+          const view = route.query.view as string
+          if (view && (view === 'day' || view === 'week' || view === 'month')) {
+            store.setView(view)
+          }
+
+          // Select the day containing the event
+          store.selectDay(event.from)
+
+          // Open the event modal
+          store.openEditModal(event)
+
+          // Clear the query param after handling
+          router.replace({ query: { ...route.query, eventId: undefined, view: undefined } })
+        } else {
+          console.warn('[Calendar] Event not found:', eventIdNum)
+        }
+      }
+    }
+  },
+  { immediate: true }
+)
 
 // ============================================================================
 // Event Handlers

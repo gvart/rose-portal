@@ -9,6 +9,19 @@
 // ============================================================================
 
 /**
+ * Reminder time options for calendar events
+ * Maps to backend ReminderTime enum
+ */
+export type ReminderTime =
+  | 'NONE'
+  | 'MINUTES_15'
+  | 'MINUTES_30'
+  | 'HOUR_1'
+  | 'HOURS_2'
+  | 'HOURS_12'
+  | 'DAY_1'
+
+/**
  * Request payload for creating an event
  * Maps to: CreateEventRequest in CalendarEntrypoint.kt
  */
@@ -17,6 +30,7 @@ export interface CreateEventRequest {
   from: string // ISO 8601 string
   to: string // ISO 8601 string
   color: string
+  reminderTime: ReminderTime
 }
 
 /**
@@ -28,6 +42,7 @@ export interface UpdateEventRequest {
   from: string // ISO 8601 string
   to: string // ISO 8601 string
   color: string
+  reminderTime: ReminderTime
 }
 
 /**
@@ -43,6 +58,7 @@ export interface ApiEventResponse {
   from: string // ISO 8601 string
   to: string // ISO 8601 string
   color: string
+  reminderTime: ReminderTime
 }
 
 /**
@@ -68,6 +84,7 @@ export interface CalendarEvent {
   to: Date
   color: EventColor
   isAllDay: boolean
+  reminderTime: ReminderTime
   createdAt: Date
   updatedAt: Date
   createdBy: User
@@ -176,6 +193,28 @@ export const EVENT_COLORS: Record<EventColor, EventColorConfig> = {
   }
 }
 
+/**
+ * Reminder time configuration
+ */
+export interface ReminderTimeConfig {
+  id: ReminderTime
+  label: string
+  description: string
+}
+
+/**
+ * Available reminder time options
+ */
+export const REMINDER_TIME_OPTIONS: ReminderTimeConfig[] = [
+  { id: 'NONE', label: 'No reminder', description: 'No notification' },
+  { id: 'MINUTES_15', label: '15 minutes before', description: '15 min' },
+  { id: 'MINUTES_30', label: '30 minutes before', description: '30 min' },
+  { id: 'HOUR_1', label: '1 hour before', description: '1 hour' },
+  { id: 'HOURS_2', label: '2 hours before', description: '2 hours' },
+  { id: 'HOURS_12', label: '12 hours before', description: '12 hours' },
+  { id: 'DAY_1', label: '1 day before', description: '1 day' }
+]
+
 // ============================================================================
 // View Types
 // ============================================================================
@@ -268,6 +307,7 @@ export interface EventFormData {
   endTime: string // HH:mm format
   isAllDay: boolean
   color: EventColor
+  reminderTime: ReminderTime
 }
 
 /**
@@ -280,7 +320,8 @@ export const DEFAULT_EVENT_FORM: EventFormData = {
   endDate: new Date(),
   endTime: '10:00',
   isAllDay: false,
-  color: 'indigo'
+  color: 'indigo',
+  reminderTime: 'NONE'
 }
 
 // ============================================================================

@@ -166,6 +166,41 @@ const shouldShowOnboardingTooltip = computed(() => {
   return isInstalled.value && store.shouldShowOnboarding()
 })
 
+// ============================================================================
+// Deep Link Handling
+// ============================================================================
+
+// Watch for choreId in URL query params (from notifications)
+watch(
+  () => route.query.choreId,
+  async (choreId) => {
+    if (choreId) {
+      const choreIdNum = parseInt(choreId as string, 10)
+      if (!isNaN(choreIdNum)) {
+        console.log('[Chores] Deep link to chore:', choreIdNum)
+
+        // Load chores if not already loaded
+        if (store.allChores.length === 0) {
+          await store.loadChores()
+        }
+
+        // Find and open the chore
+        const chore = store.allChores.find(c => c.id === choreIdNum)
+        if (chore) {
+          // Open the chore modal
+          handleSelectChore(chore)
+
+          // Clear the query param after handling
+          router.replace({ query: { ...route.query, choreId: undefined } })
+        } else {
+          console.warn('[Chores] Chore not found:', choreIdNum)
+        }
+      }
+    }
+  },
+  { immediate: true }
+)
+
 // Show onboarding after chores load
 watch(() => store.loading, async (loading) => {
   if (!loading && shouldShowOnboardingTooltip.value) {

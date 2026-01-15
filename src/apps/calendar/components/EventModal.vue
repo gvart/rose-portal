@@ -129,6 +129,41 @@
               </div>
             </div>
 
+            <!-- Reminder Time Selection -->
+            <div class="input-section">
+              <label class="input-label">Reminder</label>
+              <div class="reminder-options">
+                <button
+                  v-for="option in reminderTimeOptions"
+                  :key="option.id"
+                  v-haptic:light
+                  type="button"
+                  class="reminder-option"
+                  :class="{ 'reminder-option--selected': localFormData.reminderTime === option.id }"
+                  @click="localFormData.reminderTime = option.id"
+                  :aria-label="`Set reminder to ${option.label}`"
+                >
+                  <div class="reminder-option-content">
+                    <span class="reminder-label">{{ option.label }}</span>
+                    <span v-if="option.description !== 'No notification'" class="reminder-description">
+                      {{ option.description }}
+                    </span>
+                  </div>
+                  <svg
+                    v-if="localFormData.reminderTime === option.id"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="3"
+                    stroke="currentColor"
+                    class="check-icon-small"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
             <!-- Validation Errors -->
             <div v-if="validationErrors.length > 0" class="validation-errors">
               <div
@@ -223,8 +258,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
-import type { CalendarEvent, EventFormData, EventColor, ModalMode } from '../types/calendar'
-import { EVENT_COLORS } from '../types/calendar'
+import type { CalendarEvent, EventFormData, EventColor, ModalMode, ReminderTime } from '../types/calendar'
+import { EVENT_COLORS, REMINDER_TIME_OPTIONS } from '../types/calendar'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -255,6 +290,9 @@ const localFormData = ref<EventFormData>({ ...props.formData })
 
 // Color options from constants
 const colorOptions = Object.values(EVENT_COLORS)
+
+// Reminder time options from constants
+const reminderTimeOptions = REMINDER_TIME_OPTIONS
 
 // ============================================================================
 // Computed
@@ -669,6 +707,59 @@ function confirmDelete() {
   width: 20px;
   height: 20px;
   color: white;
+}
+
+/* Reminder Options */
+.reminder-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reminder-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border-secondary);
+  background: var(--color-bg-primary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+  cursor: pointer;
+  text-align: left;
+}
+
+.reminder-option:active {
+  transform: scale(0.98);
+}
+
+.reminder-option--selected {
+  border-color: var(--color-accent-primary);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.reminder-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.reminder-label {
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.reminder-description {
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
+}
+
+.check-icon-small {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent-primary);
+  flex-shrink: 0;
 }
 
 /* Validation Errors */
