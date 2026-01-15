@@ -1,0 +1,54 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches: [main]
+    # Don't run CI on tags (deploy workflow handles that)
+    tags-ignore:
+      - '**'
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /
+
+      - name: Verify 404.html exists
+        run: |
+          if [ ! -f dist/404.html ]; then
+            echo "Error: 404.html not found in dist folder"
+            exit 1
+          fi
+          echo "✓ 404.html found in dist folder"
+
+      # Optional: Add tests when you have them
+      # - name: Run tests
+      #   run: npm test
+
+      - name: Store build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+
+      - name: Build successful
+        run: echo "✓ Build completed successfully. Deployment will happen when a release tag is created."
