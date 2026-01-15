@@ -169,13 +169,20 @@ watch(() => route.path, () => {
 })
 
 onMounted(() => {
+  console.log('[AuthOrchestrator] onMounted - checking auth state', {
+    isInstalled: isInstalled.value,
+    shouldShowAuthSelection: shouldShowAuthSelection(),
+    usersCount: multiUser.users.value.length,
+    isAuthenticated: authStore.isAuthenticated
+  })
+
   // Check for single-user auto-login in PWA mode
   if (isInstalled.value && shouldShowAuthSelection()) {
     const users = multiUser.users.value
 
     // If exactly one user exists, auto-login in PWA
     if (users.length === 1) {
-      console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
+      console.log('[AuthOrchestrator] PWA with single user detected - triggering auto-login')
       const singleUser = users[0]
       authFlowMode.value = 'quick-login'
       authFlowUsername.value = singleUser.username
@@ -188,7 +195,7 @@ onMounted(() => {
 
   // Show appropriate auth modal if conditions are met
   if (shouldShowAuthSelection()) {
-    // Always show user selection modal (it has both "Sign In" and "New User" options)
+    console.log('[AuthOrchestrator] Showing user selection modal')
     showUserSelection.value = true
   }
 })

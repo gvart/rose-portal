@@ -11,6 +11,19 @@ export function usePWA() {
   const isInstalled = ref(false)
   const deferredPrompt = ref<PWAInstallPrompt | null>(null)
 
+  // Check if already installed (do this immediately, not in onMounted)
+  const checkInstalled = () => {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      isInstalled.value = true
+      console.log('[PWA] App is running as installed PWA')
+    } else {
+      console.log('[PWA] App is running in browser mode')
+    }
+  }
+
+  // Check installation status immediately
+  checkInstalled()
+
   // Service Worker registration
   const {
     needRefresh,
@@ -28,13 +41,6 @@ export function usePWA() {
       console.log('[PWA] App ready to work offline')
     }
   })
-
-  // Check if already installed
-  const checkInstalled = () => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      isInstalled.value = true
-    }
-  }
 
   // Handle install prompt
   const handleBeforeInstallPrompt = (e: Event) => {
@@ -74,7 +80,6 @@ export function usePWA() {
   }
 
   onMounted(() => {
-    checkInstalled()
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     window.addEventListener('appinstalled', handleAppInstalled)
   })
