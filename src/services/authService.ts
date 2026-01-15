@@ -8,7 +8,7 @@ export const authService = {
    * Create a new user account
    */
   async signup(credentials: SignupCredentials): Promise<User> {
-    const { data } = await authClient.post<User>('/users', credentials)
+    const { data } = await authClient.post<User>('/v1/users', credentials)
     return data
   },
 
