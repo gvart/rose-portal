@@ -20,6 +20,8 @@
                 ref="inviteCodeInputRef"
                 v-model="inviteCode"
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 class="text-input code-input"
                 placeholder="Enter invite code"
                 maxlength="20"
