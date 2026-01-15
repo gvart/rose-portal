@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main  # Always checkout main branch, even when triggered by release
 
       - name: Setup Node
         uses: actions/setup-node@v4
