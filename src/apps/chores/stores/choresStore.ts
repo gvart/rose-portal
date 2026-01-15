@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useConfiguration } from '@/composables/useConfiguration'
 import * as choresApi from '../services/choresApi'
 import type {
   Chore,
@@ -22,6 +23,7 @@ export const useChoresStore = defineStore('chores', () => {
   // Chores data
   const chores = ref<Chore[]>([])
   const selectedChore = ref<Chore | null>(null)
+  const users = ref<User[]>([])
 
   // UI state
   const loading = ref(false)
@@ -66,16 +68,7 @@ export const useChoresStore = defineStore('chores', () => {
   // ============================================================================
 
   const usersFromChores = computed(() => {
-    const userMap = new Map<number, User>()
-
-    chores.value.forEach(chore => {
-      if (chore.assignedTo) {
-        userMap.set(chore.assignedTo.id, chore.assignedTo)
-      }
-      userMap.set(chore.createdBy.id, chore.createdBy)
-    })
-
-    return Array.from(userMap.values()).sort((a, b) => a.username.localeCompare(b.username))
+    return users.value.sort((a, b) => a.username.localeCompare(b.username))
   })
 
   // ============================================================================
@@ -123,6 +116,9 @@ export const useChoresStore = defineStore('chores', () => {
 
       // Update pagination states
       updatePaginationStates(response)
+
+      // Fetch project users for assignment (non-blocking)
+      fetchProjectUsers()
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to load chores'
       console.error('Failed to fetch chores:', e)
@@ -165,6 +161,26 @@ export const useChoresStore = defineStore('chores', () => {
       console.error('Failed to load more chores:', e)
     } finally {
       pagination.loading = false
+    }
+  }
+
+  /**
+   * Fetch all users in the project for assignment
+   */
+  async function fetchProjectUsers(): Promise<void> {
+    try {
+      const { getProjectKey } = useConfiguration()
+      const projectKey = getProjectKey()
+
+      if (!projectKey) {
+        console.warn('No project key available, cannot fetch users')
+        return
+      }
+
+      users.value = await choresApi.getProjectUsers(projectKey)
+    } catch (e) {
+      console.error('Failed to fetch project users:', e)
+      // Don't set error state - this is non-critical
     }
   }
 
@@ -438,6 +454,7 @@ export const useChoresStore = defineStore('chores', () => {
     // State
     chores,
     selectedChore,
+    users,
     loading,
     error,
     showChoreModal,
@@ -457,6 +474,7 @@ export const useChoresStore = defineStore('chores', () => {
 
     // Actions
     fetchChores,
+    fetchProjectUsers,
     loadMoreForStatus,
     createChore,
     updateChore,

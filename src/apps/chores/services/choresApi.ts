@@ -123,6 +123,16 @@ export async function deleteChore(id: number): Promise<void> {
   await api.delete(`/${id}`)
 }
 
+/**
+ * Fetch all users in a project
+ * @param projectId - Project key/ID
+ * @returns List of users in the project
+ */
+export async function getProjectUsers(projectId: string): Promise<User[]> {
+  const response = await apiClients.notes.get<ApiUser[]>(`/users/project/${projectId}`)
+  return response.data.map(transformApiUserToInternal)
+}
+
 // ============================================================================
 // Transformation Functions
 // ============================================================================
