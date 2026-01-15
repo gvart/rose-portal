@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/gvart/rose-portal/compare/v1.0.0...v1.0.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* **ci:** change release workflow trigger from push:tags to release:published ([a72fbae](https://github.com/gvart/rose-portal/commit/a72fbaeef03692391d85694eaf5a5e7849559dcf))
+
 ## 1.0.0 (2026-01-15)
 
 
