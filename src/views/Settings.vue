@@ -209,6 +209,18 @@
             {{ isCheckingForUpdates ? 'Checking...' : 'Check for Updates' }}
           </button>
         </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">Current Version</label>
+            <p v-if="currentVersionInfo" class="setting-description">
+              v{{ currentVersionInfo.version }} ({{ currentVersionInfo.commitHash }})
+              <br>
+              <span class="version-message">{{ currentVersionInfo.commitMessage.split('\n')[0] }}</span>
+            </p>
+            <p v-else class="setting-description">Loading version info...</p>
+          </div>
+        </div>
       </div>
 
       <div v-if="isDesktop" class="settings-section">
@@ -430,6 +442,7 @@ onMounted(() => {
   if (isDesktop.value) {
     fetchInviteCode()
   }
+  fetchCurrentVersion()
 })
 
 // PWA & Notifications (only relevant for mobile/tablet)
@@ -595,6 +608,28 @@ const handleCheckForUpdates = async () => {
   }, 1000)
 }
 
+// Current version info
+interface VersionInfo {
+  version: string
+  commitHash: string
+  commitMessage: string
+  commitDate: string
+  buildDate: string
+}
+
+const currentVersionInfo = ref<VersionInfo | null>(null)
+
+async function fetchCurrentVersion() {
+  try {
+    const response = await fetch('/version.json?' + Date.now())
+    if (response.ok) {
+      currentVersionInfo.value = await response.json()
+    }
+  } catch (error) {
+    console.warn('Failed to fetch version info:', error)
+  }
+}
+
 // PWA Data Export
 const pwaStorage = usePwaStorage()
 const pwaDataCopied = ref(false)
@@ -641,6 +676,10 @@ const handleExportPwaData = async () => {
 
 .setting-description {
   @apply text-sm text-gray-600;
+}
+
+.version-message {
+  @apply italic text-gray-500;
 }
 
 .setting-warning {

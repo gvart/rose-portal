@@ -9,7 +9,8 @@
         </div>
         <div class="update-text">
           <strong>New version available!</strong>
-          <span>Update now to get the latest features and fixes</span>
+          <span v-if="versionInfo">{{ versionInfo.commitMessage.split('\n')[0] }}</span>
+          <span v-else>Update now to get the latest features and fixes</span>
         </div>
 
         <button
@@ -25,9 +26,34 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { usePWA } from '@/composables/usePWA'
 
+interface VersionInfo {
+  version: string
+  commitHash: string
+  commitMessage: string
+  commitDate: string
+  buildDate: string
+}
+
 const { needRefresh, updateServiceWorker } = usePWA()
+const versionInfo = ref<VersionInfo | null>(null)
+
+// Fetch version info when update is available
+watch(needRefresh, async (isAvailable) => {
+  if (isAvailable && !versionInfo.value) {
+    try {
+      const response = await fetch('/version.json?' + Date.now()) // Cache bust
+      if (response.ok) {
+        versionInfo.value = await response.json()
+        console.log('[UpdatePrompt] New version info:', versionInfo.value)
+      }
+    } catch (error) {
+      console.warn('[UpdatePrompt] Failed to fetch version info:', error)
+    }
+  }
+})
 
 const handleUpdate = async () => {
   await updateServiceWorker(true)

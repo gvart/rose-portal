@@ -19,6 +19,9 @@ build
 .vercel
 .netlify
 
+# Generated version info
+public/version.json
+
 # Environment variables
 .env
 .env*.local
