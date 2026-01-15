@@ -191,6 +191,24 @@
             {{ pwaDataCopied ? 'Copied!' : 'Copy Link' }}
           </button>
         </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">App Updates</label>
+            <p class="setting-description">
+              {{ updateStatusText }}
+            </p>
+          </div>
+
+          <button
+            v-haptic
+            @click="handleCheckForUpdates"
+            class="btn-primary"
+            :disabled="isCheckingForUpdates"
+          >
+            {{ isCheckingForUpdates ? 'Checking...' : 'Check for Updates' }}
+          </button>
+        </div>
       </div>
 
       <div v-if="isDesktop" class="settings-section">
@@ -415,7 +433,16 @@ onMounted(() => {
 })
 
 // PWA & Notifications (only relevant for mobile/tablet)
-const { isInstallable, isInstalled, install, offlineReady } = usePWA()
+const {
+  isInstallable,
+  isInstalled,
+  install,
+  offlineReady,
+  checkForUpdates,
+  isCheckingForUpdates,
+  lastUpdateCheck,
+  needRefresh
+} = usePWA()
 const {
   isSupported: isNotificationsSupported,
   permission,
@@ -431,6 +458,20 @@ const notificationStatus = computed(() => {
   if (isNotificationsGranted.value) return 'Enabled'
   if (isNotificationsDenied.value) return 'Blocked by user'
   return 'Not enabled'
+})
+
+const updateStatusText = computed(() => {
+  if (needRefresh.value) {
+    return '⚠️ Update available - see banner above'
+  }
+  if (isCheckingForUpdates.value) {
+    return 'Checking for updates...'
+  }
+  if (lastUpdateCheck.value) {
+    const time = new Date(lastUpdateCheck.value).toLocaleTimeString()
+    return `Last checked: ${time}`
+  }
+  return 'Auto-checks every hour'
 })
 
 const notificationLoading = ref(false)
@@ -541,6 +582,17 @@ const handleDisableNotifications = async () => {
   } finally {
     notificationLoading.value = false
   }
+}
+
+const handleCheckForUpdates = async () => {
+  await checkForUpdates()
+
+  // Give the check a moment to complete and potentially trigger needRefresh
+  setTimeout(() => {
+    if (!needRefresh.value) {
+      toast.success('You are running the latest version!')
+    }
+  }, 1000)
 }
 
 // PWA Data Export
