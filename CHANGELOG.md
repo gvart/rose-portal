@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/gvart/rose-portal/compare/v1.0.2...v1.1.0) (2026-01-15)
+
+
+### Features
+
+* **pwa:** enable numeric keyboard for invitation code input ([32d3c0b](https://github.com/gvart/rose-portal/commit/32d3c0b8b85bf1191da9f4cd430edf9485bf2116))
+
 ## [1.0.2](https://github.com/gvart/rose-portal/compare/v1.0.1...v1.0.2) (2026-01-15)
 
 
