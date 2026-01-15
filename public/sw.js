@@ -208,11 +208,15 @@ function determineTargetUrl(data, action) {
 
 /**
  * Navigate to a URL, focusing existing window if available
- * @param {string} targetUrl - URL to navigate to
+ * @param {string} targetUrl - URL to navigate to (can be relative or absolute)
  * @returns {Promise} - Promise that resolves when navigation complete
  */
 async function navigateToUrl(targetUrl) {
   try {
+    // Convert to absolute URL (required for iOS)
+    const absoluteUrl = new URL(targetUrl, self.location.origin).href
+    console.log('[SW] Navigating to:', absoluteUrl)
+
     // Get all windows controlled by this service worker
     const clientList = await self.clients.matchAll({
       type: 'window',
@@ -225,22 +229,24 @@ async function navigateToUrl(targetUrl) {
     for (const client of clientList) {
       // Check if client is on the same origin
       const clientUrl = new URL(client.url)
-      const targetUrlObj = new URL(targetUrl, self.location.origin)
+      const targetUrlObj = new URL(absoluteUrl)
 
       if (clientUrl.origin === targetUrlObj.origin) {
-        console.log('[SW] Focusing existing client and navigating')
+        console.log('[SW] Focusing existing client and navigating to:', absoluteUrl)
 
         // Focus the window
         await client.focus()
 
         // Navigate to the target URL
         if ('navigate' in client) {
-          return client.navigate(targetUrl)
+          console.log('[SW] Using client.navigate()')
+          return client.navigate(absoluteUrl)
         } else {
           // Fallback: post message to client to navigate
+          console.log('[SW] Using postMessage fallback')
           client.postMessage({
             type: 'NAVIGATE',
-            url: targetUrl
+            url: absoluteUrl
           })
           return client
         }
@@ -248,9 +254,11 @@ async function navigateToUrl(targetUrl) {
     }
 
     // No existing window found, open a new one
-    console.log('[SW] Opening new window')
+    console.log('[SW] No existing window, opening new window to:', absoluteUrl)
     if (self.clients.openWindow) {
-      return self.clients.openWindow(targetUrl)
+      return self.clients.openWindow(absoluteUrl)
+    } else {
+      console.error('[SW] openWindow not supported')
     }
   } catch (error) {
     console.error('[SW] Error navigating to URL:', error)
