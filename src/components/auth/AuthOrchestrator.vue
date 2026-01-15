@@ -36,6 +36,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useMultiUserAuth } from '@/composables/useMultiUserAuth'
 import { useConfiguration } from '@/composables/useConfiguration'
 import { useAuthFlow } from '@/composables/useAuthFlow'
+import { usePWA } from '@/composables/usePWA'
 import AuthModal from './AuthModal.vue'
 import UserSelectionModal from './UserSelectionModal.vue'
 import type { StoredUser } from '@/types/auth'
@@ -45,6 +46,7 @@ const authStore = useAuthStore()
 const multiUser = useMultiUserAuth()
 const { isConfigured, projectKey, getProjectKey } = useConfiguration()
 const { shouldShowUserSelection, clearUserSelection } = useAuthFlow()
+const { isInstalled } = usePWA()
 
 // Initial auth (for first-time users)
 const showInitialAuth = ref(false)
@@ -95,7 +97,22 @@ function shouldShowAuthSelection(): boolean {
 
 // Watch for configuration changes to show user selection
 watch(isConfigured, (configured) => {
-  if (configured && shouldShowAuthSelection() && !showUserSelection.value) {
+  if (configured && shouldShowAuthSelection() && !showUserSelection.value && !showAuthFlow.value) {
+    // Check for single-user auto-login in PWA mode
+    if (isInstalled.value) {
+      const users = multiUser.users.value
+      if (users.length === 1) {
+        console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
+        const singleUser = users[0]
+        authFlowMode.value = 'quick-login'
+        authFlowUsername.value = singleUser.username
+        authFlowUserId.value = singleUser.id
+        cameFromUserSelection.value = false
+        showAuthFlow.value = true
+        return
+      }
+    }
+
     showUserSelection.value = true
   }
 })
@@ -105,8 +122,23 @@ watch(projectKey, (key) => {
   console.log('[AuthOrchestrator] Project key changed:', key)
   if (key && shouldShowAuthSelection()) {
     console.log('[AuthOrchestrator] Should show auth selection. Has users:', hasUsers.value)
-    // Always show user selection modal (it has both "Sign In" and "New User" options)
+
     if (!showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
+      // Check for single-user auto-login in PWA mode
+      if (isInstalled.value) {
+        const users = multiUser.users.value
+        if (users.length === 1) {
+          console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
+          const singleUser = users[0]
+          authFlowMode.value = 'quick-login'
+          authFlowUsername.value = singleUser.username
+          authFlowUserId.value = singleUser.id
+          cameFromUserSelection.value = false
+          showAuthFlow.value = true
+          return
+        }
+      }
+
       console.log('[AuthOrchestrator] Showing user selection modal')
       showUserSelection.value = true
     }
@@ -116,12 +148,44 @@ watch(projectKey, (key) => {
 // Watch for route changes to recheck auth selection need
 watch(() => route.path, () => {
   if (shouldShowAuthSelection() && !showUserSelection.value && !showAuthFlow.value && !showInitialAuth.value) {
+    // Check for single-user auto-login in PWA mode
+    if (isInstalled.value) {
+      const users = multiUser.users.value
+      if (users.length === 1) {
+        console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
+        const singleUser = users[0]
+        authFlowMode.value = 'quick-login'
+        authFlowUsername.value = singleUser.username
+        authFlowUserId.value = singleUser.id
+        cameFromUserSelection.value = false
+        showAuthFlow.value = true
+        return
+      }
+    }
+
     // Always show user selection modal (it has both "Sign In" and "New User" options)
     showUserSelection.value = true
   }
 })
 
 onMounted(() => {
+  // Check for single-user auto-login in PWA mode
+  if (isInstalled.value && shouldShowAuthSelection()) {
+    const users = multiUser.users.value
+
+    // If exactly one user exists, auto-login in PWA
+    if (users.length === 1) {
+      console.log('[AuthOrchestrator] PWA with single user detected - auto-login')
+      const singleUser = users[0]
+      authFlowMode.value = 'quick-login'
+      authFlowUsername.value = singleUser.username
+      authFlowUserId.value = singleUser.id
+      cameFromUserSelection.value = false
+      showAuthFlow.value = true
+      return
+    }
+  }
+
   // Show appropriate auth modal if conditions are met
   if (shouldShowAuthSelection()) {
     // Always show user selection modal (it has both "Sign In" and "New User" options)

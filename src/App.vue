@@ -19,7 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import InstallPrompt from '@/components/pwa/InstallPrompt.vue'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt.vue'
 import ProjectKeyModal from '@/components/common/ProjectKeyModal.vue'
@@ -36,6 +37,9 @@ import { useAuthStore } from '@/stores/authStore'
 import { usePwaStorage } from '@/composables/usePwaStorage'
 import { useConfiguration } from '@/composables/useConfiguration'
 
+// Initialize router for deep link navigation
+const router = useRouter()
+
 // Initialize timer engine globally
 const timerStore = useTimerStore()
 useTimerEngine(timerStore)
@@ -46,6 +50,25 @@ const showPwaMigration = ref(false)
 
 // Initialize authentication
 const authStore = useAuthStore()
+
+// Handle service worker messages for deep linking
+function handleServiceWorkerMessage(event: MessageEvent) {
+  console.log('[App] Service worker message:', event.data)
+
+  if (event.data && event.data.type === 'NAVIGATE') {
+    const url = event.data.url
+    console.log('[App] Navigating to:', url)
+
+    // Parse URL and navigate
+    try {
+      const urlObj = new URL(url, window.location.origin)
+      router.push(urlObj.pathname + urlObj.search)
+    } catch (error) {
+      console.error('[App] Navigation error:', error)
+    }
+  }
+}
+
 onMounted(async () => {
   // STEP 1: Initialize PWA storage
   pwaStorage.initialize()
@@ -55,6 +78,18 @@ onMounted(async () => {
 
   // STEP 2: Initialize auth
   await authStore.initializeAuth()
+
+  // STEP 3: Set up service worker message listener for deep linking
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage)
+    console.log('[App] Service worker message listener registered')
+  }
+})
+
+onBeforeUnmount(() => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage)
+  }
 })
 </script>
 
