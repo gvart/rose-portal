@@ -36,6 +36,7 @@ import { useTimerEngine } from '@/apps/timer/composables/useTimerEngine'
 import { useAuthStore } from '@/stores/authStore'
 import { usePwaStorage } from '@/composables/usePwaStorage'
 import { useConfiguration } from '@/composables/useConfiguration'
+import { useSwipeBackPrevention } from '@/composables/useSwipeBackPrevention'
 
 // Initialize router for deep link navigation
 const router = useRouter()
@@ -50,6 +51,9 @@ const showPwaMigration = ref(false)
 
 // Initialize authentication
 const authStore = useAuthStore()
+
+// Initialize global swipe-back prevention for PWA
+useSwipeBackPrevention()
 
 // Handle service worker messages for deep linking
 function handleServiceWorkerMessage(event: MessageEvent) {

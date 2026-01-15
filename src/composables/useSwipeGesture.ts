@@ -1,5 +1,6 @@
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { useHapticFeedback } from './useHapticFeedback'
+import { usePwaDetection } from './usePwaDetection'
 
 export type SwipeDirection = 'left' | 'right'
 
@@ -28,6 +29,7 @@ export function useSwipeGesture(
   } = options
 
   const { vibrate } = useHapticFeedback()
+  const { isPWA } = usePwaDetection()
 
   // Swipe state
   const swipeProgress = ref(0)
@@ -54,6 +56,12 @@ export function useSwipeGesture(
     // Check edge zone if specified
     if (edgeZone !== null && startX > edgeZone) {
       return // Not in edge zone, ignore
+    }
+
+    // CRITICAL: Prevent Safari's native swipe-back gesture in PWA mode
+    // Only prevent if touch starts in left edge zone (potential back gesture)
+    if (isPWA.value && edgeZone !== null && startX <= edgeZone) {
+      event.preventDefault()
     }
 
     isSwiping.value = false
@@ -85,6 +93,11 @@ export function useSwipeGesture(
     // Check edge zone on start
     if (edgeZone !== null && startX > edgeZone) {
       return
+    }
+
+    // CRITICAL: Prevent Safari navigation when swiping right from edge in PWA
+    if (isPWA.value && deltaX > 0 && edgeZone !== null && startX <= edgeZone) {
+      event.preventDefault()
     }
 
     // Valid swipe in progress
@@ -153,8 +166,8 @@ export function useSwipeGesture(
     const element = elementRef.value
     if (!element) return
 
-    element.addEventListener('touchstart', handleTouchStart, { passive: true })
-    element.addEventListener('touchmove', handleTouchMove, { passive: true })
+    element.addEventListener('touchstart', handleTouchStart, { passive: false })
+    element.addEventListener('touchmove', handleTouchMove, { passive: false })
     element.addEventListener('touchend', handleTouchEnd, { passive: true })
     element.addEventListener('touchcancel', handleTouchCancel, { passive: true })
   })

@@ -46,6 +46,19 @@
     overflow-y: auto;
   }
 
+  /* Prevent Safari swipe navigation in PWA mode */
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    html,
+    body {
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto; /* Preserve vertical scrolling */
+    }
+
+    body {
+      touch-action: pan-y; /* Allow only vertical panning */
+    }
+  }
+
   /* Hide scrollbar for specific scrollable containers only */
   .hide-scrollbar,
   .apps-container.carousel {
