@@ -6,38 +6,20 @@
         <h3 class="gauge-card__title">{{ title }}</h3>
       </div>
 
-      <div
-        class="gauge-card__visual"
-        role="progressbar"
-        :aria-label="`${title}: ${value} ${unit}`"
-        :aria-valuenow="value"
-        :aria-valuemin="0"
-        :aria-valuemax="max"
-      >
-        <svg class="gauge-ring" viewBox="0 0 100 100" aria-hidden="true">
-          <circle
-            cx="50" cy="50" r="42"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="8"
-            class="gauge-ring__bg"
-          />
-          <circle
-            cx="50" cy="50" r="42"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="8"
-            class="gauge-ring__fill"
-            :class="`gauge-ring__fill--${status}`"
-            :stroke-dasharray="circumference"
-            :stroke-dashoffset="offset"
-            transform="rotate(-90 50 50)"
-          />
-        </svg>
-        <div class="gauge-card__value">
-          <span class="gauge-card__number">{{ value }}</span>
-          <span class="gauge-card__unit">{{ unit }}</span>
-        </div>
+      <div class="gauge-card__visual">
+        <q-circular-progress
+          :value="progressValue"
+          :color="progressColor"
+          size="128px"
+          :thickness="0.12"
+          track-color="grey-3"
+          class="gauge-ring"
+        >
+          <div class="gauge-card__value">
+            <span class="gauge-card__number">{{ value }}</span>
+            <span class="gauge-card__unit">{{ unit }}</span>
+          </div>
+        </q-circular-progress>
       </div>
 
       <p class="gauge-card__subtitle">{{ subtitle }}</p>
@@ -58,10 +40,16 @@ const props = defineProps<{
   subtitle: string
 }>()
 
-const circumference = 2 * Math.PI * 42
-const offset = computed(() => {
-  const progress = props.value / props.max
-  return circumference * (1 - progress)
+const progressValue = computed(() => (props.value / props.max) * 100)
+
+const progressColor = computed(() => {
+  const colorMap: Record<StatusLevel, string> = {
+    good: 'positive',
+    warning: 'warning',
+    critical: 'negative',
+    saturated: 'info'
+  }
+  return colorMap[props.status]
 })
 </script>
 
@@ -104,44 +92,16 @@ const offset = computed(() => {
 }
 
 .gauge-card__visual {
-  position: relative;
-  width: 128px;
-  height: 128px;
-  margin: 0 auto var(--space-4);
-}
-
-.gauge-ring {
-  width: 100%;
-  height: 100%;
-}
-
-.gauge-ring__bg {
-  color: var(--color-border-secondary);
-}
-
-.gauge-ring__fill {
-  color: var(--color-success-solid);
-  transition: all 700ms var(--ease-in-out);
-}
-
-.gauge-ring__fill--warning {
-  color: var(--color-warning-solid);
-}
-
-.gauge-ring__fill--critical {
-  color: var(--color-error-solid);
-}
-
-.gauge-ring__fill--saturated {
-  color: var(--color-info-solid);
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
 }
 
 .gauge-card__value {
-  position: absolute;
-  inset: 0;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
+  gap: 2px;
 }
 
 .gauge-card__number {
