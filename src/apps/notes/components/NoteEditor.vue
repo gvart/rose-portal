@@ -2,6 +2,7 @@
   <div v-if="note" class="note-editor">
     <div class="note-editor__header">
       <input
+        ref="titleInputRef"
         :value="notesStore.editorTitle"
         class="note-title-input"
         placeholder="Note title"
@@ -48,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, onUnmounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onUnmounted, onBeforeUnmount } from 'vue'
 import { EditorContent } from '@tiptap/vue-3'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import { useTipTapEditor } from '@/components/editor/composables/useTipTapEditor'
@@ -59,6 +60,8 @@ import { useAutoSave } from '../composables/useAutoSave'
 import EditorToolbar from '@/components/editor/EditorToolbar.vue'
 import TagSelector from './TagSelector.vue'
 import type { Note } from '../types/notes'
+
+const titleInputRef = ref<HTMLInputElement | null>(null)
 
 const props = defineProps<{
   note: Note | null
@@ -115,6 +118,27 @@ watch(
           editor.commands.setContent(markdownToTipTap(props.content))
         }
       }
+    }
+  }
+)
+
+// Autofocus title input when note is opened
+onMounted(() => {
+  if (titleInputRef.value && !props.note?.title) {
+    // Only autofocus if this is a new note (no title)
+    titleInputRef.value.focus()
+  }
+})
+
+// Watch for note changes to autofocus on new note
+watch(
+  () => props.note?.id,
+  (newId, oldId) => {
+    if (newId !== oldId && titleInputRef.value && !props.note?.title) {
+      // Autofocus when switching to a new note
+      setTimeout(() => {
+        titleInputRef.value?.focus()
+      }, 100)
     }
   }
 )

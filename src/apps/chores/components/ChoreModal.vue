@@ -1,6 +1,6 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
-    <q-card class="chore-modal-card">
+    <q-card class="chore-modal-card modal-lg">
       <q-card-section class="modal-header">
         <div class="text-h6">
           {{ mode === 'create' ? 'Create Chore' : 'Edit Chore' }}
@@ -8,72 +8,84 @@
         <q-btn icon="close" flat round dense @click="close" />
       </q-card-section>
 
-      <q-card-section class="modal-content">
-        <div class="modal-layout">
-          <!-- Main Content Area (Left Column on Desktop) -->
-          <div class="content-main">
-              <!-- Title -->
-              <div class="form-group">
-                <q-input
-                  v-model="localFormData.title"
-                  placeholder="Chore title"
-                  maxlength="255"
-                  borderless
-                  input-class="text-h6 text-weight-medium"
-                  :error="!!errors.title"
-                  :error-message="errors.title"
-                />
-              </div>
-
-              <!-- Description -->
-              <div class="form-group">
-                <label for="chore-description" class="form-label">Description</label>
-                <ChoreDescriptionEditor
-                  v-model="localFormData.description"
-                  placeholder="Add details about this chore..."
-                />
-              </div>
-            </div>
-
-            <!-- Details Sidebar (Right Column on Desktop) -->
-            <div class="content-sidebar">
-              <!-- Priority -->
-              <div class="form-group">
-                <label class="form-label">Priority</label>
-                <PrioritySegmentedControl v-model="localFormData.priority" />
-              </div>
-
-              <!-- Due Date -->
-              <div class="form-group">
-                <label class="form-label">Due Date</label>
-                <VueDatePicker
-                  v-model="localFormData.dueDate"
-                  :enable-time-picker="false"
-                  format="MMM dd, yyyy"
-                  auto-apply
-                  :teleport="true"
-                >
-                  <template #dp-input="{ value }">
-                    <div class="date-picker-input">
-                      {{ value }}
-                    </div>
-                  </template>
-                </VueDatePicker>
-              </div>
-
-              <!-- Assigned To (Edit mode only) -->
-              <AssignmentSelector
-                v-if="mode === 'edit'"
-                v-model="localFormData.assignedToId"
-                :users="availableUsers"
+      <q-card-section class="modal-content scrollable-content">
+        <div class="modal-two-column">
+          <!-- Main Content Area -->
+          <div class="modal-main">
+            <!-- Title -->
+            <div class="input-section">
+              <q-input
+                v-model="localFormData.title"
+                placeholder="Chore title"
+                maxlength="255"
+                outlined
+                dense
+                input-class="text-subtitle1 text-weight-medium"
+                :error="!!errors.title"
+                :error-message="errors.title"
+                :readonly="isPi5"
+                @click="isPi5 && handleTitleFocus()"
               />
             </div>
+
+            <!-- Description -->
+            <div class="input-section">
+              <label class="input-label">Description</label>
+              <ChoreDescriptionEditor
+                v-model="localFormData.description"
+                placeholder="Add details about this chore..."
+                :compact="true"
+                @focus="isPi5 && handleDescriptionFocus()"
+              />
+            </div>
+          </div>
+
+          <!-- Details Sidebar -->
+          <div class="modal-sidebar">
+            <!-- Priority -->
+            <div class="input-section">
+              <label class="input-label">Priority</label>
+              <PrioritySegmentedControl v-model="localFormData.priority" dense />
+            </div>
+
+            <!-- Due Date -->
+            <div class="input-section">
+              <label class="input-label">Due Date</label>
+              <VueDatePicker
+                v-model="localFormData.dueDate"
+                :enable-time-picker="false"
+                format="MMM dd, yyyy"
+                auto-apply
+                :teleport="true"
+              >
+                <template #dp-input="{ value }">
+                  <q-input
+                    :model-value="value"
+                    readonly
+                    outlined
+                    dense
+                    placeholder="Select date"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer" />
+                    </template>
+                  </q-input>
+                </template>
+              </VueDatePicker>
+            </div>
+
+            <!-- Assigned To (Edit mode only) -->
+            <AssignmentSelector
+              v-if="mode === 'edit'"
+              v-model="localFormData.assignedToId"
+              :users="availableUsers"
+              dense
+            />
           </div>
         </div>
       </q-card-section>
 
-      <q-card-actions align="right" class="q-px-md q-pb-md">
-        <q-btn label="Cancel" flat @click="close" />
+      <q-card-actions class="modal-footer modal-footer--between">
         <q-btn
           v-if="mode === 'edit' && canDelete"
           label="Delete"
@@ -82,23 +94,40 @@
           :disable="loading"
           @click="handleDelete"
         />
-        <q-btn
-          :label="loading ? 'Saving...' : 'Save'"
-          color="primary"
-          unelevated
-          :disable="loading || !isValid"
-          :loading="loading"
-          @click="handleSave"
-        />
+        <q-space v-else />
+
+        <div class="row q-gutter-sm">
+          <q-btn label="Cancel" flat @click="close" />
+          <q-btn
+            :label="loading ? 'Saving...' : 'Save'"
+            color="primary"
+            unelevated
+            :disable="loading || !isValid"
+            :loading="loading"
+            @click="handleSave"
+          />
+        </div>
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <!-- On-Screen Keyboard (Pi5 only) -->
+  <Teleport to="body">
+    <FloatingKeyboard
+      v-if="isPi5"
+      v-model="keyboardValue"
+      v-model:show="showKeyboard"
+      :docked="true"
+    />
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
+import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
 import AssignmentSelector from './AssignmentSelector.vue'
 import ChoreDescriptionEditor from './ChoreDescriptionEditor.vue'
 import PrioritySegmentedControl from './PrioritySegmentedControl.vue'
@@ -124,10 +153,44 @@ const emit = defineEmits<{
 
 const localFormData = ref<ChoreFormData>({ ...props.formData })
 const errors = ref<Record<string, string>>({})
+const showKeyboard = ref(false)
+const activeField = ref<'title' | 'description'>('title')
+const { isPi5 } = useDeviceDetection()
 
 const isValid = computed(() => {
   return localFormData.value.title.trim().length > 0
 })
+
+// Unified keyboard value - switches between title and description
+const keyboardValue = computed({
+  get: () => {
+    if (activeField.value === 'title') {
+      return localFormData.value.title
+    } else {
+      // Strip HTML for description on Pi5
+      const div = document.createElement('div')
+      div.innerHTML = localFormData.value.description
+      return div.textContent || div.innerText || ''
+    }
+  },
+  set: (value: string) => {
+    if (activeField.value === 'title') {
+      localFormData.value.title = value
+    } else {
+      localFormData.value.description = value
+    }
+  }
+})
+
+function handleTitleFocus() {
+  activeField.value = 'title'
+  showKeyboard.value = true
+}
+
+function handleDescriptionFocus() {
+  activeField.value = 'description'
+  showKeyboard.value = true
+}
 
 watch(
   () => props.formData,
@@ -172,133 +235,91 @@ function close(): void {
 
 <style scoped>
 .chore-modal-card {
-  max-width: 56rem;
-  width: 100%;
-  max-height: 90vh;
-}
-
-.modal-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
 }
 
 .modal-content {
-  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  max-height: 60vh;
 }
 
-.modal-layout {
+/* Mobile: Single column */
+.modal-two-column {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
-.content-main {
+/* Mobile-specific optimizations for phones */
+@media (max-width: 768px) {
+  .modal-two-column {
+    gap: 12px !important;
+  }
+
+  .modal-sidebar {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .modal-content {
+    max-height: 70vh;
+  }
+
+  .input-section {
+    gap: 4px !important;
+  }
+}
+
+/* Desktop: Side by side */
+@media (min-width: 768px) {
+  .modal-two-column {
+    flex-direction: row;
+  }
+
+  .modal-sidebar {
+    width: 240px;
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: var(--depth-1-border);
+  }
+}
+
+.modal-main {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 }
 
-.content-sidebar {
-  width: 280px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 0;
-}
-
-.content-main .form-group:last-child,
-.content-sidebar .form-group:last-child {
-  margin-bottom: 0;
-}
-
-.form-label {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.date-picker-input {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  color: #111827;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-
-.date-picker-input:hover {
-  border-color: #9ca3af;
-}
-
-/* Desktop sidebar styling */
-@media (min-width: 769px) {
-  .content-sidebar {
-    background: #f9fafb;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    border: 1px solid #e5e7eb;
+/* Ultra-compact optimizations for Pi5 */
+@media (max-height: 768px) {
+  .chore-modal-card.modal-lg {
+    max-height: 90vh !important;
+    max-width: 92vw !important; /* Use more horizontal space */
   }
 
-  .content-sidebar .form-group {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+  /* Force two-column on landscape small displays */
+  .modal-two-column {
+    flex-direction: row !important;
   }
 
-  .content-sidebar .form-group:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
+  /* Narrower sidebar */
+  .modal-sidebar {
+    width: 200px !important;
+    gap: 8px !important;
+    padding: var(--space-3) !important;
   }
-}
 
-/* Mobile responsive */
-@media (max-width: 768px) {
+  /* Compact date picker */
+  .q-input--dense {
+    font-size: 12px !important;
+  }
+
   .modal-content {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .content-main,
-  .content-sidebar {
-    width: 100%;
-  }
-
-  .content-sidebar {
-    gap: 1rem;
-  }
-
-  .form-group {
-    margin-bottom: 0;
-  }
-
-  .content-main .form-group {
-    gap: 1rem;
-  }
-
-  .content-sidebar .form-group {
-    gap: 1rem;
-  }
-
-  .form-label {
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    text-transform: none;
-    letter-spacing: normal;
+    max-height: 75vh;
   }
 }
 </style>

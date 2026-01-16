@@ -1,0 +1,348 @@
+/**
+ * ROSE Portal Compact Layout System
+ * Density-first design for power users and constrained viewports
+ *
+ * Usage: Add 'compact' class to body or specific containers
+ */
+
+:root {
+  /* ========================================
+     COMPACT SPACING SCALE (3px Grid)
+     ======================================== */
+
+  --compact-space-1: 3px;    /* Micro spacing */
+  --compact-space-2: 6px;    /* Tight spacing */
+  --compact-space-3: 9px;    /* Default gaps */
+  --compact-space-4: 12px;   /* Standard padding */
+  --compact-space-5: 15px;   /* Section spacing */
+  --compact-space-6: 18px;   /* Large section spacing */
+  --compact-space-8: 24px;   /* Major sections */
+  --compact-space-10: 30px;  /* Very large sections */
+  --compact-space-11: 40px;  /* Touch target (reduced) */
+
+  /* ========================================
+     MODAL SIZE PRESETS
+     ======================================== */
+
+  /* Small: Confirmations, simple forms */
+  --modal-width-sm: 384px;
+  --modal-max-height-sm: 70vh;
+
+  /* Medium: Standard forms, settings */
+  --modal-width-md: 512px;
+  --modal-max-height-md: 80vh;
+
+  /* Large: Complex forms, multi-step wizards */
+  --modal-width-lg: 672px;
+  --modal-max-height-lg: 85vh;
+
+  /* Extra Large: Data-heavy views, tables */
+  --modal-width-xl: 896px;
+  --modal-max-height-xl: 90vh;
+
+  /* Full: Near-fullscreen modals */
+  --modal-width-full: calc(100vw - 32px);
+  --modal-max-height-full: calc(100vh - 32px);
+
+  /* ========================================
+     FORM LAYOUT VARIABLES
+     ======================================== */
+
+  /* Form grid configuration */
+  --form-grid-columns: 1;
+  --form-grid-gap: var(--space-4);
+  --form-field-min-width: 200px;
+
+  /* Input sizing */
+  --input-height-sm: 36px;
+  --input-height-md: 44px;
+  --input-height-lg: 52px;
+
+  /* Label sizing */
+  --label-font-size: var(--font-size-13);
+  --label-margin-bottom: var(--space-2);
+
+  /* Hint text */
+  --hint-font-size: var(--font-size-11);
+  --hint-margin-top: var(--space-1);
+
+  /* ========================================
+     COMPACT TYPOGRAPHY
+     ======================================== */
+
+  --compact-font-size-base: 13px;
+  --compact-font-size-sm: 11px;
+  --compact-font-size-lg: 15px;
+  --compact-line-height: 1.4;
+
+  /* ========================================
+     SCROLL INDICATORS
+     ======================================== */
+
+  --scroll-indicator-height: 24px;
+  --scroll-indicator-gradient: linear-gradient(
+    to bottom,
+    var(--color-bg-primary) 0%,
+    transparent 100%
+  );
+  --scroll-indicator-gradient-bottom: linear-gradient(
+    to top,
+    var(--color-bg-primary) 0%,
+    transparent 100%
+  );
+}
+
+/* ========================================
+   RESPONSIVE FORM GRID BREAKPOINTS
+   ======================================== */
+
+@media (min-width: 640px) {
+  :root {
+    --form-grid-columns: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --form-grid-gap: var(--space-5);
+  }
+}
+
+/* ========================================
+   COMPACT MODE OVERRIDES
+   ======================================== */
+
+body.compact,
+.compact {
+  /* Reduce base spacing */
+  --space-1: var(--compact-space-1);
+  --space-2: var(--compact-space-2);
+  --space-3: var(--compact-space-3);
+  --space-4: var(--compact-space-4);
+  --space-5: var(--compact-space-5);
+  --space-6: var(--compact-space-6);
+  --space-8: var(--compact-space-8);
+  --space-10: var(--compact-space-10);
+  --space-11: var(--compact-space-11);
+
+  /* Tighter typography */
+  --font-size-14: var(--compact-font-size-base);
+  --font-size-12: var(--compact-font-size-sm);
+  --font-size-16: var(--compact-font-size-lg);
+
+  /* Smaller radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+/* ========================================
+   DARK MODE COMPACT OVERRIDES
+   ======================================== */
+
+:root[data-theme="dark"] {
+  --scroll-indicator-gradient: linear-gradient(
+    to bottom,
+    var(--color-bg-primary) 0%,
+    transparent 100%
+  );
+  --scroll-indicator-gradient-bottom: linear-gradient(
+    to top,
+    var(--color-bg-primary) 0%,
+    transparent 100%
+  );
+}
+
+/* ========================================
+   MOBILE-SPECIFIC OVERRIDES (Phone Widths <= 768px)
+   For iPhone and Android phone viewports
+   ======================================== */
+
+@media (max-width: 768px) {
+  :root {
+    /* Mobile spacing scale - tighter than desktop */
+    --mobile-space-1: 2px;
+    --mobile-space-2: 4px;
+    --mobile-space-3: 8px;
+    --mobile-space-4: 12px;
+    --mobile-space-5: 16px;
+    --mobile-space-6: 20px;
+    --mobile-space-8: 24px;
+    --mobile-space-11: 44px; /* Touch target minimum */
+
+    /* Mobile modal padding */
+    --modal-padding-mobile: 12px;
+    --modal-gap-mobile: 12px;
+    --modal-header-padding-mobile: 12px;
+    --modal-footer-padding-mobile: 12px;
+
+    /* Mobile card padding */
+    --card-padding-mobile: 12px;
+    --section-gap-mobile: 8px;
+
+    /* Mobile form spacing */
+    --form-grid-gap: 12px;
+    --form-field-gap: 8px;
+    --input-section-gap: 4px;
+
+    /* Mobile typography */
+    --mobile-font-size-base: 14px;
+    --mobile-font-size-sm: 12px;
+    --mobile-font-size-lg: 16px;
+    --mobile-line-height: 1.4;
+  }
+
+  /* Apply mobile overrides to modals */
+  .q-dialog .q-card {
+    padding: var(--modal-padding-mobile) !important;
+  }
+
+  .modal-header {
+    padding: var(--modal-header-padding-mobile) !important;
+  }
+
+  .modal-content {
+    gap: var(--modal-gap-mobile) !important;
+  }
+
+  .modal-footer {
+    padding: var(--modal-footer-padding-mobile) !important;
+  }
+
+  /* Tighter form sections */
+  .form-grid,
+  .form-sections {
+    gap: var(--form-grid-gap) !important;
+  }
+
+  .input-section {
+    gap: var(--input-section-gap) !important;
+  }
+}
+
+/* ========================================
+   ULTRA-COMPACT MODE (Small Displays <= 768px height)
+   Specifically for Pi5 7" touchscreen (1024x600)
+   ======================================== */
+
+@media (max-height: 768px) {
+  :root {
+    /* Aggressive spacing reduction */
+    --ultra-compact-space-1: 2px;
+    --ultra-compact-space-2: 4px;
+    --ultra-compact-space-3: 6px;
+    --ultra-compact-space-4: 8px;
+    --ultra-compact-space-5: 10px;
+    --ultra-compact-space-6: 12px;
+    --ultra-compact-space-8: 16px;
+    --ultra-compact-space-11: 40px; /* Touch target minimum */
+
+    /* Tighter typography */
+    --ultra-compact-font-size-base: 12px;
+    --ultra-compact-font-size-sm: 10px;
+    --ultra-compact-font-size-lg: 14px;
+    --ultra-compact-line-height: 1.3;
+
+    /* Modal height maximization */
+    --modal-max-height-sm: 85vh;
+    --modal-max-height-md: 88vh;
+    --modal-max-height-lg: 90vh;
+    --modal-max-height-xl: 92vh;
+
+    /* Reduced input heights */
+    --input-height-sm: 32px;
+    --input-height-md: 36px;
+    --input-height-lg: 40px;
+
+    /* Minimal label spacing */
+    --label-margin-bottom: var(--ultra-compact-space-1);
+    --hint-margin-top: 0px;
+    --hint-font-size: 10px;
+  }
+
+  body.compact,
+  .compact {
+    --space-1: var(--ultra-compact-space-1);
+    --space-2: var(--ultra-compact-space-2);
+    --space-3: var(--ultra-compact-space-3);
+    --space-4: var(--ultra-compact-space-4);
+    --space-5: var(--ultra-compact-space-5);
+    --space-6: var(--ultra-compact-space-6);
+    --space-8: var(--ultra-compact-space-8);
+    --space-11: var(--ultra-compact-space-11);
+
+    --font-size-10: var(--ultra-compact-font-size-sm);
+    --font-size-12: var(--ultra-compact-font-size-sm);
+    --font-size-14: var(--ultra-compact-font-size-base);
+    --font-size-16: var(--ultra-compact-font-size-lg);
+
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+  }
+
+  /* Reduce modal card section padding */
+  .q-card__section {
+    padding: 8px 12px !important;
+  }
+
+  /* Tighter modal headers */
+  .modal-header {
+    padding: 8px 12px !important;
+    min-height: 40px;
+  }
+
+  .modal-header .text-h6 {
+    font-size: 14px !important;
+    line-height: 1.3;
+  }
+
+  .modal-header .text-caption {
+    font-size: 10px !important;
+    margin-top: 2px;
+  }
+
+  /* Compact modal content */
+  .modal-content {
+    padding: 8px 12px !important;
+  }
+
+  /* Tighter form grids */
+  .form-grid {
+    gap: 8px !important;
+  }
+
+  /* Compact input sections */
+  .input-section {
+    gap: 4px !important;
+  }
+
+  .input-label {
+    font-size: 11px !important;
+    line-height: 1.2;
+  }
+
+  .form-hint {
+    font-size: 10px !important;
+    line-height: 1.3;
+    margin-top: 2px !important;
+  }
+
+  /* Reduce modal footer height */
+  .modal-footer {
+    padding: 8px 12px !important;
+    min-height: 44px;
+  }
+
+  /* Compact buttons */
+  .q-btn {
+    padding: 4px 10px !important;
+    min-height: 36px !important;
+    font-size: 12px !important;
+  }
+
+  .q-btn--dense {
+    min-height: 32px !important;
+    padding: 3px 8px !important;
+  }
+}

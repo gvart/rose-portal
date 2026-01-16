@@ -32,22 +32,17 @@
             <label for="haptic-toggle" class="setting-label">Enable vibration on touch</label>
             <p class="setting-description">Provides tactile feedback when interacting with buttons and controls</p>
             <p v-if="!settingsStore.hapticSupported" class="setting-warning">
-              ⚠️ Haptic feedback is not supported on this device
+              <q-icon name="warning" size="14px" /> Haptic feedback is not supported on this device
             </p>
           </div>
 
-          <button
-            id="haptic-toggle"
-            role="switch"
-            :aria-checked="settingsStore.hapticEnabled"
-            :disabled="!settingsStore.hapticSupported"
-            class="toggle-switch"
-            :class="{ active: settingsStore.hapticEnabled }"
-           
-            @click="handleToggle"
-          >
-            <span class="toggle-slider" :class="{ active: settingsStore.hapticEnabled }"></span>
-          </button>
+          <q-toggle
+            :model-value="settingsStore.hapticEnabled"
+            :disable="!settingsStore.hapticSupported"
+            color="positive"
+            size="md"
+            @update:model-value="settingsStore.toggleHaptic"
+          />
         </div>
       </div>
 
@@ -60,17 +55,12 @@
             <p class="setting-description">Show particle animation after period of inactivity</p>
           </div>
 
-          <button
-            id="screensaver-toggle"
-            role="switch"
-            :aria-checked="settingsStore.screensaverEnabled"
-            class="toggle-switch"
-            :class="{ active: settingsStore.screensaverEnabled }"
-           
-            @click="settingsStore.toggleScreensaver"
-          >
-            <span class="toggle-slider" :class="{ active: settingsStore.screensaverEnabled }"></span>
-          </button>
+          <q-toggle
+            :model-value="settingsStore.screensaverEnabled"
+            color="positive"
+            size="md"
+            @update:model-value="settingsStore.toggleScreensaver"
+          />
         </div>
 
         <div v-if="settingsStore.screensaverEnabled" class="setting-item">
@@ -81,27 +71,23 @@
 
           <div class="timeout-controls">
             <button
-             
+
               @click="decreaseTimeout"
               class="timeout-btn"
               :disabled="settingsStore.screensaverTimeout <= 1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-              </svg>
+              <q-icon name="remove" size="16px" />
             </button>
 
             <span class="timeout-value">{{ settingsStore.screensaverTimeout }} min</span>
 
             <button
-             
+
               @click="increaseTimeout"
               class="timeout-btn"
               :disabled="settingsStore.screensaverTimeout >= 60"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
+              <q-icon name="add" size="16px" />
             </button>
           </div>
         </div>
@@ -135,7 +121,7 @@
               {{ notificationStatus }}
             </p>
             <p v-if="!isNotificationsSupported" class="setting-warning">
-              ⚠️ Push notifications are not supported on this device/browser
+              <q-icon name="warning" size="14px" /> Push notifications are not supported on this device/browser
             </p>
           </div>
 
@@ -179,7 +165,12 @@
           <div class="setting-info">
             <label class="setting-label">Transfer Settings to PWA</label>
             <p class="setting-description">
-              {{ pwaDataCopied ? '✓ Link copied! Open it after installing the PWA' : 'Copy a link to transfer your settings when installing the PWA' }}
+              <template v-if="pwaDataCopied">
+                <q-icon name="check" size="14px" color="positive" /> Link copied! Open it after installing the PWA
+              </template>
+              <template v-else>
+                Copy a link to transfer your settings when installing the PWA
+              </template>
             </p>
           </div>
 
@@ -196,6 +187,7 @@
           <div class="setting-info">
             <label class="setting-label">App Updates</label>
             <p class="setting-description">
+              <q-icon v-if="showUpdateWarning" name="warning" size="14px" color="warning" />
               {{ updateStatusText }}
             </p>
           </div>
@@ -243,7 +235,7 @@
         </div>
       </div>
 
-      <div v-if="isDesktop" class="settings-section">
+      <div v-if="isDesktop" class="settings-section full-width">
         <h2 class="section-title">Install on Phone</h2>
 
         <div class="setting-item">
@@ -259,7 +251,7 @@
         <div class="qr-code-container">
           <Qrcode
             :value="installUrl"
-            :size="200"
+            :size="160"
             :dotsOptions="{ type: 'rounded', color: '#10b981' }"
             :cornersSquareOptions="{ type: 'extra-rounded', color: '#10b981' }"
             :cornersDotOptions="{ type: 'dot', color: '#10b981' }"
@@ -288,7 +280,8 @@
           <div class="code-display">
             <span class="code-text">{{ inviteCode.code }}</span>
             <button @click="copyInviteCode" class="btn-copy">
-              {{ codeCopied ? '✓ Copied' : 'Copy' }}
+              <q-icon v-if="codeCopied" name="check" size="14px" />
+              {{ codeCopied ? 'Copied' : 'Copy' }}
             </button>
           </div>
           <p class="expiration-text">
@@ -299,7 +292,7 @@
         <p class="qr-code-url">{{ installUrl }}</p>
       </div>
 
-      <div class="settings-section">
+      <div class="settings-section full-width">
         <h2 class="section-title">About</h2>
         <div class="about-info">
           <p class="about-text">ROSE Portal</p>
@@ -347,10 +340,6 @@ const themes = [
   { value: 'dark', label: 'Dark' },
   { value: 'auto', label: 'Auto' }
 ] as const
-
-function handleToggle() {
-  settingsStore.toggleHaptic()
-}
 
 // Screensaver Timeout Controls
 function increaseTimeout() {
@@ -475,7 +464,7 @@ const notificationStatus = computed(() => {
 
 const updateStatusText = computed(() => {
   if (needRefresh.value) {
-    return '⚠️ Update available - see banner above'
+    return 'Update available - see banner above'
   }
   if (isCheckingForUpdates.value) {
     return 'Checking for updates...'
@@ -486,6 +475,8 @@ const updateStatusText = computed(() => {
   }
   return 'Auto-checks every hour'
 })
+
+const showUpdateWarning = computed(() => needRefresh.value)
 
 const notificationLoading = ref(false)
 
@@ -651,110 +642,179 @@ const handleExportPwaData = async () => {
 
 <style scoped>
 .settings {
-  @apply max-w-2xl mx-auto space-y-8;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .settings {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .settings-section.full-width {
+    grid-column: 1 / -1;
+  }
 }
 
 .settings-section {
-  @apply bg-white rounded-xl shadow-md p-6;
+  background: var(--color-bg-primary);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .section-title {
-  @apply text-xl font-bold text-gray-800 mb-4;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: var(--depth-1-border);
 }
 
 .setting-item {
-  @apply flex items-center justify-between gap-6 py-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+}
+
+.setting-item:not(:last-child) {
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .setting-info {
-  @apply flex-1;
+  flex: 1;
+  min-width: 0;
 }
 
 .setting-label {
-  @apply block text-lg font-semibold text-gray-800 mb-1 cursor-pointer;
+  display: block;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
 }
 
 .setting-description {
-  @apply text-sm text-gray-600;
+  font-size: var(--font-size-12);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
 }
 
 .version-message {
-  @apply italic text-gray-500;
+  font-style: italic;
+  color: var(--color-text-muted);
 }
 
 .setting-warning {
-  @apply text-sm text-amber-600 mt-2;
+  font-size: var(--font-size-12);
+  color: var(--color-warning-text);
+  margin-top: var(--space-1);
 }
 
-.toggle-switch {
-  @apply relative w-14 h-8 rounded-full transition-colors duration-200
-         bg-gray-300 hover:bg-gray-400
-         disabled:opacity-50 disabled:cursor-not-allowed
-         flex-shrink-0;
-}
-
-.toggle-switch.active {
-  @apply bg-green-500 hover:bg-green-600;
-}
-
-.toggle-slider {
-  @apply absolute top-1 left-1 w-6 h-6 rounded-full bg-white
-         shadow-md transition-transform duration-200;
-}
-
-.toggle-slider.active {
-  @apply translate-x-6;
-}
 
 .about-info {
-  @apply py-2;
+  padding: var(--space-2) 0;
 }
 
 .about-text {
-  @apply text-lg font-semibold text-gray-800;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .about-subtext {
-  @apply text-sm text-gray-600;
+  font-size: var(--font-size-12);
+  color: var(--color-text-secondary);
 }
 
 .btn-primary {
-  @apply px-4 py-2 bg-green-500 text-white font-medium rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-green-600
-         disabled:opacity-50 disabled:cursor-not-allowed;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background: var(--color-success-bg-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
-  @apply px-4 py-2 bg-gray-500 text-white font-medium rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-gray-600;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-medium);
+  border: var(--depth-1-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-in-out);
 }
 
-.btn-test {
-  @apply px-4 py-2 bg-blue-500 text-white font-medium rounded-lg
-         transition-all duration-150 active:scale-95
-         hover:bg-blue-600;
+.btn-secondary:hover {
+  background: var(--color-bg-secondary);
+}
+
+.btn-secondary:active {
+  transform: scale(0.96);
 }
 
 .status-indicator {
-  @apply w-3 h-3 rounded-full flex-shrink-0;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
 }
 
 .status-active {
-  @apply bg-green-500 shadow-lg shadow-green-500/50;
+  background: var(--color-success-bg);
+  box-shadow: 0 0 8px var(--color-success-bg);
 }
 
 .status-inactive {
-  @apply bg-gray-300;
+  background: var(--color-bg-tertiary);
 }
 
 .qr-code-container {
-  @apply flex justify-center items-center py-6 my-4 bg-white rounded-lg border-2 border-gray-200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-4);
+  background: white;
+  border: var(--depth-1-border);
+  border-radius: var(--radius-md);
 }
 
 .qr-code-url {
-  @apply text-xs text-gray-500 text-center mt-2 break-all px-4;
+  font-size: var(--font-size-11);
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: var(--space-2);
+  word-break: break-all;
 }
 
 .timeout-controls {
@@ -912,5 +972,41 @@ const handleExportPwaData = async () => {
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+}
+
+/* Mobile-specific optimizations for phones */
+@media (max-width: 768px) {
+  .settings {
+    padding: var(--mobile-space-3) !important;
+    gap: var(--section-gap-mobile) !important;
+  }
+
+  .settings-section {
+    padding: var(--card-padding-mobile) !important;
+    gap: var(--section-gap-mobile) !important;
+  }
+
+  .setting-item {
+    padding: var(--mobile-space-2) 0 !important;
+  }
+
+  .setting-description {
+    font-size: 12px !important;
+    line-height: 1.3;
+  }
+
+  .section-title {
+    font-size: 14px !important;
+    padding-bottom: var(--mobile-space-2) !important;
+  }
+
+  .qr-code-container {
+    padding: var(--mobile-space-3) !important;
+  }
+
+  .invite-code-section {
+    padding: var(--mobile-space-3) !important;
+    margin-top: var(--mobile-space-3) !important;
+  }
 }
 </style>

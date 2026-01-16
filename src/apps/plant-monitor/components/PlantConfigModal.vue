@@ -1,152 +1,159 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)" persistent>
-    <q-card class="plant-config-card">
+    <q-card class="plant-config-card modal-lg">
       <q-card-section class="modal-header">
-        <div class="text-h5">Plant Configuration</div>
+        <div>
+          <div class="text-h6">Plant Configuration</div>
+          <div class="text-caption text-grey-7">{{ plant?.name || 'Configure plant settings' }}</div>
+        </div>
         <q-btn icon="close" flat round dense @click="closeModal" :disable="saveInProgress" />
       </q-card-section>
 
-      <q-card-section class="modal-content">
-            <div class="input-section">
-              <label class="input-label">Plant Name</label>
-              <input
-                v-model="localConfig.name"
-                type="text"
-                class="text-input"
-                placeholder="Enter plant name"
-                maxlength="50"
-                :readonly="!isMobileOrTablet"
-                @click="!isMobileOrTablet && (showKeyboard = true)"
-                @focus="!isMobileOrTablet && (showKeyboard = true)"
-              />
-            </div>
+      <q-card-section class="modal-content scrollable-content">
+        <div class="form-grid">
+          <!-- Plant Name - Full Width -->
+          <div class="input-section full-width">
+            <label class="input-label">Plant Name</label>
+            <input
+              v-model="localConfig.name"
+              type="text"
+              class="text-input"
+              placeholder="Enter plant name"
+              maxlength="50"
+              :readonly="isPi5"
+              @click="isPi5 && (showKeyboard = true)"
+              @focus="isPi5 && (showKeyboard = true)"
+            />
+          </div>
 
-            <div class="input-section">
-              <label class="input-label">
-                Dry Threshold
-                <span class="label-hint">(triggers watering)</span>
-              </label>
-              <ThresholdStepper
-                v-model="localConfig.dryThreshold"
-                :min="CONFIG_LIMITS.dryThreshold.min"
-                :max="CONFIG_LIMITS.dryThreshold.max"
-                :step="CONFIG_LIMITS.dryThreshold.step"
-                unit="%"
-              />
-              <p class="input-hint">
-                Device waters when moisture drops below this percentage.
-              </p>
-            </div>
+          <!-- Dry Threshold -->
+          <div class="input-section">
+            <label class="input-label">
+              Dry Threshold
+              <span class="form-label--secondary">(triggers watering)</span>
+            </label>
+            <ThresholdStepper
+              v-model="localConfig.dryThreshold"
+              :min="CONFIG_LIMITS.dryThreshold.min"
+              :max="CONFIG_LIMITS.dryThreshold.max"
+              :step="CONFIG_LIMITS.dryThreshold.step"
+              unit="%"
+              dense
+            />
+            <p class="form-hint">
+              Waters when moisture drops below this %.
+            </p>
+          </div>
 
-            <div class="input-section">
-              <label class="input-label">
-                Wet Threshold
-                <span class="label-hint">(stops watering)</span>
-              </label>
-              <ThresholdStepper
-                v-model="localConfig.wetThreshold"
-                :min="CONFIG_LIMITS.wetThreshold.min"
-                :max="CONFIG_LIMITS.wetThreshold.max"
-                :step="CONFIG_LIMITS.wetThreshold.step"
-                unit="%"
-              />
-              <p class="input-hint">
-                Device stops watering when moisture reaches this level.
-              </p>
-            </div>
+          <!-- Wet Threshold -->
+          <div class="input-section">
+            <label class="input-label">
+              Wet Threshold
+              <span class="form-label--secondary">(stops watering)</span>
+            </label>
+            <ThresholdStepper
+              v-model="localConfig.wetThreshold"
+              :min="CONFIG_LIMITS.wetThreshold.min"
+              :max="CONFIG_LIMITS.wetThreshold.max"
+              :step="CONFIG_LIMITS.wetThreshold.step"
+              unit="%"
+              dense
+            />
+            <p class="form-hint">
+              Stops watering at this moisture level.
+            </p>
+          </div>
 
-            <q-banner v-if="safetyWarnings.length > 0" rounded dense class="bg-warning text-warning q-mb-md">
-              <template v-slot:avatar>
-                <q-icon name="warning" />
-              </template>
-              <div
-                v-for="(warning, idx) in safetyWarnings"
-                :key="idx"
-                class="q-mb-xs"
-              >
-                {{ warning }}
+          <!-- Safety Warnings - Full Width -->
+          <q-banner v-if="safetyWarnings.length > 0" rounded dense class="bg-warning text-warning full-width">
+            <template v-slot:avatar>
+              <q-icon name="warning" />
+            </template>
+            <div v-for="(warning, idx) in safetyWarnings" :key="idx" class="q-mb-xs">
+              {{ warning }}
+            </div>
+          </q-banner>
+
+          <!-- Pump Duration -->
+          <div class="input-section">
+            <label class="input-label">Pump Duration</label>
+            <DurationStepper
+              v-model="localConfig.pumpDuration"
+              :min="CONFIG_LIMITS.pumpDuration.min"
+              :max="CONFIG_LIMITS.pumpDuration.max"
+              :step="CONFIG_LIMITS.pumpDuration.step"
+              unit="seconds"
+              :presets="[1, 2, 3, 5]"
+              dense
+            />
+            <p class="form-hint">
+              Duration per watering cycle.
+            </p>
+          </div>
+
+          <!-- Update Interval -->
+          <div class="input-section">
+            <label class="input-label">Update Interval</label>
+            <DurationStepper
+              v-model="localConfig.publishInterval"
+              :min="CONFIG_LIMITS.publishInterval.min"
+              :max="CONFIG_LIMITS.publishInterval.max"
+              :step="CONFIG_LIMITS.publishInterval.step"
+              unit="auto"
+              :presets="[30, 60, 300, 600]"
+              dense
+            />
+            <p class="form-hint">
+              How often data is published.
+            </p>
+          </div>
+
+          <!-- Display Dim Toggle - Full Width -->
+          <div class="input-section full-width">
+            <div class="toggle-row">
+              <div class="toggle-label-group">
+                <label class="input-label">Display Dim</label>
+                <p class="form-hint">
+                  Auto-dim display after inactivity.
+                </p>
               </div>
-            </q-banner>
-
-            <div class="input-section">
-              <label class="input-label">Pump Duration</label>
-              <DurationStepper
-                v-model="localConfig.pumpDuration"
-                :min="CONFIG_LIMITS.pumpDuration.min"
-                :max="CONFIG_LIMITS.pumpDuration.max"
-                :step="CONFIG_LIMITS.pumpDuration.step"
-                unit="seconds"
-                :presets="[1, 2, 3, 5]"
+              <q-toggle
+                v-model="localConfig.displayDimEnabled"
+                color="positive"
               />
-              <p class="input-hint">
-                How long the pump runs during each watering cycle.
-              </p>
             </div>
+          </div>
 
-            <div class="input-section">
-              <label class="input-label">Data Update Interval</label>
-              <DurationStepper
-                v-model="localConfig.publishInterval"
-                :min="CONFIG_LIMITS.publishInterval.min"
-                :max="CONFIG_LIMITS.publishInterval.max"
-                :step="CONFIG_LIMITS.publishInterval.step"
-                unit="auto"
-                :presets="[30, 60, 300, 600]"
-              />
-              <p class="input-hint">
-                How often the device sends sensor data updates.
-              </p>
+          <!-- Dim Timeout - Full Width -->
+          <div v-if="localConfig.displayDimEnabled" class="input-section full-width">
+            <label class="input-label">Dim Timeout</label>
+            <DurationStepper
+              v-model="localConfig.displayDimTimeout"
+              :min="CONFIG_LIMITS.displayDimTimeout.min"
+              :max="CONFIG_LIMITS.displayDimTimeout.max"
+              :step="CONFIG_LIMITS.displayDimTimeout.step"
+              unit="auto"
+              :presets="[10, 30, 60, 120]"
+              dense
+            />
+          </div>
+
+          <!-- Validation Errors - Full Width -->
+          <q-banner v-if="validationErrors.length > 0" rounded dense class="bg-negative text-white full-width">
+            <template v-slot:avatar>
+              <q-icon name="error" />
+            </template>
+            <div v-for="(error, idx) in validationErrors" :key="idx" class="q-mb-xs">
+              {{ error.message }}
             </div>
-
-            <div class="input-section">
-              <div class="toggle-row">
-                <div class="toggle-label-group">
-                  <label class="input-label">Display Dim</label>
-                  <p class="input-hint">
-                    Automatically dim the display after inactivity.
-                  </p>
-                </div>
-                <q-toggle
-                  v-model="localConfig.displayDimEnabled"
-                  color="positive"
-                  size="lg"
-                />
-              </div>
-            </div>
-
-            <div v-if="localConfig.displayDimEnabled" class="input-section">
-              <label class="input-label">Display Dim Timeout</label>
-              <DurationStepper
-                v-model="localConfig.displayDimTimeout"
-                :min="CONFIG_LIMITS.displayDimTimeout.min"
-                :max="CONFIG_LIMITS.displayDimTimeout.max"
-                :step="CONFIG_LIMITS.displayDimTimeout.step"
-                unit="auto"
-                :presets="[10, 30, 60, 120]"
-              />
-              <p class="input-hint">
-                How long to wait before dimming the display.
-              </p>
-            </div>
-
-            <q-banner v-if="validationErrors.length > 0" rounded dense class="bg-negative text-white q-mb-md">
-              <template v-slot:avatar>
-                <q-icon name="error" />
-              </template>
-              <div
-                v-for="(error, idx) in validationErrors"
-                :key="idx"
-                class="q-mb-xs"
-              >
-                {{ error.message }}
-              </div>
-            </q-banner>
+          </q-banner>
+        </div>
       </q-card-section>
 
-      <q-card-actions align="right" class="q-px-md q-pb-md">
+      <q-card-actions align="right" class="modal-footer">
         <q-btn label="Cancel" flat @click="closeModal" :disable="saveInProgress" />
         <q-btn
-          label="Save Configuration"
+          label="Save"
           color="primary"
           unelevated
           :disable="!isValid || saveInProgress"
@@ -157,12 +164,13 @@
     </q-card>
   </q-dialog>
 
-  <!-- Floating Keyboard (Desktop only) -->
+  <!-- On-Screen Keyboard (Pi5 only) -->
   <Teleport to="body">
     <FloatingKeyboard
-      v-if="!isMobileOrTablet"
+      v-if="isPi5"
       v-model="localConfig.name"
       v-model:show="showKeyboard"
+      :docked="true"
     />
   </Teleport>
 </template>
@@ -188,7 +196,7 @@ const emit = defineEmits<{
   'save': [config: PlantConfig & { name: string }]
 }>()
 
-const { isMobileOrTablet } = useDeviceDetection()
+const { isPi5 } = useDeviceDetection()
 
 const localConfig = ref({
   name: '',
@@ -225,7 +233,7 @@ const safetyWarnings = computed<string[]>(() => {
 
   if (localConfig.value.dryThreshold < SAFE_THRESHOLD_RANGE.MIN) {
     warnings.push(
-      `⚠️ Dry threshold is very low (${localConfig.value.dryThreshold}%). Your plant might die from insufficient water! Recommended: ${SAFE_THRESHOLD_RANGE.MIN}% or higher.`
+      `Dry threshold is very low (${localConfig.value.dryThreshold}%). Your plant might die from insufficient water! Recommended: ${SAFE_THRESHOLD_RANGE.MIN}% or higher.`
     )
   }
 
@@ -307,47 +315,15 @@ function saveConfig() {
 
 <style scoped>
 .plant-config-card {
-  max-width: 672px;
-  width: 100%;
-  max-height: 90vh;
-}
-
-.modal-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
 }
 
 .modal-content {
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.input-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.input-label {
-  font-size: var(--font-size-13);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-
-.label-hint {
-  font-size: var(--font-size-11);
-  font-weight: var(--font-weight-normal);
-  color: var(--color-text-muted);
-  margin-left: var(--space-2);
-}
-
-.input-hint {
-  font-size: var(--font-size-11);
-  color: var(--color-text-muted);
-  margin-top: var(--space-1);
+  flex: 1;
+  min-height: 0;
+  max-height: 60vh;
 }
 
 .text-input {
@@ -369,17 +345,93 @@ function saveConfig() {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* Responsive grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-4);
 }
 
-.toggle-label-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Mobile-specific optimizations for phones */
+@media (max-width: 768px) {
+  .plant-config-card {
+    max-width: 100vw !important;
+  }
+
+  .modal-content {
+    max-height: 70vh;
+  }
+
+  /* Tighter form grid */
+  .form-grid {
+    gap: 12px !important;
+  }
+
+  /* Reduce input section gaps */
+  .input-section {
+    gap: 4px !important;
+  }
+
+  /* Compact hint text */
+  .form-hint {
+    font-size: 12px !important;
+    margin-top: 2px !important;
+    line-height: 1.3;
+  }
+
+  /* Compact warning banners */
+  .q-banner {
+    padding: 8px !important;
+    font-size: 12px !important;
+  }
+
+  /* Reduce toggle row spacing */
+  .toggle-row {
+    gap: 8px !important;
+  }
+}
+
+/* Ultra-compact mode optimizations for Pi5 */
+@media (max-height: 768px) {
+  .plant-config-card.modal-lg {
+    max-height: 90vh !important;
+    max-width: 90vw !important;
+  }
+
+  /* Make form grid more horizontal on landscape */
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Keep plant name full width */
+  .input-section.full-width {
+    grid-column: 1 / -1;
+  }
+
+  /* Hide less critical hint text to save vertical space */
+  .form-hint {
+    display: none;
+  }
+
+  /* Compact warning banners */
+  .q-banner {
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+  }
+
+  .modal-content {
+    max-height: 75vh;
+  }
 }
 </style>

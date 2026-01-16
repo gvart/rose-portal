@@ -1,28 +1,27 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
-    <q-card class="create-timer-card">
-      <q-card-section>
-        <div class="row items-center q-pb-none">
-          <div class="text-h6">Create Timer</div>
-          <q-space />
-          <q-btn icon="close" flat round dense @click="handleClose" />
-        </div>
+    <q-card class="create-timer-card modal-md">
+      <q-card-section class="modal-header">
+        <div class="text-h6">Create Timer</div>
+        <q-btn icon="close" flat round dense @click="handleClose" />
       </q-card-section>
 
-      <q-card-section class="q-pt-none">
-        <q-form>
-          <!-- Timer Name -->
-          <q-input
-            v-model="name"
-            label="Timer Name"
-            placeholder="My Timer"
-            outlined
-            class="q-mb-md"
-          />
+      <q-card-section class="modal-content">
+        <q-form class="form-grid">
+          <!-- Timer Name - Full Width -->
+          <div class="input-section full-width">
+            <label class="input-label">Timer Name</label>
+            <q-input
+              v-model="name"
+              outlined
+              dense
+              placeholder="My Timer"
+            />
+          </div>
 
-          <!-- Timer Type Selection -->
-          <div class="q-mb-md">
-            <div class="text-caption text-grey-7 q-mb-sm">Timer Type</div>
+          <!-- Timer Type - Full Width -->
+          <div class="input-section full-width">
+            <label class="input-label">Timer Type</label>
             <q-btn-toggle
               v-model="selectedType"
               spread
@@ -30,6 +29,7 @@
               toggle-color="warning"
               color="grey-3"
               text-color="grey-9"
+              dense
               :options="[
                 { label: 'Countdown', value: 'countdown' },
                 { label: 'Stopwatch', value: 'stopwatch' },
@@ -39,127 +39,103 @@
           </div>
 
           <!-- Quick Presets (Countdown only) -->
-          <div v-if="selectedType === 'countdown'" class="q-mb-md">
-            <div class="text-caption text-grey-7 q-mb-sm">Quick Presets</div>
-            <div class="row q-col-gutter-sm">
-              <div
+          <div v-if="selectedType === 'countdown'" class="input-section full-width">
+            <label class="input-label">Quick Presets</label>
+            <div class="preset-grid">
+              <q-btn
                 v-for="preset in TIMER_PRESETS"
                 :key="preset.label"
-                class="col-4"
-              >
-                <q-btn
-                  :label="preset.label"
-                  color="warning"
-                  text-color="white"
-                  unelevated
-                  @click="applyPreset(preset)"
-                  class="full-width"
-                  size="sm"
-                />
-              </div>
+                :label="preset.label"
+                color="warning"
+                text-color="white"
+                unelevated
+                dense
+                @click="applyPreset(preset)"
+              />
             </div>
           </div>
 
           <!-- Countdown Duration Input -->
-          <div v-if="selectedType === 'countdown'" class="q-mb-md">
-            <div class="text-caption text-grey-7 q-mb-sm">Duration</div>
-            <div class="row q-col-gutter-sm">
-              <div class="col-4">
-                <q-input
-                  v-model.number="hours"
-                  type="number"
-                  min="0"
-                  max="23"
-                  suffix="h"
-                  outlined
-                  dense
-                  input-class="text-center"
-                  input-style="font-family: var(--font-mono); font-variant-numeric: tabular-nums;"
-                />
-              </div>
-              <div class="col-4">
-                <q-input
-                  v-model.number="minutes"
-                  type="number"
-                  min="0"
-                  max="59"
-                  suffix="m"
-                  outlined
-                  dense
-                  input-class="text-center"
-                  input-style="font-family: var(--font-mono); font-variant-numeric: tabular-nums;"
-                />
-              </div>
-              <div class="col-4">
-                <q-input
-                  v-model.number="seconds"
-                  type="number"
-                  min="0"
-                  max="59"
-                  suffix="s"
-                  outlined
-                  dense
-                  input-class="text-center"
-                  input-style="font-family: var(--font-mono); font-variant-numeric: tabular-nums;"
-                />
-              </div>
+          <template v-if="selectedType === 'countdown'">
+            <div class="input-section">
+              <label class="input-label">Hours</label>
+              <q-input
+                v-model.number="hours"
+                type="number"
+                min="0"
+                max="23"
+                suffix="h"
+                outlined
+                dense
+                input-class="text-center numeric-data"
+              />
             </div>
-          </div>
+            <div class="input-section">
+              <label class="input-label">Minutes</label>
+              <q-input
+                v-model.number="minutes"
+                type="number"
+                min="0"
+                max="59"
+                suffix="m"
+                outlined
+                dense
+                input-class="text-center numeric-data"
+              />
+            </div>
+            <div class="input-section full-width">
+              <label class="input-label">Seconds</label>
+              <q-input
+                v-model.number="seconds"
+                type="number"
+                min="0"
+                max="59"
+                suffix="s"
+                outlined
+                dense
+                input-class="text-center numeric-data"
+                style="max-width: 50%;"
+              />
+            </div>
+          </template>
 
           <!-- Pomodoro Settings -->
-          <div v-if="selectedType === 'pomodoro'">
-            <div class="text-caption text-grey-7 q-mb-sm">Pomodoro Settings</div>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Work Duration</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-input
-                  v-model.number="pomodoroWorkMinutes"
-                  type="number"
-                  min="1"
-                  max="60"
-                  suffix="min"
-                  outlined
-                  dense
-                  style="width: 100px"
-                  input-class="text-center"
-                  input-style="font-family: var(--font-mono); font-variant-numeric: tabular-nums;"
-                />
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Break Duration</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-input
-                  v-model.number="pomodoroBreakMinutes"
-                  type="number"
-                  min="1"
-                  max="30"
-                  suffix="min"
-                  outlined
-                  dense
-                  style="width: 100px"
-                  input-class="text-center"
-                  input-style="font-family: var(--font-mono); font-variant-numeric: tabular-nums;"
-                />
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Auto-start breaks</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-toggle v-model="autoStartBreaks" color="warning" />
-              </q-item-section>
-            </q-item>
-          </div>
+          <template v-if="selectedType === 'pomodoro'">
+            <div class="input-section">
+              <label class="input-label">Work Duration</label>
+              <q-input
+                v-model.number="pomodoroWorkMinutes"
+                type="number"
+                min="1"
+                max="60"
+                suffix="min"
+                outlined
+                dense
+                input-class="text-center numeric-data"
+              />
+            </div>
+            <div class="input-section">
+              <label class="input-label">Break Duration</label>
+              <q-input
+                v-model.number="pomodoroBreakMinutes"
+                type="number"
+                min="1"
+                max="30"
+                suffix="min"
+                outlined
+                dense
+                input-class="text-center numeric-data"
+              />
+            </div>
+            <div class="toggle-row full-width">
+              <label class="input-label">Auto-start breaks</label>
+              <q-toggle v-model="autoStartBreaks" color="warning" />
+            </div>
+          </template>
         </q-form>
       </q-card-section>
 
-      <q-card-actions align="right" class="q-px-md q-pb-md">
+      <q-card-actions class="modal-footer">
         <q-btn label="Cancel" flat @click="handleClose" />
         <q-btn
           label="Create & Start"
@@ -303,7 +279,89 @@ watch(
 
 <style scoped>
 .create-timer-card {
-  max-width: 512px;
+  display: flex;
+  flex-direction: column;
   width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 480px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+@media (min-width: 480px) {
+  .preset-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.numeric-data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mobile-specific optimizations for phones */
+@media (max-width: 768px) {
+  .form-grid {
+    gap: 12px !important;
+  }
+
+  .preset-grid {
+    gap: 8px !important;
+  }
+
+  .input-section {
+    gap: 4px !important;
+  }
+
+  .preset-grid .q-btn {
+    min-height: 40px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* Ultra-compact optimizations for Pi5 */
+@media (max-height: 768px) {
+  .create-timer-card.modal-md {
+    max-height: 88vh !important;
+  }
+
+  /* Horizontal timer type selection */
+  .q-btn-toggle {
+    font-size: 11px !important;
+  }
+
+  /* Compact time input */
+  .q-input {
+    font-size: 12px !important;
+  }
+
+  /* Preset buttons in single row with 4 columns */
+  .preset-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .preset-grid .q-btn {
+    font-size: 11px !important;
+    padding: 4px 6px !important;
+  }
 }
 </style>
