@@ -1,61 +1,43 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="handleOverlayClick">
-        <div class="modal-container" @click.stop>
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <div class="header-content">
-              <h2 class="modal-title">
-                {{ mode === 'create' ? 'Create Event' : 'Edit Event' }}
-              </h2>
-              <div v-if="mode === 'edit' && selectedEvent?.createdBy?.name" class="event-meta">
-                Created by {{ selectedEvent.createdBy.name }}
-              </div>
-            </div>
-            <button
-             
-              type="button"
-              class="close-button"
-              @touchend.prevent="closeModal"
-              @click.prevent="closeModal"
-              aria-label="Close"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
+    <q-card class="event-modal-card">
+      <q-card-section class="modal-header">
+        <div class="header-content">
+          <div class="text-h5">
+            {{ mode === 'create' ? 'Create Event' : 'Edit Event' }}
           </div>
+          <div v-if="mode === 'edit' && selectedEvent?.createdBy?.name" class="event-meta">
+            Created by {{ selectedEvent.createdBy.name }}
+          </div>
+        </div>
+        <q-btn icon="close" flat round dense @click="closeModal" :disable="loading" />
+      </q-card-section>
 
-          <!-- Modal Content -->
-          <div class="modal-content">
-            <!-- Event Name -->
-            <div class="input-section">
-              <label class="input-label" for="event-name">Event Name</label>
-              <input
-                id="event-name"
-                ref="nameInputRef"
-                v-model="localFormData.eventName"
-                type="text"
-                class="text-input"
-                placeholder="Enter event name"
-                maxlength="100"
-                @keydown.enter="handleSave"
-              />
-            </div>
+      <q-card-section class="modal-content">
+        <!-- Event Name -->
+        <div class="input-section">
+          <label class="input-label" for="event-name">Event Name</label>
+          <q-input
+            id="event-name"
+            ref="nameInputRef"
+            v-model="localFormData.eventName"
+            type="text"
+            outlined
+            placeholder="Enter event name"
+            maxlength="100"
+            @keydown.enter="handleSave"
+          />
+        </div>
 
-            <!-- All Day Toggle -->
-            <div class="toggle-section">
-              <label class="toggle-label">
-                <input
-                  type="checkbox"
-                  v-model="localFormData.isAllDay"
-                  class="toggle-checkbox"
-                />
-                <span class="toggle-switch"></span>
-                <span class="toggle-text">All Day Event</span>
-              </label>
-            </div>
+        <!-- All Day Toggle -->
+        <div class="toggle-section">
+          <q-toggle
+            v-model="localFormData.isAllDay"
+            label="All Day Event"
+            color="primary"
+            size="lg"
+          />
+        </div>
 
             <!-- Date/Time Section -->
             <div class="datetime-section">
@@ -129,126 +111,87 @@
               </div>
             </div>
 
-            <!-- Reminder Time Selection -->
-            <div class="input-section">
-              <label class="input-label" for="reminder-select">Reminder</label>
-              <div class="reminder-select-wrapper">
-                <select
-                  id="reminder-select"
-                  v-model="localFormData.reminderTime"
-                  class="reminder-select"
-                >
-                  <option
-                    v-for="option in reminderTimeOptions"
-                    :key="option.id"
-                    :value="option.id"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  class="reminder-select-icon"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
-              </div>
-            </div>
-
-            <!-- Validation Errors -->
-            <div v-if="attemptedSubmit && validationErrors.length > 0" class="validation-errors">
-              <div
-                v-for="(error, idx) in validationErrors"
-                :key="idx"
-                class="error-item"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" class="w-5 h-5">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                <span>{{ error }}</span>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-              <!-- Delete Button (Edit mode only) -->
-              <button
-                v-if="mode === 'edit'"
-               
-                type="button"
-                class="btn btn-danger"
-                :disabled="loading"
-                @touchend.prevent="handleDelete"
-                @click.prevent="handleDelete"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
-                Delete
-              </button>
-
-              <div class="spacer"></div>
-
-              <button
-               
-                type="button"
-                class="btn btn-secondary"
-                :disabled="loading"
-                @touchend.prevent="closeModal"
-                @click.prevent="closeModal"
-              >
-                Cancel
-              </button>
-
-              <button
-               
-                type="button"
-                class="btn btn-primary"
-                :disabled="!isValid || loading"
-                @touchend.prevent="handleSave"
-                @click.prevent="handleSave"
-              >
-                {{ loading ? 'Saving...' : (mode === 'create' ? 'Create' : 'Save') }}
-              </button>
-            </div>
-          </div>
+        <!-- Reminder Time Selection -->
+        <div class="input-section">
+          <label class="input-label">Reminder</label>
+          <q-select
+            v-model="localFormData.reminderTime"
+            :options="reminderTimeOptions"
+            option-value="id"
+            option-label="label"
+            emit-value
+            map-options
+            outlined
+          />
         </div>
-      </div>
-    </Transition>
 
-    <!-- Delete Confirmation -->
-    <Transition name="modal">
-      <div v-if="showDeleteConfirm" class="modal-overlay" @click="showDeleteConfirm = false">
-        <div class="confirm-dialog" @click.stop>
-          <h3 class="confirm-title">Delete Event?</h3>
-          <p class="confirm-text">
-            Are you sure you want to delete "{{ selectedEvent?.eventName }}"?
-            This action cannot be undone.
-          </p>
-          <div class="confirm-actions">
-            <button
-             
-              class="btn btn-secondary"
-              @click="showDeleteConfirm = false"
-            >
-              Cancel
-            </button>
-            <button
-             
-              class="btn btn-danger"
-              @click="confirmDelete"
-            >
-              Delete
-            </button>
+        <!-- Validation Errors -->
+        <q-banner v-if="attemptedSubmit && validationErrors.length > 0" rounded dense class="bg-negative text-white">
+          <template v-slot:avatar>
+            <q-icon name="error" />
+          </template>
+          <div
+            v-for="(error, idx) in validationErrors"
+            :key="idx"
+            class="q-mb-xs"
+          >
+            {{ error }}
           </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+        </q-banner>
+
+      </q-card-section>
+
+      <q-card-actions align="right" class="q-px-md q-pb-md">
+        <!-- Delete Button (Edit mode only) -->
+        <q-btn
+          v-if="mode === 'edit'"
+          icon="delete"
+          label="Delete"
+          color="negative"
+          flat
+          :disable="loading"
+          @click="handleDelete"
+        />
+
+        <q-space />
+
+        <q-btn
+          label="Cancel"
+          flat
+          :disable="loading"
+          @click="closeModal"
+        />
+
+        <q-btn
+          :label="loading ? 'Saving...' : (mode === 'create' ? 'Create' : 'Save')"
+          color="primary"
+          unelevated
+          :disable="!isValid || loading"
+          :loading="loading"
+          @click="handleSave"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <!-- Delete Confirmation Dialog -->
+  <q-dialog v-model="showDeleteConfirm">
+    <q-card class="confirm-dialog-card">
+      <q-card-section>
+        <div class="text-h6">Delete Event?</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        Are you sure you want to delete "{{ selectedEvent?.eventName }}"?
+        This action cannot be undone.
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn label="Cancel" flat @click="showDeleteConfirm = false" />
+        <q-btn label="Delete" color="negative" unelevated @click="confirmDelete" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -465,35 +408,16 @@ function confirmDelete() {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  z-index: 50;
-}
-
-.modal-container {
-  background: var(--color-bg-primary);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
-  border-radius: var(--radius-lg);
+.event-modal-card {
   max-width: 512px;
   width: 100%;
   max-height: 90vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-6);
-  border-bottom: var(--depth-2-border);
 }
 
 .header-content {
@@ -502,45 +426,14 @@ function confirmDelete() {
   gap: var(--space-1);
 }
 
-.modal-title {
-  font-size: var(--font-size-24);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-}
-
 .event-meta {
   font-size: var(--font-size-13);
   color: var(--color-text-muted);
   font-weight: var(--font-weight-medium);
 }
 
-.close-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--space-11);
-  min-height: var(--space-11);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-faint);
-  background: transparent;
-  border: none;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.close-button:active {
-  transform: scale(0.96);
-  background: var(--color-bg-active);
-  color: var(--color-text-secondary);
-}
-
 .modal-content {
   overflow-y: auto;
-  padding: var(--space-6);
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -559,81 +452,9 @@ function confirmDelete() {
   color: var(--color-text-primary);
 }
 
-.text-input {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-sm);
-  border: var(--depth-1-border);
-  font-size: var(--font-size-14);
-  color: var(--color-text-primary);
-  background: var(--color-bg-primary);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: var(--space-11);
-}
-
-.text-input:focus {
-  outline: none;
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
 /* Toggle Section */
 .toggle-section {
   padding: var(--space-2) 0;
-}
-
-.toggle-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  cursor: pointer;
-}
-
-.toggle-checkbox {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-.toggle-switch {
-  position: relative;
-  width: 48px;
-  height: 28px;
-  background: var(--color-border-secondary);
-  border-radius: var(--radius-full);
-  transition: background-color var(--duration-fast) var(--ease-in-out);
-}
-
-.toggle-switch::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: var(--radius-full);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform var(--duration-fast) var(--ease-in-out);
-}
-
-.toggle-checkbox:checked + .toggle-switch {
-  background: var(--color-accent-primary);
-}
-
-.toggle-checkbox:checked + .toggle-switch::after {
-  transform: translateX(20px);
-}
-
-.toggle-text {
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
 }
 
 /* DateTime Section */
@@ -708,259 +529,22 @@ function confirmDelete() {
   color: white;
 }
 
-/* Reminder Select Dropdown */
-.reminder-select-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.reminder-select {
-  width: 100%;
-  padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4);
-  border-radius: var(--radius-sm);
-  border: var(--depth-1-border);
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  background: var(--color-bg-primary);
-  cursor: pointer;
-  appearance: none;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: var(--space-11);
-}
-
-.reminder-select:hover {
-  border-color: var(--color-border-focus);
-}
-
-.reminder-select:focus {
-  outline: none;
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.reminder-select:active {
-  transform: scale(0.99);
-}
-
-.reminder-select-icon {
-  position: absolute;
-  right: var(--space-3);
-  width: 20px;
-  height: 20px;
-  color: var(--color-text-muted);
-  pointer-events: none;
-}
-
-/* Validation Errors */
-.validation-errors {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background: var(--color-error-bg);
-  border: 2px solid var(--color-error-border);
-  border-radius: var(--radius-sm);
-}
-
-.error-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-error-text);
-  font-size: var(--font-size-13);
-  font-weight: var(--font-weight-medium);
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  gap: var(--space-3);
-  padding-top: var(--space-4);
-  border-top: var(--depth-2-border);
-}
-
-.spacer {
-  flex: 1;
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-14);
-  border-radius: var(--radius-md);
-  border: none;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-  min-height: var(--space-11);
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.btn-secondary {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.btn-secondary:active:not(:disabled) {
-  background: var(--color-bg-active);
-}
-
-.btn-primary {
-  background: var(--color-accent-primary);
-  color: white;
-}
-
-.btn-primary:active:not(:disabled) {
-  background: var(--color-accent-primary-active);
-}
-
-.btn-danger {
-  background: var(--color-error-bg);
-  color: var(--color-error-text);
-}
-
-.btn-danger:active:not(:disabled) {
-  background: var(--color-error-solid);
-  color: white;
-}
-
 /* Delete Confirmation Dialog */
-.confirm-dialog {
-  background: var(--color-bg-primary);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
-  border-radius: var(--radius-lg);
+.confirm-dialog-card {
   max-width: 384px;
   width: 100%;
-  padding: var(--space-6);
-}
-
-.confirm-title {
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
-}
-
-.confirm-text {
-  font-size: var(--font-size-14);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-6);
-}
-
-.confirm-actions {
-  display: flex;
-  gap: var(--space-3);
-  justify-content: flex-end;
-}
-
-/* Modal Transitions */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container,
-.modal-enter-active .confirm-dialog,
-.modal-leave-active .confirm-dialog {
-  transition: transform var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container,
-.modal-enter-from .confirm-dialog,
-.modal-leave-to .confirm-dialog {
-  transform: scale(0.96) translateY(var(--space-4));
-  opacity: 0;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .modal-overlay {
-    padding: 0;
-  }
-
-  .modal-container {
-    max-height: 100%;
-    height: 100%;
-    border-radius: 0;
-    max-width: 100%;
-  }
-
-  .modal-header {
-    padding: var(--space-4);
-    position: sticky;
-    top: 0;
-    background: var(--color-bg-primary);
-    z-index: 10;
-  }
-
-  .modal-title {
-    font-size: var(--font-size-18);
-  }
-
-  .modal-content {
-    padding: var(--space-4);
-    gap: var(--space-4);
-  }
-
   .datetime-section {
     grid-template-columns: 1fr;
-  }
-
-  .action-buttons {
-    flex-wrap: wrap;
-    position: sticky;
-    bottom: 0;
-    background: var(--color-bg-primary);
-    padding: var(--space-4);
-    padding-bottom: var(--space-6);
-    border-top: var(--depth-2-border);
-    margin-left: calc(-1 * var(--space-4));
-    margin-right: calc(-1 * var(--space-4));
-  }
-
-  .btn {
-    flex: 1;
-    min-width: 120px;
-  }
-
-  .btn-danger {
-    width: 100%;
-    order: 3;
-    margin-top: var(--space-2);
-  }
-
-  .spacer {
-    display: none;
   }
 }
 
 /* Tablet responsive */
 @media (min-width: 641px) and (max-width: 1024px) {
-  .modal-container {
+  .event-modal-card {
     max-width: 672px;
   }
 }
