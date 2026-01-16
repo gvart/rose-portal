@@ -1,46 +1,37 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="closeModal">
-        <div class="modal-container" @click.stop>
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h2 class="modal-title">Meal Plan #{{ planIndex + 1 }}</h2>
-            <button @click="closeModal" class="close-button" aria-label="Close">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="close-icon">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
+    <q-card class="meal-plan-card">
+      <q-card-section class="modal-header">
+        <div class="text-h5">Meal Plan #{{ planIndex + 1 }}</div>
+        <q-btn icon="close" flat round dense @click="closeModal" />
+      </q-card-section>
 
-          <!-- Plan Meta Information -->
-          <div class="plan-meta-info">
-            <span class="meta-badge">
-              {{ plan.dishList.length }} dish{{ plan.dishList.length !== 1 ? 'es' : '' }}
-            </span>
-            <span class="meta-badge">
-              {{ plan.groceryList.length }} ingredient{{ plan.groceryList.length !== 1 ? 's' : '' }}
-            </span>
-          </div>
+      <q-card-section class="q-pb-none">
+        <div class="row q-gutter-sm">
+          <q-chip color="positive" text-color="white">
+            {{ plan.dishList.length }} dish{{ plan.dishList.length !== 1 ? 'es' : '' }}
+          </q-chip>
+          <q-chip color="positive" text-color="white">
+            {{ plan.groceryList.length }} ingredient{{ plan.groceryList.length !== 1 ? 's' : '' }}
+          </q-chip>
+        </div>
+      </q-card-section>
 
-          <!-- Tabs -->
-          <div class="tabs-container">
-            <button
-              @click="activeTab = 'dishes'"
-              :class="['tab-button', { active: activeTab === 'dishes' }]"
-            >
-              Dishes
-            </button>
-            <button
-              @click="activeTab = 'grocery'"
-              :class="['tab-button', { active: activeTab === 'grocery' }]"
-            >
-              Grocery List
-            </button>
-          </div>
+      <q-tabs
+        v-model="activeTab"
+        dense
+        class="text-grey-7"
+        active-color="positive"
+        indicator-color="positive"
+        align="left"
+      >
+        <q-tab name="dishes" label="Dishes" />
+        <q-tab name="grocery" label="Grocery List" />
+      </q-tabs>
 
-          <!-- Modal Content -->
-          <div class="modal-content">
+      <q-separator />
+
+      <q-card-section class="modal-content">
             <!-- Dishes Tab -->
             <div v-if="activeTab === 'dishes'" class="dishes-list">
               <div
@@ -76,11 +67,9 @@
                 <span class="item-name">{{ ingredient.name }}</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -133,105 +122,21 @@ function parseMarkdown(text: string): string {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  z-index: 50;
-}
-
-.modal-container {
-  background: var(--color-bg-primary);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
-  border-radius: var(--radius-lg);
+.meal-plan-card {
   max-width: 64rem;
   width: 100%;
   max-height: 90vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-6);
-  border-bottom: 2px solid var(--color-border-primary);
-}
-
-.modal-title {
-  font-size: var(--font-size-24);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-}
-
-.close-button {
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 44px;
-  min-width: 44px;
-}
-
-.close-button:active {
-  background: var(--color-bg-secondary);
-}
-
-.close-icon {
-  width: 24px;
-  height: 24px;
-  color: var(--color-text-secondary);
-}
-
-.plan-meta-info {
-  display: flex;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-6) 0;
-}
-
-.meta-badge {
-  padding: var(--space-1) var(--space-3);
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-semibold);
-}
-
-.tabs-container {
-  display: flex;
-  gap: var(--space-2);
-  border-bottom: 2px solid var(--color-border-primary);
-  padding: var(--space-2) var(--space-6) 0;
-}
-
-.tab-button {
-  padding: var(--space-2) var(--space-4);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  border-bottom: 2px solid transparent;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 44px;
-}
-
-.tab-button:active:not(.active) {
-  color: var(--color-success-solid);
-}
-
-.tab-button.active {
-  color: var(--color-success-solid);
-  border-bottom-color: var(--color-success-solid);
 }
 
 .modal-content {
   overflow-y: auto;
-  padding: var(--space-6);
-  flex: 1;
+  max-height: 60vh;
 }
 
 .dishes-list {
@@ -451,27 +356,5 @@ function parseMarkdown(text: string): string {
 .item-name {
   color: var(--color-text-primary);
   font-weight: var(--font-weight-medium);
-}
-
-/* Modal transition */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.95);
-  opacity: 0;
 }
 </style>

@@ -1,25 +1,12 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="closeModal">
-        <div class="modal-container" @click.stop>
-          <div class="modal-header">
-            <h2 class="modal-title">Plant Configuration</h2>
-            <button
-             
-              type="button"
-              @touchend.prevent="closeModal"
-              @click.prevent="closeModal"
-              class="close-button"
-              aria-label="Close"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)" persistent>
+    <q-card class="plant-config-card">
+      <q-card-section class="modal-header">
+        <div class="text-h5">Plant Configuration</div>
+        <q-btn icon="close" flat round dense @click="closeModal" :disable="saveInProgress" />
+      </q-card-section>
 
-          <div class="modal-content">
+      <q-card-section class="modal-content">
             <div class="input-section">
               <label class="input-label">Plant Name</label>
               <input
@@ -68,18 +55,18 @@
               </p>
             </div>
 
-            <div v-if="safetyWarnings.length > 0" class="safety-warnings">
+            <q-banner v-if="safetyWarnings.length > 0" rounded dense class="bg-warning text-warning q-mb-md">
+              <template v-slot:avatar>
+                <q-icon name="warning" />
+              </template>
               <div
                 v-for="(warning, idx) in safetyWarnings"
                 :key="idx"
-                class="warning-item"
+                class="q-mb-xs"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" class="w-5 h-5">
-                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                <span>{{ warning }}</span>
+                {{ warning }}
               </div>
-            </div>
+            </q-banner>
 
             <div class="input-section">
               <label class="input-label">Pump Duration</label>
@@ -119,16 +106,11 @@
                     Automatically dim the display after inactivity.
                   </p>
                 </div>
-                <button
-                 
-                  type="button"
-                  @click="localConfig.displayDimEnabled = !localConfig.displayDimEnabled"
-                  :class="['toggle-button', { active: localConfig.displayDimEnabled }]"
-                  role="switch"
-                  :aria-checked="localConfig.displayDimEnabled"
-                >
-                  <span class="toggle-slider"></span>
-                </button>
+                <q-toggle
+                  v-model="localConfig.displayDimEnabled"
+                  color="positive"
+                  size="lg"
+                />
               </div>
             </div>
 
@@ -147,45 +129,33 @@
               </p>
             </div>
 
-            <div v-if="validationErrors.length > 0" class="validation-errors">
+            <q-banner v-if="validationErrors.length > 0" rounded dense class="bg-negative text-white q-mb-md">
+              <template v-slot:avatar>
+                <q-icon name="error" />
+              </template>
               <div
                 v-for="(error, idx) in validationErrors"
                 :key="idx"
-                class="error-item"
+                class="q-mb-xs"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" class="w-5 h-5">
-                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                <span>{{ error.message }}</span>
+                {{ error.message }}
               </div>
-            </div>
+            </q-banner>
+      </q-card-section>
 
-            <div class="action-buttons">
-              <button
-               
-                type="button"
-                @touchend.prevent="closeModal"
-                @click.prevent="closeModal"
-                class="btn btn-secondary"
-                :disabled="saveInProgress"
-              >
-                Cancel
-              </button>
-              <button
-               
-                type="button"
-                @touchend.prevent="saveConfig"
-                @click.prevent="saveConfig"
-                class="btn btn-primary"
-                :disabled="!isValid || saveInProgress"
-              >
-                {{ saveInProgress ? 'Saving...' : 'Save Configuration' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Transition>
+      <q-card-actions align="right" class="q-px-md q-pb-md">
+        <q-btn label="Cancel" flat @click="closeModal" :disable="saveInProgress" />
+        <q-btn
+          label="Save Configuration"
+          color="primary"
+          unelevated
+          :disable="!isValid || saveInProgress"
+          :loading="saveInProgress"
+          @click="saveConfig"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 
     <!-- Floating Keyboard (Desktop only) -->
     <FloatingKeyboard
@@ -335,71 +305,20 @@ function saveConfig() {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  z-index: 50;
-}
-
-.modal-container {
-  background: var(--color-bg-primary);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
-  border-radius: var(--radius-lg);
+.plant-config-card {
   max-width: 672px;
   width: 100%;
   max-height: 90vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-6);
-  border-bottom: var(--depth-2-border);
-}
-
-.modal-title {
-  font-size: var(--font-size-24);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-}
-
-.close-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--space-11);
-  min-height: var(--space-11);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-faint);
-  background: transparent;
-  border: none;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.close-button:active {
-  transform: scale(0.96);
-  background: var(--color-bg-active);
-  color: var(--color-text-secondary);
 }
 
 .modal-content {
   overflow-y: auto;
-  padding: var(--space-6);
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -449,119 +368,6 @@ function saveConfig() {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.validation-errors {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background: var(--color-error-bg);
-  border: 2px solid var(--color-error-border);
-  border-radius: var(--radius-sm);
-}
-
-.error-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-error-text);
-  font-size: var(--font-size-13);
-  font-weight: var(--font-weight-medium);
-}
-
-.safety-warnings {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background: var(--color-warning-bg);
-  border: 2px solid var(--color-warning-border);
-  border-radius: var(--radius-sm);
-}
-
-.warning-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  color: var(--color-warning-text);
-  font-size: var(--font-size-13);
-  font-weight: var(--font-weight-medium);
-}
-
-.warning-item svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: var(--space-3);
-  padding-top: var(--space-4);
-  border-top: var(--depth-2-border);
-}
-
-.btn {
-  flex: 1;
-  padding: var(--space-3) var(--space-6);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-14);
-  border-radius: var(--radius-md);
-  border: none;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-  min-height: var(--space-11);
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.btn-secondary {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.btn-secondary:active:not(:disabled) {
-  background: var(--color-bg-active);
-}
-
-.btn-primary {
-  background: var(--color-accent-primary);
-  color: white;
-}
-
-.btn-primary:active:not(:disabled) {
-  background: var(--color-accent-primary-active);
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container {
-  transition: transform var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.96) translateY(var(--space-4));
-  opacity: 0;
-}
-
 .toggle-row {
   display: flex;
   align-items: center;
@@ -574,44 +380,5 @@ function saveConfig() {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-}
-
-.toggle-button {
-  position: relative;
-  width: 52px;
-  height: 32px;
-  background: var(--color-bg-tertiary);
-  border: var(--depth-1-border);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  flex-shrink: 0;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.toggle-button:active {
-  transform: scale(0.96);
-}
-
-.toggle-button.active {
-  background: var(--color-success-solid);
-  border-color: var(--color-success-solid);
-}
-
-.toggle-slider {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 24px;
-  height: 24px;
-  background: var(--color-bg-primary);
-  border-radius: var(--radius-full);
-  transition: transform var(--duration-fast) var(--ease-in-out);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.toggle-button.active .toggle-slider {
-  transform: translateX(20px);
 }
 </style>
