@@ -1,46 +1,48 @@
 <template>
-  <div class="gauge-card" :class="`gauge-card--${status}`">
-    <div class="gauge-card__header">
-      <slot name="icon" />
-      <h3 class="gauge-card__title">{{ title }}</h3>
-    </div>
-
-    <div
-      class="gauge-card__visual"
-      role="progressbar"
-      :aria-label="`${title}: ${value} ${unit}`"
-      :aria-valuenow="value"
-      :aria-valuemin="0"
-      :aria-valuemax="max"
-    >
-      <svg class="gauge-ring" viewBox="0 0 100 100" aria-hidden="true">
-        <circle
-          cx="50" cy="50" r="42"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="8"
-          class="gauge-ring__bg"
-        />
-        <circle
-          cx="50" cy="50" r="42"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="8"
-          class="gauge-ring__fill"
-          :class="`gauge-ring__fill--${status}`"
-          :stroke-dasharray="circumference"
-          :stroke-dashoffset="offset"
-          transform="rotate(-90 50 50)"
-        />
-      </svg>
-      <div class="gauge-card__value">
-        <span class="gauge-card__number">{{ value }}</span>
-        <span class="gauge-card__unit">{{ unit }}</span>
+  <q-card class="gauge-card" :class="`gauge-card--${status}`">
+    <q-card-section class="text-center">
+      <div class="gauge-card__header">
+        <slot name="icon" />
+        <h3 class="gauge-card__title">{{ title }}</h3>
       </div>
-    </div>
 
-    <p class="gauge-card__subtitle">{{ subtitle }}</p>
-  </div>
+      <div
+        class="gauge-card__visual"
+        role="progressbar"
+        :aria-label="`${title}: ${value} ${unit}`"
+        :aria-valuenow="value"
+        :aria-valuemin="0"
+        :aria-valuemax="max"
+      >
+        <svg class="gauge-ring" viewBox="0 0 100 100" aria-hidden="true">
+          <circle
+            cx="50" cy="50" r="42"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="8"
+            class="gauge-ring__bg"
+          />
+          <circle
+            cx="50" cy="50" r="42"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="8"
+            class="gauge-ring__fill"
+            :class="`gauge-ring__fill--${status}`"
+            :stroke-dasharray="circumference"
+            :stroke-dashoffset="offset"
+            transform="rotate(-90 50 50)"
+          />
+        </svg>
+        <div class="gauge-card__value">
+          <span class="gauge-card__number">{{ value }}</span>
+          <span class="gauge-card__unit">{{ unit }}</span>
+        </div>
+      </div>
+
+      <p class="gauge-card__subtitle">{{ subtitle }}</p>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -65,11 +67,6 @@ const offset = computed(() => {
 
 <style scoped>
 .gauge-card {
-  background: var(--color-bg-primary);
-  border: var(--depth-1-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-6);
-  text-align: center;
   border-left: 4px solid var(--color-success-solid);
 }
 
