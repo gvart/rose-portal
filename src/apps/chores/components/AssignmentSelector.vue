@@ -1,20 +1,22 @@
 <template>
   <div class="assignment-selector">
     <label class="assignment-selector-label">Assign To</label>
-    <select
-      :value="modelValue ?? ''"
-      class="assignment-selector-input"
-      @change="handleChange"
-    >
-      <option value="">Unassigned</option>
-      <option v-for="user in users" :key="user.id" :value="user.id">
-        {{ user.username }}
-      </option>
-    </select>
+    <q-select
+      :model-value="modelValue"
+      @update:model-value="emit('update:modelValue', $event)"
+      :options="selectOptions"
+      option-value="value"
+      option-label="label"
+      emit-value
+      map-options
+      outlined
+      clearable
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { User } from '../types/chores'
 
 interface Props {
@@ -22,17 +24,19 @@ interface Props {
   users: User[]
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: number | null]
 }>()
 
-function handleChange(event: Event): void {
-  const target = event.target as HTMLSelectElement
-  const value = target.value === '' ? null : parseInt(target.value, 10)
-  emit('update:modelValue', value)
-}
+const selectOptions = computed(() => [
+  { value: null, label: 'Unassigned' },
+  ...props.users.map(user => ({
+    value: user.id,
+    label: user.username
+  }))
+])
 </script>
 
 <style scoped>
@@ -46,32 +50,5 @@ function handleChange(event: Event): void {
   font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
-}
-
-.assignment-selector-input {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  color: #111827;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.assignment-selector-input:hover {
-  border-color: #9ca3af;
-}
-
-.assignment-selector-input:focus {
-  outline: none;
-  border-color: #EC4899;
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
-}
-
-.assignment-selector-input:disabled {
-  background: #f3f4f6;
-  cursor: not-allowed;
 }
 </style>
