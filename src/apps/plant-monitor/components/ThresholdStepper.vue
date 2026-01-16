@@ -1,37 +1,29 @@
 <template>
   <div class="threshold-stepper">
-    <button
-     
-      type="button"
-      @touchend.prevent="decrement"
-      @click.prevent="decrement"
-      class="stepper-button"
-      :disabled="modelValue <= min"
+    <q-btn
+      icon="remove"
+      color="info"
+      unelevated
+      @click="decrement"
+      :disable="modelValue <= min"
       aria-label="Decrease value"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="stepper-icon">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
-      </svg>
-    </button>
+      class="stepper-button"
+    />
 
     <div class="value-display">
       <span class="value-number">{{ modelValue }}</span>
       <span class="value-unit">{{ unit }}</span>
     </div>
 
-    <button
-     
-      type="button"
-      @touchend.prevent="increment"
-      @click.prevent="increment"
-      class="stepper-button"
-      :disabled="modelValue >= max"
+    <q-btn
+      icon="add"
+      color="info"
+      unelevated
+      @click="increment"
+      :disable="modelValue >= max"
       aria-label="Increase value"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="stepper-icon">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-    </button>
+      class="stepper-button"
+    />
   </div>
 </template>
 
@@ -68,35 +60,8 @@ function decrement() {
 }
 
 .stepper-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  background: var(--color-info-bg);
-  color: var(--color-info-solid);
-  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
   min-width: 56px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.stepper-button:active:not(:disabled) {
-  transform: scale(0.95);
-  background: #bfdbfe;
-}
-
-.stepper-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.stepper-icon {
-  width: 24px;
-  height: 24px;
 }
 
 .value-display {
