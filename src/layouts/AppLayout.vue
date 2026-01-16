@@ -2,11 +2,19 @@
   <q-layout view="hHh lpR fFf" :style="{ '--theme-color': themeColor }">
     <q-header bordered class="bg-white text-dark">
       <q-toolbar>
-        <q-btn flat dense round icon="chevron_left" @click="goBack" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="chevron_left"
+          @click="goBack"
+          aria-label="Go back"
+          color="grey-8"
+        />
         <q-toolbar-title class="text-center text-weight-medium">
           {{ title }}
         </q-toolbar-title>
-        <q-btn flat dense round class="invisible" />
+        <q-btn flat dense round icon="chevron_left" class="invisible" />
       </q-toolbar>
       <div class="header-accent"></div>
     </q-header>
@@ -35,11 +43,14 @@ defineProps<{
 
 const router = useRouter()
 const goBack = () => {
+  console.log('Back button clicked') // Debug log
   // Use browser history to go back
   if (window.history.length > 1) {
+    console.log('Going back in history')
     router.back()
   } else {
     // Fallback to home if no history
+    console.log('Navigating to home')
     router.push('/')
   }
 }
@@ -71,5 +82,11 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
 
 .invisible {
   visibility: hidden;
+}
+
+/* Ensure toolbar buttons are properly sized and clickable */
+:deep(.q-toolbar .q-btn) {
+  min-width: 40px;
+  min-height: 40px;
 }
 </style>
