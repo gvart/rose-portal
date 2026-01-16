@@ -27,12 +27,14 @@
     </div>
 
     <div class="notes-list__header">
-      <button class="create-note-btn" @click="$emit('create')">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-        New Note
-      </button>
+      <q-btn
+        label="New Note"
+        icon="add"
+        color="primary"
+        unelevated
+        class="full-width"
+        @click="$emit('create')"
+      />
     </div>
 
     <!-- Loading skeleton -->
@@ -59,7 +61,7 @@
 
       <!-- Load more indicator -->
       <div v-if="hasMore" class="load-more-indicator">
-        <div class="spinner"></div>
+        <q-spinner color="primary" size="16px" />
         <span>Loading more...</span>
       </div>
     </div>
@@ -92,7 +94,7 @@ import NoteCard from './NoteCard.vue'
 import NoteCardSkeleton from './NoteCardSkeleton.vue'
 import EmptyNotesState from './EmptyNotesState.vue'
 import NoteContextMenu from './NoteContextMenu.vue'
-import ConfirmDialog from './ConfirmDialog.vue'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import type { Note } from '../types/notes'
 
 defineProps<{
@@ -184,42 +186,6 @@ useInfiniteScroll(listContainerRef, {
   z-index: 10;
 }
 
-.create-note-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px;
-  min-height: 44px;
-  background-color: #8b5cf6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.create-note-btn:hover {
-  background-color: #7c3aed;
-}
-
-.create-note-btn:active {
-  transform: scale(0.98);
-}
-
-.create-note-btn:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-}
-
-.create-note-btn:focus {
-  outline: none;
-}
-
 .notes-list__skeleton,
 .notes-list__empty,
 .notes-list__items {
@@ -234,21 +200,6 @@ useInfiniteScroll(listContainerRef, {
   padding: 16px;
   color: #6b7280;
   font-size: 14px;
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid #e5e7eb;
-  border-top-color: #8b5cf6;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* Pull-to-refresh indicator */
@@ -295,8 +246,6 @@ useInfiniteScroll(listContainerRef, {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .create-note-btn,
-  .spinner,
   .pull-spinner,
   .pull-icon,
   .pull-indicator {
