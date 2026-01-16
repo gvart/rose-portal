@@ -9,8 +9,9 @@
       </q-card-section>
 
       <q-card-section class="modal-content">
-            <!-- Main Content Area (Left Column on Desktop) -->
-            <div class="content-main">
+        <div class="modal-layout">
+          <!-- Main Content Area (Left Column on Desktop) -->
+          <div class="content-main">
               <!-- Title -->
               <div class="form-group">
                 <q-input
@@ -68,7 +69,7 @@
               />
             </div>
           </div>
-
+        </div>
       </q-card-section>
 
       <q-card-actions align="right" class="q-px-md q-pb-md">
@@ -184,6 +185,9 @@ function close(): void {
 
 .modal-content {
   overflow-y: auto;
+}
+
+.modal-layout {
   display: flex;
   gap: 2rem;
 }
