@@ -16,7 +16,16 @@
 
       <!-- Kanban Board -->
       <div class="chores-content">
+        <KanbanBoardPWA
+          v-if="isPWA"
+          :todo-chores="store.todoChores"
+          :in-progress-chores="store.inProgressChores"
+          :done-chores="store.doneChores"
+          @status-change="handleStatusChange"
+          @select-chore="handleSelectChore"
+        />
         <KanbanBoard
+          v-else
           :todo-chores="store.todoChores"
           :in-progress-chores="store.inProgressChores"
           :done-chores="store.doneChores"
@@ -27,7 +36,6 @@
           @status-change="handleStatusChange"
           @select-chore="handleSelectChore"
           @load-more="store.loadMoreForStatus($event)"
-          @long-press="handleLongPress"
         />
       </div>
 
@@ -42,19 +50,6 @@
         :can-delete="canDeleteChore"
         @save="handleSave"
         @delete="handleDelete"
-      />
-
-      <!-- Context Menu for Long Press -->
-      <ChoreContextMenu
-        v-model="showContextMenu"
-        :chore="selectedChoreForMenu"
-        :can-edit="true"
-        :can-delete="canEditSelectedChoreForMenu"
-        @move-to-todo="handleMoveToStatus(ChoreStatus.TODO)"
-        @move-to-in-progress="handleMoveToStatus(ChoreStatus.IN_PROGRESS)"
-        @move-to-done="handleMoveToStatus(ChoreStatus.DONE)"
-        @edit="handleEditFromMenu"
-        @delete="handleDeleteFromMenu"
       />
 
       <!-- Confirm Delete Dialog -->
@@ -123,23 +118,23 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ChoresHeader from './components/ChoresHeader.vue'
 import KanbanBoard from './components/KanbanBoard.vue'
+import KanbanBoardPWA from './components/KanbanBoardPWA.vue'
 import ChoreModal from './components/ChoreModal.vue'
-import ChoreContextMenu from './components/ChoreContextMenu.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import OnboardingTooltip from './components/OnboardingTooltip.vue'
 import { useChoresStore } from './stores/choresStore'
 import type { ChoreFormData, Chore } from './types/chores'
 import { ChoreStatus, canEditChore } from './types/chores'
 import { usePWA } from '@/composables/usePWA'
+import { usePwaDetection } from '@/composables/usePwaDetection'
 
 const store = useChoresStore()
 const route = useRoute()
 const router = useRouter()
 const { isInstalled } = usePWA()
+const { isPWA } = usePwaDetection()
 const showDeleteDialog = ref(false)
 const choreToDelete = ref<Chore | null>(null)
-const showContextMenu = ref(false)
-const selectedChoreForMenu = ref<Chore | null>(null)
 const showOnboarding = ref(false)
 const firstChoreElement = ref<HTMLElement | null>(null)
 
@@ -153,11 +148,6 @@ const hasActiveFilters = computed(() => {
 const canDeleteChore = computed(() => {
   if (!store.selectedChore || store.currentUserId === null) return false
   return canEditChore(store.selectedChore, store.currentUserId)
-})
-
-const canEditSelectedChoreForMenu = computed(() => {
-  if (!selectedChoreForMenu.value || store.currentUserId === null) return false
-  return canEditChore(selectedChoreForMenu.value, store.currentUserId)
 })
 
 const isMobile = computed(() => window.innerWidth < 768)
@@ -181,12 +171,12 @@ watch(
         console.log('[Chores] Deep link to chore:', choreIdNum)
 
         // Load chores if not already loaded
-        if (store.allChores.length === 0) {
-          await store.loadChores()
+        if (store.chores.length === 0) {
+          await store.fetchChores()
         }
 
         // Find and open the chore
-        const chore = store.allChores.find(c => c.id === choreIdNum)
+        const chore = store.chores.find((c: Chore) => c.id === choreIdNum)
         if (chore) {
           // Open the chore modal
           handleSelectChore(chore)
@@ -220,13 +210,6 @@ watch(() => store.loading, async (loading) => {
         }
       }, 10000)
     }
-  }
-})
-
-// Dismiss when user performs first long press
-watch(() => showContextMenu.value, (isShowing) => {
-  if (isShowing && showOnboarding.value) {
-    handleDismissOnboarding()
   }
 })
 
@@ -309,31 +292,6 @@ function handleDelete(): void {
 
   choreToDelete.value = store.selectedChore
   showDeleteDialog.value = true
-}
-
-// Long press action handler
-function handleLongPress(chore: Chore): void {
-  selectedChoreForMenu.value = chore
-  showContextMenu.value = true
-}
-
-async function handleMoveToStatus(newStatus: ChoreStatus): Promise<void> {
-  if (selectedChoreForMenu.value) {
-    await store.updateChoreStatus(selectedChoreForMenu.value.id, newStatus)
-  }
-}
-
-function handleEditFromMenu(): void {
-  if (selectedChoreForMenu.value) {
-    handleSelectChore(selectedChoreForMenu.value)
-  }
-}
-
-function handleDeleteFromMenu(): void {
-  if (selectedChoreForMenu.value) {
-    choreToDelete.value = selectedChoreForMenu.value
-    showDeleteDialog.value = true
-  }
 }
 
 async function handleConfirmDelete(): Promise<void> {
