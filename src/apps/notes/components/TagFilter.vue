@@ -1,44 +1,58 @@
 <template>
   <div class="tag-filter">
-    <div class="tag-filter__header">
-      <h3 class="tag-filter__title">Tags</h3>
-      <button class="tag-filter__manage-btn" @click="$emit('manage')">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M8 2V14M2 8H14"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
-      </button>
+    <div class="tag-filter__header q-pa-md">
+      <div class="text-subtitle1 text-weight-semibold">Tags</div>
+      <q-btn
+        icon="add"
+        flat
+        round
+        dense
+        @click="$emit('manage')"
+      />
     </div>
 
-    <div v-if="tags.length === 0" class="tag-filter__empty">
-      <p>No tags yet</p>
-      <button class="tag-filter__create-btn" @click="$emit('manage')">Create Tag</button>
+    <div v-if="tags.length === 0" class="tag-filter__empty q-pa-lg text-center">
+      <p class="text-grey-6 q-mb-md">No tags yet</p>
+      <q-btn
+        label="Create Tag"
+        color="primary"
+        unelevated
+        @click="$emit('manage')"
+      />
     </div>
 
-    <div v-else class="tag-filter__list">
-      <label
+    <q-list v-else class="tag-filter__list">
+      <q-item
         v-for="tag in tags"
         :key="tag.id"
-        class="tag-filter__item"
-        :class="{ 'tag-filter__item--selected': selectedIds.includes(tag.id) }"
+        clickable
+        @click="$emit('toggle', tag.id)"
+        :active="selectedIds.includes(tag.id)"
+        active-class="bg-primary-1"
       >
-        <input
-          type="checkbox"
-          :checked="selectedIds.includes(tag.id)"
-          class="tag-filter__checkbox"
-          @change="$emit('toggle', tag.id)"
-        />
-        <span class="tag-filter__color" :style="{ backgroundColor: tag.color }"></span>
-        <span class="tag-filter__name">{{ tag.name }}</span>
-      </label>
-    </div>
+        <q-item-section side>
+          <q-checkbox
+            :model-value="selectedIds.includes(tag.id)"
+            @update:model-value="$emit('toggle', tag.id)"
+          />
+        </q-item-section>
+        <q-item-section avatar>
+          <div class="tag-color" :style="{ backgroundColor: tag.color }"></div>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ tag.name }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
 
-    <div v-if="selectedIds.length > 0" class="tag-filter__footer">
-      <button class="tag-filter__clear-btn" @click="$emit('clear')">Clear Filters</button>
+    <div v-if="selectedIds.length > 0" class="q-pa-md">
+      <q-btn
+        label="Clear Filters"
+        color="primary"
+        outline
+        @click="$emit('clear')"
+        class="full-width"
+      />
     </div>
   </div>
 </template>
@@ -70,119 +84,17 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.tag-filter__title {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.tag-filter__manage-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: transparent;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: #6b7280;
-}
-
-.tag-filter__manage-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.tag-filter__empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: #6b7280;
-}
-
-.tag-filter__empty p {
-  margin: 0 0 16px 0;
-  font-size: 14px;
-}
-
-.tag-filter__create-btn {
-  padding: 8px 16px;
-  background-color: #8b5cf6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.tag-filter__create-btn:hover {
-  background-color: #7c3aed;
 }
 
 .tag-filter__list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0;
 }
 
-.tag-filter__item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.tag-filter__item:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.tag-filter__item--selected {
-  background-color: rgba(139, 92, 246, 0.1);
-}
-
-.tag-filter__checkbox {
-  cursor: pointer;
-}
-
-.tag-filter__color {
+.tag-color {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.tag-filter__name {
-  flex: 1;
-  font-size: 14px;
-}
-
-.tag-filter__footer {
-  padding: 16px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.tag-filter__clear-btn {
-  width: 100%;
-  padding: 8px;
-  background-color: transparent;
-  color: #8b5cf6;
-  border: 1px solid #8b5cf6;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tag-filter__clear-btn:hover {
-  background-color: rgba(139, 92, 246, 0.1);
 }
 </style>
