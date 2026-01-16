@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/gvart/rose-portal/compare/v1.1.0...v1.2.0) (2026-01-16)
+
+
+### Features
+
+* migrate to quasar ([#6](https://github.com/gvart/rose-portal/issues/6)) ([615d21e](https://github.com/gvart/rose-portal/commit/615d21eb21892b6cd67a2de72a385ab8af7403e8))
+* **pwa:** fix auto-auth, deeplinks, reminders, and drag-and-drop ([51337ed](https://github.com/gvart/rose-portal/commit/51337ed671999a72393e3bc8b14f1e8282f837f6))
+
 ## [1.1.0](https://github.com/gvart/rose-portal/compare/v1.0.2...v1.1.0) (2026-01-15)
 
 
