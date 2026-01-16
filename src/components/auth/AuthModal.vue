@@ -27,8 +27,8 @@
                 type="text"
                 outlined
                 :placeholder="mode === 'signup' ? 'Your Name' : 'Username'"
-                :readonly="!isMobileOrTablet"
-                @click="!isMobileOrTablet && (showKeyboard = true)"
+                :readonly="isPi5"
+                @click="isPi5 && (showKeyboard = true)"
                 class="q-mb-md"
               />
 
@@ -64,12 +64,13 @@
     </q-card>
   </q-dialog>
 
-  <!-- Floating Keyboard (Desktop only) -->
+  <!-- On-Screen Keyboard (Pi5 only) -->
   <Teleport to="body">
     <FloatingKeyboard
-      v-if="!isMobileOrTablet"
+      v-if="isPi5"
       v-model="username"
       v-model:show="showKeyboard"
+      :docked="true"
     />
   </Teleport>
 </template>
@@ -88,7 +89,7 @@ interface Props {
   show: boolean
   mode: AuthMode
   prefilledUsername?: string
-  userId?: string // For quick-login mode
+  userId?: string | number // For quick-login mode
   showBackToSelection?: boolean // Show back button to return to user selection
 }
 
@@ -105,7 +106,7 @@ const emit = defineEmits<{
 }>()
 
 const authStore = useAuthStore()
-const { isMobileOrTablet } = useDeviceDetection()
+const { isMobileOrTablet, isPi5 } = useDeviceDetection()
 
 // State
 const currentStep = ref<AuthStep>('username')
@@ -164,6 +165,7 @@ function reset(): void {
 
 function nextStep(): void {
   if (currentStep.value === 'username' && username.value.trim()) {
+    showKeyboard.value = false
     currentStep.value = 'pin'
   }
 }
@@ -247,5 +249,24 @@ async function handlePinComplete(completedPin: string): Promise<void> {
 
 .flex-1 {
   flex: 1;
+}
+
+/* Ultra-compact optimizations for Pi5 */
+@media (max-height: 768px) {
+  .auth-modal-card {
+    max-height: 70vh !important; /* Smaller since it's simple */
+  }
+
+  .step-container {
+    gap: var(--space-4);
+  }
+
+  .step-description {
+    font-size: 12px;
+  }
+
+  .loading-text {
+    font-size: 12px;
+  }
 }
 </style>

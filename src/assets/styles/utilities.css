@@ -1,0 +1,429 @@
+/**
+ * ROSE Portal Utility Classes
+ * Reusable patterns for forms, modals, and layouts
+ */
+
+/* ========================================
+   FORM GRID LAYOUTS
+   ======================================== */
+
+/**
+ * Responsive form grid
+ * Single column on mobile, 2 columns on tablet+
+ */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--form-grid-gap, var(--space-4));
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Force full width within grid */
+.form-grid .full-width,
+.form-grid--full-width {
+  grid-column: 1 / -1;
+}
+
+/**
+ * Form group with label, input, and hint
+ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-group--inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-label {
+  font-size: var(--label-font-size, var(--font-size-13));
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.form-label--secondary {
+  font-size: var(--font-size-11);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+  margin-left: var(--space-2);
+}
+
+.form-hint {
+  font-size: var(--hint-font-size, var(--font-size-11));
+  color: var(--color-text-muted);
+  margin-top: var(--hint-margin-top, var(--space-1));
+}
+
+/* ========================================
+   MODAL SIZE PRESETS
+   ======================================== */
+
+/**
+ * Modal size classes for QDialog cards
+ * Apply to the q-card inside q-dialog
+ */
+.modal-sm {
+  max-width: var(--modal-width-sm) !important;
+  max-height: var(--modal-max-height-sm) !important;
+}
+
+.modal-md {
+  max-width: var(--modal-width-md) !important;
+  max-height: var(--modal-max-height-md) !important;
+}
+
+.modal-lg {
+  max-width: var(--modal-width-lg) !important;
+  max-height: var(--modal-max-height-lg) !important;
+}
+
+.modal-xl {
+  max-width: var(--modal-width-xl) !important;
+  max-height: var(--modal-max-height-xl) !important;
+}
+
+.modal-full {
+  max-width: var(--modal-width-full) !important;
+  max-height: var(--modal-max-height-full) !important;
+  margin: 16px;
+}
+
+/* ========================================
+   SCROLLABLE CONTENT WITH INDICATORS
+   ======================================== */
+
+/**
+ * Scrollable container with fade indicators
+ * Shows when content overflows
+ */
+.scrollable-content {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-secondary) transparent;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/**
+ * Scroll fade indicators
+ * Add to parent of scrollable-content
+ */
+.scroll-container {
+  position: relative;
+}
+
+.scroll-container::before,
+.scroll-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 6px; /* Account for scrollbar */
+  height: var(--scroll-indicator-height, 24px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-in-out);
+  z-index: 1;
+}
+
+.scroll-container::before {
+  top: 0;
+  background: var(--scroll-indicator-gradient);
+}
+
+.scroll-container::after {
+  bottom: 0;
+  background: var(--scroll-indicator-gradient-bottom);
+}
+
+.scroll-container.can-scroll-up::before {
+  opacity: 1;
+}
+
+.scroll-container.can-scroll-down::after {
+  opacity: 1;
+}
+
+/* ========================================
+   COMPACT SPACING UTILITIES
+   ======================================== */
+
+/* Compact padding */
+.p-compact { padding: var(--compact-space-3); }
+.px-compact { padding-left: var(--compact-space-3); padding-right: var(--compact-space-3); }
+.py-compact { padding-top: var(--compact-space-3); padding-bottom: var(--compact-space-3); }
+
+/* Compact margin */
+.m-compact { margin: var(--compact-space-3); }
+.mx-compact { margin-left: var(--compact-space-3); margin-right: var(--compact-space-3); }
+.my-compact { margin-top: var(--compact-space-3); margin-bottom: var(--compact-space-3); }
+
+/* Compact gap */
+.gap-compact { gap: var(--compact-space-3); }
+.gap-compact-sm { gap: var(--compact-space-2); }
+.gap-compact-lg { gap: var(--compact-space-5); }
+
+/* ========================================
+   MODAL HEADER & FOOTER PATTERNS
+   ======================================== */
+
+/**
+ * Standard modal header with title and close button
+ */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+
+.modal-header-title {
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.modal-header-subtitle {
+  font-size: var(--font-size-13);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/**
+ * Modal content area
+ */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.modal-content--compact {
+  padding: var(--compact-space-4);
+}
+
+/**
+ * Modal footer with actions
+ */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  flex-shrink: 0;
+  border-top: var(--depth-1-border);
+}
+
+.modal-footer--between {
+  justify-content: space-between;
+}
+
+/* ========================================
+   TWO-COLUMN MODAL LAYOUT
+   ======================================== */
+
+/**
+ * Desktop: Main content + Sidebar
+ * Mobile: Stacked layout
+ * Small landscape (Pi5): Horizontal with narrower sidebar
+ */
+.modal-two-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Standard desktop breakpoint */
+@media (min-width: 768px) {
+  .modal-two-column {
+    flex-direction: row;
+  }
+}
+
+/* Small landscape displays (Pi5 optimization) */
+@media (min-width: 1024px) and (max-height: 768px) {
+  .modal-two-column {
+    flex-direction: row;
+    gap: var(--space-4);
+  }
+
+  .modal-sidebar {
+    width: 220px !important; /* Narrower sidebar */
+    padding: var(--space-3) !important;
+  }
+}
+
+.modal-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .modal-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: var(--depth-1-border);
+  }
+}
+
+/* ========================================
+   INPUT SECTION PATTERN
+   ======================================== */
+
+/**
+ * Reusable input section with label, control, and hint
+ */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.input-section--compact {
+  gap: var(--compact-space-2);
+}
+
+.input-label {
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.input-hint {
+  font-size: var(--font-size-11);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ========================================
+   TOGGLE ROW PATTERN
+   ======================================== */
+
+/**
+ * Toggle with label and description
+ */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--space-11);
+}
+
+.toggle-label-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* ========================================
+   CARD GRID LAYOUTS
+   ======================================== */
+
+/**
+ * Responsive card grid
+ */
+.card-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card-grid--compact {
+  gap: var(--compact-space-4);
+}
+
+/* ========================================
+   STATUS INDICATOR UTILITIES
+   ======================================== */
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.status-dot--success { background: var(--color-success-solid); }
+.status-dot--warning { background: var(--color-warning-solid); }
+.status-dot--error { background: var(--color-error-solid); }
+.status-dot--info { background: var(--color-info-solid); }
+.status-dot--muted { background: var(--color-text-muted); }
+
+/* ========================================
+   TEXT TRUNCATION
+   ======================================== */
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

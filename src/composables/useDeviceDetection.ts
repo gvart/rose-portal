@@ -9,6 +9,7 @@ export function useDeviceDetection() {
   const detectDevice = () => {
     const userAgent = navigator.userAgent.toLowerCase()
     const width = window.innerWidth
+    const height = window.innerHeight
 
     // Check for Raspberry Pi 5
     // Pi5 typically runs Chromium on Raspberry Pi OS (ARM architecture)
@@ -16,7 +17,10 @@ export function useDeviceDetection() {
     isPi5.value = pi5Regex.test(userAgent) ||
                   userAgent.includes('raspbian') ||
                   // Additional check: look for specific hardware indicators
-                  (navigator.hardwareConcurrency === 4 && navigator.maxTouchPoints === 0 && width >= 1920)
+                  // Pi5 with 7" touchscreen is 1024x600
+                  (navigator.hardwareConcurrency === 4 && width === 1024 && height === 600) ||
+                  // Support similar small displays
+                  (navigator.hardwareConcurrency === 4 && width >= 1024 && width <= 1280 && height <= 768)
 
     // Check for mobile devices
     const mobileRegex = /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i
@@ -35,7 +39,8 @@ export function useDeviceDetection() {
       isDesktop: isDesktop.value,
       isPi5: isPi5.value,
       userAgent,
-      width
+      width,
+      height
     })
   }
 

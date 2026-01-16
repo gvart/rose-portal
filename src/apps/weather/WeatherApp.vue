@@ -49,7 +49,9 @@
 
       <!-- Error State -->
       <div v-if="store.error && !store.hasData" class="error-state">
-        <div class="error-icon">⚠️</div>
+        <div class="error-icon">
+          <q-icon name="warning" size="48px" color="warning" />
+        </div>
         <div class="error-title">Failed to Load Weather</div>
         <div class="error-message">{{ store.error }}</div>
         <button @click="handleRetry" class="glass-btn">

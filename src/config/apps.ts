@@ -4,7 +4,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'recipe',
     name: 'Recipe Finder',
-    icon: '/icons/recipe.svg',
+    iconName: 'restaurant',
     description: 'Find recipes and ingredients',
     route: '/recipe',
     component: () => import('@/apps/recipe/RecipeApp.vue'),
@@ -15,7 +15,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'system-monitor',
     name: 'System Monitor',
-    icon: '/icons/monitor.svg',
+    iconName: 'monitor_heart',
     description: 'Monitor system metrics and performance',
     route: '/system-monitor',
     component: () => import('@/apps/system-monitor/SystemMonitorApp.vue'),
@@ -26,7 +26,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'plant-monitor',
     name: 'Plant Monitor',
-    icon: '/icons/plant.svg',
+    iconName: 'eco',
     description: 'Monitor your smart plant sensors',
     route: '/plant-monitor',
     component: () => import('@/apps/plant-monitor/PlantMonitorApp.vue'),
@@ -37,7 +37,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'calendar',
     name: 'Calendar',
-    icon: '/icons/calendar.svg',
+    iconName: 'calendar_month',
     description: 'Manage your events and schedule',
     route: '/calendar',
     component: () => import('@/apps/calendar/CalendarApp.vue'),
@@ -48,7 +48,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'timer',
     name: 'Timer',
-    icon: '/icons/timer.svg',
+    iconName: 'timer',
     description: 'Countdown, stopwatch, and pomodoro timers',
     route: '/timer',
     component: () => import('@/apps/timer/TimerApp.vue'),
@@ -59,7 +59,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'weather',
     name: 'Weather',
-    icon: '/icons/weather.svg',
+    iconName: 'wb_sunny',
     description: '7-day forecast and weather alerts',
     route: '/weather',
     component: () => import('@/apps/weather/WeatherApp.vue'),
@@ -70,7 +70,7 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'notes',
     name: 'Notes',
-    icon: '/icons/notes.svg',
+    iconName: 'sticky_note_2',
     description: 'Rich text notes with tags',
     route: '/notes',
     component: () => import('@/apps/notes/NotesApp.vue'),
@@ -81,12 +81,23 @@ export const appRegistry: AppConfig[] = [
   {
     id: 'chores',
     name: 'Chores',
-    icon: '/icons/chores.svg',
+    iconName: 'checklist',
     description: 'Manage tasks with Kanban board',
     route: '/chores',
     component: () => import('@/apps/chores/ChoresApp.vue'),
     color: '#EC4899',
     enabled: true,
     order: 8
+  },
+  {
+    id: 'settings',
+    name: 'Settings',
+    iconName: 'settings',
+    description: 'Appearance, notifications, and configuration',
+    route: '/settings',
+    component: () => import('@/views/Settings.vue'),
+    color: '#6B7280',
+    enabled: true,
+    order: 9
   }
 ]

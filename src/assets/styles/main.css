@@ -1,14 +1,19 @@
 /**
  * Rose Portal Main Styles
  * Import design tokens and configure global styles
+ * Import order matters for cascading
  */
+
+/* 1. Design tokens (variables) */
 @import './tokens.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* 2. Compact layout variables */
+@import './compact.css';
 
-@layer base {
+/* 3. Utility classes */
+@import './utilities.css';
+
+/* Global base styles */
   * {
     -webkit-tap-highlight-color: transparent;
     /* Smooth momentum scrolling on iOS/Safari (also helps on Pi) */
@@ -70,9 +75,8 @@
   .apps-container.carousel::-webkit-scrollbar {
     display: none;
   }
-}
 
-@layer components {
+/* Component utilities */
   /* Touch-friendly button sizing (44px minimum) */
   .btn-touch {
     min-height: var(--space-11);
@@ -104,5 +108,64 @@
   .numeric-data {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+  }
+
+/* ============================================
+   TOUCH INTERACTION OPTIMIZATIONS
+   Remove hover states on touch devices
+   ============================================ */
+
+/* Remove hover states on touch-only devices */
+@media (hover: none) and (pointer: coarse) {
+  /* Use active states instead of hover */
+  .q-btn:active,
+  .q-item:active,
+  button:active {
+    opacity: 0.7;
+    transform: scale(0.97);
+  }
+
+  /* Remove tooltips on touch devices */
+  .q-tooltip {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   PI5 SMALL DISPLAY OPTIMIZATIONS
+   Quasar component overrides for 7" touchscreen
+   ============================================ */
+
+@media (max-height: 768px) {
+  /* Ensure all interactive elements meet minimum touch target */
+  .q-btn,
+  .q-item,
+  .q-field,
+  input,
+  button {
+    min-height: 40px !important;
+    min-width: 40px !important;
+  }
+
+  /* Exception for icon-only buttons in toolbars */
+  .q-btn--dense.icon-only,
+  .toolbar .q-btn {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+
+  /* Optimize scrolling performance */
+  .scrollable-content {
+    will-change: scroll-position;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+
+  /* Hide scrollbar on small touch displays */
+  .scrollable-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollable-content {
+    scrollbar-width: none;
   }
 }

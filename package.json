@@ -44,9 +44,11 @@
     "workbox-window": "^7.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@quasar/vite-plugin": "^1.10.0",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^6.0.3",
+    "rollup-plugin-visualizer": "^6.0.5",
     "sass": "^1.97.2",
     "sharp": "^0.34.5",
     "typescript": "^5.9.3",

@@ -44,7 +44,12 @@ app.use(Quasar, {
       position: 'top-right',
       timeout: 3000,
       textColor: 'white',
-      actions: [{ icon: 'close', color: 'white' }]
+      actions: [{ icon: 'close', color: 'white' }],
+      // Add compact mode for small displays
+      classes: window.innerHeight <= 768 ? 'text-caption' : '',
+      attrs: {
+        style: window.innerHeight <= 768 ? 'font-size: 11px; padding: 6px 10px;' : ''
+      }
     }
   }
 })

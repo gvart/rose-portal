@@ -23,6 +23,8 @@
                   class="tag-name-input"
                   placeholder="Tag name"
                   maxlength="50"
+                  :readonly="isPi5"
+                  @click="isPi5 && (showKeyboard = true)"
                   @keyup.enter="handleCreateTag"
                 />
                 <div class="color-picker">
@@ -92,10 +94,22 @@
       @confirm="confirmDeleteTag"
     />
   </Teleport>
+
+  <!-- On-Screen Keyboard (Pi5 only) -->
+  <Teleport to="body">
+    <FloatingKeyboard
+      v-if="isPi5"
+      v-model="newTagName"
+      v-model:show="showKeyboard"
+      :docked="true"
+    />
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
+import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
 import type { Tag } from '../types/notes'
 import { TAG_COLORS, type TagColor } from '../types/notes'
 import ConfirmDialog from './ConfirmDialog.vue'
@@ -116,6 +130,8 @@ const newTagName = ref('')
 const newTagColor = ref<TagColor>(TAG_COLORS[0])
 const showDeleteConfirm = ref(false)
 const tagToDelete = ref<number | null>(null)
+const showKeyboard = ref(false)
+const { isPi5 } = useDeviceDetection()
 
 function close() {
   emit('update:modelValue', false)
