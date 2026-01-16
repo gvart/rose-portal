@@ -157,7 +157,8 @@
     </q-card>
   </q-dialog>
 
-    <!-- Floating Keyboard (Desktop only) -->
+  <!-- Floating Keyboard (Desktop only) -->
+  <Teleport to="body">
     <FloatingKeyboard
       v-if="!isMobileOrTablet"
       v-model="localConfig.name"
