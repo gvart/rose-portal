@@ -1,28 +1,6 @@
 <template>
   <div class="meal-prep-app">
-    <!-- View Toggle -->
-    <div class="view-toggle">
-      <button
-        @click="currentView = 'wizard'"
-        :class="['view-button', { active: currentView === 'wizard' }]"
-      >
-        Create New Plan
-      </button>
-      <button
-        @click="currentView = 'saved'"
-        :class="['view-button', { active: currentView === 'saved' }]"
-      >
-        Saved Plans
-      </button>
-    </div>
-
-    <!-- Saved Plans View -->
-    <div v-if="currentView === 'saved'" class="saved-view-container">
-      <SavedPlansView />
-    </div>
-
     <!-- Wizard View -->
-    <div v-else>
       <!-- Step Indicator -->
       <StepIndicator
         :current-step="store.currentStep"
@@ -116,7 +94,6 @@
         </div>
       </Transition>
       </div>
-    </div>
 
     <!-- Loading Overlay -->
     <Transition name="fade">
@@ -158,14 +135,12 @@ import MealPreferenceForm from './components/MealPreferenceForm.vue'
 import CategoryReview from './components/CategoryReview.vue'
 import WeeklyMenuView from './components/WeeklyMenuView.vue'
 import GroceryListView from './components/GroceryListView.vue'
-import SavedPlansView from './components/SavedPlansView.vue'
 
-const emit = defineEmits<{
+defineEmits<{
   back: []
 }>()
 
 const store = useMealPrepStore()
-const currentView = ref<'wizard' | 'saved'>('wizard')
 const activeTab = ref<'menu' | 'grocery'>('menu')
 const refreshingCategoryId = ref<string | null>(null)
 
@@ -177,11 +152,6 @@ const loadingMessage = computed(() => {
   }
   return 'Loading...'
 })
-
-function handleBack() {
-  store.reset()
-  emit('back')
-}
 
 function handleStepNavigation(step: 'preferences' | 'review' | 'menu') {
   // Only allow navigation to completed steps
@@ -223,39 +193,6 @@ function handleNewPlan() {
 .meal-prep-app {
   width: 100%;
   position: relative;
-}
-
-.view-toggle {
-  display: flex;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-  border-bottom: 2px solid var(--color-border-primary);
-  padding-bottom: var(--space-2);
-}
-
-.view-button {
-  padding: var(--space-3) var(--space-6);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  border-bottom: 4px solid transparent;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 52px;
-}
-
-.view-button:active:not(.active) {
-  color: var(--color-success-solid);
-  border-bottom-color: var(--color-success-border);
-}
-
-.view-button.active {
-  color: var(--color-success-solid);
-  border-bottom-color: var(--color-success-solid);
-}
-
-.saved-view-container {
-  max-width: 72rem;
-  margin: 0 auto;
-  margin-top: var(--space-6);
 }
 
 .wizard-container {

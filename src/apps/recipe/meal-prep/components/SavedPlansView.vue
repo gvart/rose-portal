@@ -2,7 +2,12 @@
   <div class="saved-plans-view">
     <!-- Header -->
     <div class="view-header">
-      <h2 class="header-title">Saved Meal Plans</h2>
+      <div class="header-left">
+        <button v-if="showBackButton" class="back-button" @click="$emit('back')">
+          <q-icon name="arrow_back" size="20px" />
+        </button>
+        <h2 class="header-title">Saved Meal Plans</h2>
+      </div>
       <span class="plan-count">{{ plans.length }} plan{{ plans.length !== 1 ? 's' : '' }}</span>
     </div>
 
@@ -67,10 +72,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, useAttrs } from 'vue'
 import { getAllPlans } from '../services/mealPrepApi'
 import type { WeeklyMenuResponse } from '../types'
 import MealPlanModal from './MealPlanModal.vue'
+
+const attrs = useAttrs()
+const showBackButton = computed(() => 'onBack' in attrs)
+
+defineEmits<{
+  back: []
+}>()
 
 const plans = ref<WeeklyMenuResponse[]>([])
 const loading = ref(false)
@@ -106,6 +118,9 @@ function openPlanModal(plan: WeeklyMenuResponse, index: number) {
 <style scoped>
 .saved-plans-view {
   width: 100%;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
 }
 
 .view-header {
@@ -117,10 +132,38 @@ function openPlanModal(plan: WeeklyMenuResponse, index: number) {
   border-bottom: 2px solid var(--color-border-primary);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) var(--ease-in-out);
+}
+
+.back-button:active {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
 .header-title {
-  font-size: var(--font-size-32);
+  font-size: var(--font-size-24);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
+}
+
+@media (min-width: 640px) {
+  .header-title {
+    font-size: var(--font-size-32);
+  }
 }
 
 .plan-count {
