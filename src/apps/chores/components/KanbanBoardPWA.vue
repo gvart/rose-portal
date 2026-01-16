@@ -1,6 +1,6 @@
 <template>
-  <div class="kanban-board-pwa">
-    <!-- Edge Drop Zones -->
+  <div class="kanban-board-pwa-wrapper">
+    <!-- Edge Drop Zones (shown during drag) -->
     <EdgeDropZone
       edge="top"
       :target-status="ChoreStatus.IN_PROGRESS"
@@ -22,106 +22,114 @@
       :active="activeEdge === 'right'"
     />
 
-    <!-- TODO Section -->
-    <div ref="todoSectionRef" class="kanban-section">
-      <div class="kanban-section-header" @click="toggleSection('TODO')">
-        <div class="kanban-section-title">
-          <QIcon name="list" size="20px" color="#6B7280" />
-          <h2>To Do</h2>
-          <QBadge :label="todoChores.length" color="grey-6" />
+    <!-- Swipeable Columns using QCarousel -->
+    <QCarousel
+      v-model="activeSlide"
+      :swipeable="!isDragging"
+      animated
+      navigation
+      padding
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      control-color="primary"
+      navigation-position="bottom"
+      class="kanban-carousel"
+    >
+      <!-- TODO Slide -->
+      <QCarouselSlide name="TODO" class="kanban-slide">
+        <div class="kanban-column">
+          <div class="kanban-column-header todo-header">
+            <div class="kanban-column-title-row">
+              <QIcon name="list" size="20px" color="#6B7280" />
+              <h2 class="kanban-column-title">To Do</h2>
+              <QBadge :label="todoChores.length" color="grey-6" />
+            </div>
+          </div>
+          <div class="kanban-column-content">
+            <ChoreCardPWA
+              v-for="chore in todoChores"
+              :key="chore.id"
+              :chore="chore"
+              :can-edit="true"
+              @click="emit('select-chore', chore)"
+              @drag-start="handleDragStart"
+              @drag-move="handleDragMove"
+              @drag-end="handleDragEnd"
+            />
+            <div v-if="todoChores.length === 0" class="kanban-empty">
+              <QIcon name="assignment" size="48px" color="#D1D5DB" />
+              <p class="kanban-empty-title">No tasks yet</p>
+              <p class="kanban-empty-subtitle">Create a new task to get started</p>
+            </div>
+          </div>
         </div>
-        <QIcon
-          :name="sectionCollapsed.TODO ? 'expand_more' : 'expand_less'"
-          size="24px"
-          color="#6B7280"
-        />
-      </div>
-      <div v-show="!sectionCollapsed.TODO" class="kanban-section-content">
-        <ChoreCardPWA
-          v-for="chore in todoChores"
-          :key="chore.id"
-          :chore="chore"
-          :can-edit="true"
-          @click="emit('select-chore', chore)"
-          @drag-start="handleDragStart"
-          @drag-move="handleDragMove"
-          @drag-end="handleDragEnd"
-        />
-        <div v-if="todoChores.length === 0" class="kanban-empty">
-          <QIcon name="check_circle" size="48px" color="#D1D5DB" />
-          <p>No tasks to do</p>
-        </div>
-      </div>
-    </div>
+      </QCarouselSlide>
 
-    <!-- IN_PROGRESS Section -->
-    <div ref="inProgressSectionRef" class="kanban-section">
-      <div class="kanban-section-header" @click="toggleSection('IN_PROGRESS')">
-        <div class="kanban-section-title">
-          <QIcon name="play_arrow" size="20px" color="#3B82F6" />
-          <h2>In Progress</h2>
-          <QBadge :label="inProgressChores.length" color="blue" />
+      <!-- IN_PROGRESS Slide -->
+      <QCarouselSlide name="IN_PROGRESS" class="kanban-slide">
+        <div class="kanban-column">
+          <div class="kanban-column-header in-progress-header">
+            <div class="kanban-column-title-row">
+              <QIcon name="play_arrow" size="20px" color="#3B82F6" />
+              <h2 class="kanban-column-title">In Progress</h2>
+              <QBadge :label="inProgressChores.length" color="blue" />
+            </div>
+          </div>
+          <div class="kanban-column-content">
+            <ChoreCardPWA
+              v-for="chore in inProgressChores"
+              :key="chore.id"
+              :chore="chore"
+              :can-edit="true"
+              @click="emit('select-chore', chore)"
+              @drag-start="handleDragStart"
+              @drag-move="handleDragMove"
+              @drag-end="handleDragEnd"
+            />
+            <div v-if="inProgressChores.length === 0" class="kanban-empty">
+              <QIcon name="schedule" size="48px" color="#D1D5DB" />
+              <p class="kanban-empty-title">Nothing in progress</p>
+              <p class="kanban-empty-subtitle">Long-press a task and drag to edge to start</p>
+            </div>
+          </div>
         </div>
-        <QIcon
-          :name="sectionCollapsed.IN_PROGRESS ? 'expand_more' : 'expand_less'"
-          size="24px"
-          color="#3B82F6"
-        />
-      </div>
-      <div v-show="!sectionCollapsed.IN_PROGRESS" class="kanban-section-content">
-        <ChoreCardPWA
-          v-for="chore in inProgressChores"
-          :key="chore.id"
-          :chore="chore"
-          :can-edit="true"
-          @click="emit('select-chore', chore)"
-          @drag-start="handleDragStart"
-          @drag-move="handleDragMove"
-          @drag-end="handleDragEnd"
-        />
-        <div v-if="inProgressChores.length === 0" class="kanban-empty">
-          <QIcon name="schedule" size="48px" color="#D1D5DB" />
-          <p>No tasks in progress</p>
-        </div>
-      </div>
-    </div>
+      </QCarouselSlide>
 
-    <!-- DONE Section -->
-    <div ref="doneSectionRef" class="kanban-section">
-      <div class="kanban-section-header" @click="toggleSection('DONE')">
-        <div class="kanban-section-title">
-          <QIcon name="check_circle" size="20px" color="#10B981" />
-          <h2>Done</h2>
-          <QBadge :label="doneChores.length" color="green" />
+      <!-- DONE Slide -->
+      <QCarouselSlide name="DONE" class="kanban-slide">
+        <div class="kanban-column">
+          <div class="kanban-column-header done-header">
+            <div class="kanban-column-title-row">
+              <QIcon name="check_circle" size="20px" color="#10B981" />
+              <h2 class="kanban-column-title">Done</h2>
+              <QBadge :label="doneChores.length" color="green" />
+            </div>
+          </div>
+          <div class="kanban-column-content">
+            <ChoreCardPWA
+              v-for="chore in doneChores"
+              :key="chore.id"
+              :chore="chore"
+              :can-edit="true"
+              @click="emit('select-chore', chore)"
+              @drag-start="handleDragStart"
+              @drag-move="handleDragMove"
+              @drag-end="handleDragEnd"
+            />
+            <div v-if="doneChores.length === 0" class="kanban-empty">
+              <QIcon name="celebration" size="48px" color="#D1D5DB" />
+              <p class="kanban-empty-title">No completed tasks</p>
+              <p class="kanban-empty-subtitle">Complete tasks to see them here</p>
+            </div>
+          </div>
         </div>
-        <QIcon
-          :name="sectionCollapsed.DONE ? 'expand_more' : 'expand_less'"
-          size="24px"
-          color="#10B981"
-        />
-      </div>
-      <div v-show="!sectionCollapsed.DONE" class="kanban-section-content">
-        <ChoreCardPWA
-          v-for="chore in doneChores"
-          :key="chore.id"
-          :chore="chore"
-          :can-edit="true"
-          @click="emit('select-chore', chore)"
-          @drag-start="handleDragStart"
-          @drag-move="handleDragMove"
-          @drag-end="handleDragEnd"
-        />
-        <div v-if="doneChores.length === 0" class="kanban-empty">
-          <QIcon name="pending" size="48px" color="#D1D5DB" />
-          <p>No completed tasks</p>
-        </div>
-      </div>
-    </div>
+      </QCarouselSlide>
+    </QCarousel>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ChoreCardPWA from './ChoreCardPWA.vue';
 import EdgeDropZone from './EdgeDropZone.vue';
 import type { Chore } from '../types/chores';
@@ -145,21 +153,14 @@ const emit = defineEmits<{
 const { vibrate } = useHapticFeedback();
 const { success, error } = useToast();
 
-// Refs for sections
-const todoSectionRef = ref<HTMLElement | null>(null);
-const inProgressSectionRef = ref<HTMLElement | null>(null);
-const doneSectionRef = ref<HTMLElement | null>(null);
+// Active carousel slide
+const activeSlide = ref<'TODO' | 'IN_PROGRESS' | 'DONE'>('TODO');
 
-// State
+// Drag state
 const draggedChoreId = ref<number | null>(null);
 const draggedChoreStatus = ref<ChoreStatus | null>(null);
-const currentDragPosition = ref({ x: 0, y: 0 });
 const activeEdge = ref<'top' | 'bottom' | 'left' | 'right' | null>(null);
-const sectionCollapsed = ref({
-  TODO: false,
-  IN_PROGRESS: false,
-  DONE: false,
-});
+const isDragging = ref(false);
 
 // Edge detection threshold
 const EDGE_THRESHOLD = 60; // px from edge
@@ -168,11 +169,8 @@ const EDGE_THRESHOLD = 60; // px from edge
 let lastDragMoveTime = 0;
 const DRAG_THROTTLE = 16; // ~60fps
 
-function toggleSection(section: 'TODO' | 'IN_PROGRESS' | 'DONE'): void {
-  sectionCollapsed.value[section] = !sectionCollapsed.value[section];
-}
-
 function handleDragStart(choreId: number): void {
+  isDragging.value = true;
   draggedChoreId.value = choreId;
 
   // Find the chore to get its status
@@ -192,8 +190,6 @@ function handleDragMove({ x, y }: { x: number; y: number; choreId: number }): vo
     return;
   }
   lastDragMoveTime = now;
-
-  currentDragPosition.value = { x, y };
 
   // Detect which edge we're near
   const windowWidth = window.innerWidth;
@@ -245,8 +241,8 @@ function handleDragEnd(choreId: number): void {
     vibrate('heavy');
     success(`Task moved to ${getStatusLabel(targetStatus)}`);
 
-    // Auto-scroll to target section
-    scrollToSection(targetStatus);
+    // Navigate to target column after status change
+    navigateToColumn(targetStatus);
   } catch (err) {
     error('Failed to update task');
     vibrate('light');
@@ -256,10 +252,10 @@ function handleDragEnd(choreId: number): void {
 }
 
 function resetDragState(): void {
+  isDragging.value = false;
   draggedChoreId.value = null;
   draggedChoreStatus.value = null;
   activeEdge.value = null;
-  currentDragPosition.value = { x: 0, y: 0 };
 }
 
 function isValidTransition(
@@ -298,87 +294,125 @@ function getStatusLabel(status: ChoreStatus): string {
   return labels[status] || '';
 }
 
-function scrollToSection(status: ChoreStatus): void {
-  let targetRef: HTMLElement | null = null;
+function navigateToColumn(status: ChoreStatus): void {
+  // Map status to slide name and navigate
+  const statusToSlide: Record<ChoreStatus, 'TODO' | 'IN_PROGRESS' | 'DONE'> = {
+    [ChoreStatus.TODO]: 'TODO',
+    [ChoreStatus.IN_PROGRESS]: 'IN_PROGRESS',
+    [ChoreStatus.DONE]: 'DONE',
+  };
 
-  switch (status) {
-    case ChoreStatus.TODO:
-      targetRef = todoSectionRef.value;
-      break;
-    case ChoreStatus.IN_PROGRESS:
-      targetRef = inProgressSectionRef.value;
-      break;
-    case ChoreStatus.DONE:
-      targetRef = doneSectionRef.value;
-      break;
-  }
-
-  if (targetRef) {
-    setTimeout(() => {
-      targetRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
+  setTimeout(() => {
+    activeSlide.value = statusToSlide[status];
+  }, 100);
 }
 </script>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-// Need to get props for template
 export default defineComponent({
   name: 'KanbanBoardPWA',
 });
 </script>
 
 <style scoped lang="scss">
-.kanban-board-pwa {
-  padding: 16px;
+.kanban-board-pwa-wrapper {
+  position: relative;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  position: relative;
 }
 
-.kanban-section {
+.kanban-carousel {
+  flex: 1;
+  background: transparent;
+  height: 100%;
+
+  :deep(.q-carousel__slide) {
+    padding: 0;
+  }
+
+  :deep(.q-carousel__navigation) {
+    bottom: calc(var(--safe-bottom, 0px) + 80px);
+  }
+
+  :deep(.q-carousel__navigation-inner) {
+    gap: 12px;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  :deep(.q-carousel__navigation-icon) {
+    width: 10px;
+    height: 10px;
+    opacity: 0.4;
+    transition: all 0.2s ease;
+
+    &.q-carousel__navigation-icon--active {
+      opacity: 1;
+      transform: scale(1.3);
+    }
+  }
+}
+
+.kanban-slide {
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+.kanban-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: #F9FAFB;
-  border: 1px solid #E5E7EB;
   border-radius: 12px;
   overflow: hidden;
 }
 
-.kanban-section-header {
+.kanban-column-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px;
   background: white;
-  border-bottom: 1px solid #E5E7EB;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  min-height: 44px; // Touch target
-
-  &:active {
-    background: #F9FAFB;
-  }
+  border-bottom: 3px solid;
 }
 
-.kanban-section-title {
+.todo-header {
+  border-color: #6B7280;
+}
+
+.in-progress-header {
+  border-color: #3B82F6;
+}
+
+.done-header {
+  border-color: #10B981;
+}
+
+.kanban-column-title-row {
   display: flex;
   align-items: center;
   gap: 12px;
-
-  h2 {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #111827;
-  }
 }
 
-.kanban-section-content {
+.kanban-column-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kanban-column-content {
+  flex: 1;
   padding: 16px;
-  min-height: 100px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .kanban-empty {
@@ -386,12 +420,34 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px 16px;
-  color: #9CA3AF;
+  padding: 48px 16px;
+  text-align: center;
+}
 
-  p {
-    margin: 12px 0 0 0;
-    font-size: 0.875rem;
-  }
+.kanban-empty-title {
+  margin: 16px 0 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+.kanban-empty-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #9CA3AF;
+}
+
+/* Scrollbar styling */
+.kanban-column-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.kanban-column-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanban-column-content::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 2px;
 }
 </style>
