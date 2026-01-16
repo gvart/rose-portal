@@ -14,7 +14,7 @@
               </div>
             </div>
             <button
-              v-haptic:light
+             
               type="button"
               class="close-button"
               @touchend.prevent="closeModal"
@@ -103,7 +103,7 @@
                 <button
                   v-for="color in colorOptions"
                   :key="color.id"
-                  v-haptic:light
+                 
                   type="button"
                   class="color-option"
                   :class="{
@@ -131,41 +131,36 @@
 
             <!-- Reminder Time Selection -->
             <div class="input-section">
-              <label class="input-label">Reminder</label>
-              <div class="reminder-options">
-                <button
-                  v-for="option in reminderTimeOptions"
-                  :key="option.id"
-                  v-haptic:light
-                  type="button"
-                  class="reminder-option"
-                  :class="{ 'reminder-option--selected': localFormData.reminderTime === option.id }"
-                  @click="localFormData.reminderTime = option.id"
-                  :aria-label="`Set reminder to ${option.label}`"
+              <label class="input-label" for="reminder-select">Reminder</label>
+              <div class="reminder-select-wrapper">
+                <select
+                  id="reminder-select"
+                  v-model="localFormData.reminderTime"
+                  class="reminder-select"
                 >
-                  <div class="reminder-option-content">
-                    <span class="reminder-label">{{ option.label }}</span>
-                    <span v-if="option.description !== 'No notification'" class="reminder-description">
-                      {{ option.description }}
-                    </span>
-                  </div>
-                  <svg
-                    v-if="localFormData.reminderTime === option.id"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="3"
-                    stroke="currentColor"
-                    class="check-icon-small"
+                  <option
+                    v-for="option in reminderTimeOptions"
+                    :key="option.id"
+                    :value="option.id"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                </button>
+                    {{ option.label }}
+                  </option>
+                </select>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  class="reminder-select-icon"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
               </div>
             </div>
 
             <!-- Validation Errors -->
-            <div v-if="validationErrors.length > 0" class="validation-errors">
+            <div v-if="attemptedSubmit && validationErrors.length > 0" class="validation-errors">
               <div
                 v-for="(error, idx) in validationErrors"
                 :key="idx"
@@ -183,7 +178,7 @@
               <!-- Delete Button (Edit mode only) -->
               <button
                 v-if="mode === 'edit'"
-                v-haptic:medium
+               
                 type="button"
                 class="btn btn-danger"
                 :disabled="loading"
@@ -199,7 +194,7 @@
               <div class="spacer"></div>
 
               <button
-                v-haptic:light
+               
                 type="button"
                 class="btn btn-secondary"
                 :disabled="loading"
@@ -210,7 +205,7 @@
               </button>
 
               <button
-                v-haptic:medium
+               
                 type="button"
                 class="btn btn-primary"
                 :disabled="!isValid || loading"
@@ -236,14 +231,14 @@
           </p>
           <div class="confirm-actions">
             <button
-              v-haptic:light
+             
               class="btn btn-secondary"
               @click="showDeleteConfirm = false"
             >
               Cancel
             </button>
             <button
-              v-haptic:medium
+             
               class="btn btn-danger"
               @click="confirmDelete"
             >
@@ -284,6 +279,7 @@ const emit = defineEmits<{
 
 const nameInputRef = ref<HTMLInputElement | null>(null)
 const showDeleteConfirm = ref(false)
+const attemptedSubmit = ref(false)
 
 // Local copy of form data for editing
 const localFormData = ref<EventFormData>({ ...props.formData })
@@ -382,6 +378,7 @@ watch(
   (isOpen) => {
     if (isOpen) {
       localFormData.value = { ...props.formData }
+      attemptedSubmit.value = false // Reset validation error display
 
       // Focus name input after animation
       nextTick(() => {
@@ -450,6 +447,8 @@ function handleOverlayClick() {
 }
 
 function handleSave() {
+  attemptedSubmit.value = true
+
   if (isValid.value && !props.loading) {
     emit('save', { ...localFormData.value })
   }
@@ -709,57 +708,49 @@ function confirmDelete() {
   color: white;
 }
 
-/* Reminder Options */
-.reminder-options {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.reminder-option {
+/* Reminder Select Dropdown */
+.reminder-select-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
+}
+
+.reminder-select {
+  width: 100%;
+  padding: var(--space-3) var(--space-10) var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
-  border: 2px solid var(--color-border-secondary);
-  background: var(--color-bg-primary);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-  text-align: left;
-}
-
-.reminder-option:active {
-  transform: scale(0.98);
-}
-
-.reminder-option--selected {
-  border-color: var(--color-accent-primary);
-  background: rgba(59, 130, 246, 0.05);
-}
-
-.reminder-option-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.reminder-label {
+  border: var(--depth-1-border);
   font-size: var(--font-size-14);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  cursor: pointer;
+  appearance: none;
+  transition: all var(--duration-fast) var(--ease-in-out);
+  min-height: var(--space-11);
 }
 
-.reminder-description {
-  font-size: var(--font-size-13);
-  color: var(--color-text-muted);
+.reminder-select:hover {
+  border-color: var(--color-border-focus);
 }
 
-.check-icon-small {
+.reminder-select:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.reminder-select:active {
+  transform: scale(0.99);
+}
+
+.reminder-select-icon {
+  position: absolute;
+  right: var(--space-3);
   width: 20px;
   height: 20px;
-  color: var(--color-accent-primary);
-  flex-shrink: 0;
+  color: var(--color-text-muted);
+  pointer-events: none;
 }
 
 /* Validation Errors */

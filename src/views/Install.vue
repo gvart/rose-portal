@@ -86,7 +86,7 @@
 
           <button
             v-if="isInstallable"
-            v-haptic
+           
             @click="handleInstall"
             class="btn-install-pwa"
           >

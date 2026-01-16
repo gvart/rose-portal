@@ -2,7 +2,7 @@
   <div class="duration-stepper">
     <div class="stepper-row">
       <button
-        v-haptic:medium
+       
         type="button"
         @touchend.prevent="decrement"
         @click.prevent="decrement"
@@ -21,7 +21,7 @@
       </div>
 
       <button
-        v-haptic:medium
+       
         type="button"
         @touchend.prevent="increment"
         @click.prevent="increment"
@@ -39,7 +39,7 @@
       <button
         v-for="preset in presets"
         :key="preset"
-        v-haptic:light
+       
         type="button"
         @touchend.prevent="setPreset(preset)"
         @click.prevent="setPreset(preset)"

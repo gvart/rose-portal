@@ -27,7 +27,7 @@
           </div>
 
           <!-- Acknowledge Button -->
-          <button v-haptic:heavy @click="handleAcknowledge" class="acknowledge-btn">
+          <button @click="handleAcknowledge" class="acknowledge-btn">
             Got it!
           </button>
         </div>

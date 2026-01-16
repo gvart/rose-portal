@@ -37,7 +37,7 @@
           <!-- Modal Actions -->
           <div class="modal-actions">
             <button
-              v-haptic
+             
               :disabled="!inviteCode.trim() || isJoining"
               @click="handleJoin"
               class="btn-primary"

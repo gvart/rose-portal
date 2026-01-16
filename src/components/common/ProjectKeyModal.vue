@@ -31,7 +31,7 @@
           <!-- Modal Actions -->
           <div class="modal-actions">
             <button
-              v-haptic
+             
               :disabled="!projectKey.trim() || isValidating"
               @click="handleValidate"
               class="btn-primary"

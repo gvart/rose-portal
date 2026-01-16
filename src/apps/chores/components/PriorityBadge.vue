@@ -1,7 +1,11 @@
 <template>
-  <span :class="['priority-badge', sizeClass, config.bgColor, config.textColor]">
-    {{ config.label }}
-  </span>
+  <q-badge
+    :color="badgeColor"
+    :text-color="badgeTextColor"
+    :label="config.label"
+    :class="sizeClass"
+    class="priority-badge"
+  />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +23,18 @@ const props = withDefaults(defineProps<Props>(), {
 
 const config = computed(() => PRIORITY_CONFIGS[props.priority])
 
+const badgeColor = computed(() => {
+  // Map priority to Quasar colors
+  const colorMap: Record<ChorePriority, string> = {
+    low: 'positive',
+    medium: 'warning',
+    high: 'negative'
+  }
+  return colorMap[props.priority]
+})
+
+const badgeTextColor = computed(() => 'white')
+
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
@@ -33,54 +49,23 @@ const sizeClass = computed(() => {
 
 <style scoped>
 .priority-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   font-weight: 600;
-  border-radius: 0.375rem;
+  border-radius: 6px;
   white-space: nowrap;
 }
 
 .priority-badge-sm {
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  line-height: 1rem;
+  padding: 2px 8px;
+  font-size: 12px;
 }
 
 .priority-badge-md {
-  padding: 0.25rem 0.625rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  padding: 4px 10px;
+  font-size: 14px;
 }
 
 .priority-badge-lg {
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5rem;
-}
-
-/* Priority colors using inline hex values that match PRIORITY_CONFIGS */
-.bg-green-100 {
-  background-color: #D1FAE5;
-}
-
-.text-green-800 {
-  color: #065F46;
-}
-
-.bg-amber-100 {
-  background-color: #FEF3C7;
-}
-
-.text-amber-800 {
-  color: #92400E;
-}
-
-.bg-red-100 {
-  background-color: #FEE2E2;
-}
-
-.text-red-800 {
-  color: #991B1B;
+  padding: 6px 12px;
+  font-size: 16px;
 }
 </style>

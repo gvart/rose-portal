@@ -2,7 +2,7 @@
   <HomeLayout>
     <div class="home-container" :class="{ landscape: isLandscapeMode }">
       <!-- Settings Button -->
-      <button v-haptic class="settings-btn" @click="goToSettings" aria-label="Settings">
+      <button class="settings-btn" @click="goToSettings" aria-label="Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3" />
           <path

@@ -6,7 +6,7 @@
           <!-- Modal Header -->
           <div class="modal-header">
             <h2 class="modal-title">Create Timer</h2>
-            <button v-haptic:light @click="handleClose" class="close-btn" aria-label="Close">
+            <button @click="handleClose" class="close-btn" aria-label="Close">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -32,7 +32,7 @@
               <label class="form-label">Timer Type</label>
               <div class="type-selector">
                 <button
-                  v-haptic:light
+                 
                   @click="selectedType = 'countdown'"
                   class="type-btn"
                   :class="{ active: selectedType === 'countdown' }"
@@ -40,7 +40,7 @@
                   Countdown
                 </button>
                 <button
-                  v-haptic:light
+                 
                   @click="selectedType = 'stopwatch'"
                   class="type-btn"
                   :class="{ active: selectedType === 'stopwatch' }"
@@ -48,7 +48,7 @@
                   Stopwatch
                 </button>
                 <button
-                  v-haptic:light
+                 
                   @click="selectedType = 'pomodoro'"
                   class="type-btn"
                   :class="{ active: selectedType === 'pomodoro' }"
@@ -65,7 +65,7 @@
                 <button
                   v-for="preset in TIMER_PRESETS"
                   :key="preset.label"
-                  v-haptic:light
+                 
                   @click="applyPreset(preset)"
                   class="preset-btn"
                 >
@@ -151,8 +151,8 @@
 
           <!-- Modal Actions -->
           <div class="modal-actions">
-            <button v-haptic @click="handleClose" class="btn-secondary">Cancel</button>
-            <button v-haptic @click="handleCreate" class="btn-primary" :disabled="!isValid">
+            <button @click="handleClose" class="btn-secondary">Cancel</button>
+            <button @click="handleCreate" class="btn-primary" :disabled="!isValid">
               Create & Start
             </button>
           </div>

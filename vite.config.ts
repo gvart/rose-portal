@@ -2,12 +2,16 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
+import { quasar } from '@quasar/vite-plugin'
 
 export default defineConfig({
   base: process.env.VITE_BASE_PATH || '/',
 
   plugins: [
     vue(),
+    quasar({
+      sassVariables: 'src/assets/styles/quasar-variables.scss'
+    }),
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'public',
@@ -92,7 +96,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor': ['vue', 'vue-router', 'pinia'],
-          'ui': ['axios'],
+          'quasar': ['quasar'],
+          'ui-libs': ['@fullcalendar/vue3', '@tiptap/vue-3', 'axios'],
           'pwa': ['workbox-window']
         }
       }

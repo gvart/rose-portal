@@ -1,6 +1,6 @@
 <template>
   <button
-    v-haptic
+   
     @click="$emit('toggle')"
     :class="['dish-select-item', { selected: isSelected }]"
   >

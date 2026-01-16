@@ -18,7 +18,7 @@
       </div>
     </div>
     <button
-      v-haptic:light
+     
       @click="$emit('refresh')"
       class="refresh-btn"
       :disabled="loading"

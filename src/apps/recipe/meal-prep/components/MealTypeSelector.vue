@@ -3,7 +3,7 @@
     <label class="selector-label">Meal Type</label>
     <div class="type-chips">
       <button
-        v-haptic
+       
         v-for="type in mealTypes"
         :key="type"
         @click="$emit('update:modelValue', type)"

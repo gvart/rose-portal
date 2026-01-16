@@ -13,7 +13,7 @@
       <button
         v-for="num in [1, 2, 3, 4, 5, 6, 7, 8, 9]"
         :key="num"
-        v-haptic
+       
         class="keypad-button"
         @click="addDigit(num)"
       >
@@ -21,14 +21,14 @@
       </button>
       <div class="keypad-spacer"></div>
       <button
-        v-haptic
+       
         class="keypad-button"
         @click="addDigit(0)"
       >
         0
       </button>
       <button
-        v-haptic
+       
         class="keypad-button keypad-delete"
         @click="removeDigit"
       >

@@ -15,7 +15,7 @@
       <div class="plant-header__actions">
         <div class="action-wrapper">
           <button
-            v-haptic:strong
+           
             class="action-btn action-btn--water"
             :disabled="actionInProgress || loading || isTooWetToWater || showWateringAnimation"
             @click="onWaterPlant"
@@ -42,7 +42,7 @@
         </div>
 
         <button
-          v-haptic:medium
+         
           class="action-btn action-btn--config"
           :disabled="loading"
           @click="onOpenConfig"

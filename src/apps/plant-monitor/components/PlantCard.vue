@@ -1,6 +1,6 @@
 <template>
   <button
-    v-haptic:medium
+   
     class="plant-card"
     :class="`plant-card--${healthStatus}`"
     :aria-label="`View ${plant.name} details. Moisture: ${plant.statistics.moisturePercent}%, Battery: ${plant.statistics.batteryPercent}%`"

@@ -8,7 +8,7 @@
         <p v-if="lastRefresh" class="plant-list__last-refresh">
           Last updated: {{ formatTime(lastRefresh) }}
         </p>
-        <button v-haptic @click="refresh" :disabled="loading" class="plant-list__refresh-btn">
+        <button @click="refresh" :disabled="loading" class="plant-list__refresh-btn">
           {{ loading ? 'Refreshing...' : 'Refresh Now' }}
         </button>
       </div>

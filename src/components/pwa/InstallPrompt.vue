@@ -18,14 +18,14 @@
 
         <div class="install-actions">
           <button
-            v-haptic
+           
             @click="handleInstall"
             class="btn-install"
           >
             Install
           </button>
           <button
-            v-haptic
+           
             @click="handleDismiss"
             class="btn-dismiss"
           >

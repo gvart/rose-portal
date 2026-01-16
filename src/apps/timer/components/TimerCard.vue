@@ -6,7 +6,7 @@
         <h3 class="timer-name">{{ timer.name }}</h3>
         <span class="timer-type-badge">{{ timerTypeLabel }}</span>
       </div>
-      <button v-haptic:light @click="$emit('delete', timer.id)" class="delete-btn" aria-label="Delete timer">
+      <button @click="$emit('delete', timer.id)" class="delete-btn" aria-label="Delete timer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -34,7 +34,7 @@
       <!-- Play/Pause Button -->
       <button
         v-if="timer.status === 'idle' || timer.status === 'paused'"
-        v-haptic:medium
+       
         @click="handleStart"
         class="control-btn primary"
       >
@@ -46,7 +46,7 @@
 
       <button
         v-if="timer.status === 'running'"
-        v-haptic:medium
+       
         @click="$emit('pause', timer.id)"
         class="control-btn secondary"
       >
@@ -59,7 +59,7 @@
       <!-- Stop Button -->
       <button
         v-if="timer.status !== 'idle'"
-        v-haptic:light
+       
         @click="$emit('stop', timer.id)"
         class="control-btn danger"
       >

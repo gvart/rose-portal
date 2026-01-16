@@ -7,7 +7,7 @@
       <button
         v-for="user in sortedUsers"
         :key="user.id"
-        v-haptic
+       
         class="user-card"
         @click="selectUser(user)"
         @touchstart="handleTouchStart(user)"
@@ -30,14 +30,14 @@
 
     <div class="action-buttons" :class="{ 'no-users': sortedUsers.length === 0 }">
       <button
-        v-haptic
+       
         class="btn-secondary"
         @click="$emit('new-user')"
       >
         Create New User
       </button>
       <button
-        v-haptic
+       
         class="btn-secondary"
         @click="$emit('sign-in')"
       >
@@ -55,10 +55,10 @@
               Remove {{ userToRemove.username }} from this device?
             </p>
             <div class="dialog-buttons">
-              <button v-haptic class="btn-cancel" @click="cancelRemove">
+              <button class="btn-cancel" @click="cancelRemove">
                 Cancel
               </button>
-              <button v-haptic class="btn-confirm" @click="confirmRemove">
+              <button class="btn-confirm" @click="confirmRemove">
                 Remove
               </button>
             </div>

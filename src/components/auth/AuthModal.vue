@@ -7,7 +7,7 @@
           <div class="modal-header">
             <button
               v-if="canGoBack"
-              v-haptic
+             
               class="back-button"
               @click="goBack"
             >
@@ -39,7 +39,7 @@
               </div>
 
               <button
-                v-haptic
+               
                 :disabled="!username.trim()"
                 class="btn-primary"
                 @click="nextStep"

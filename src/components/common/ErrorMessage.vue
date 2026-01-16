@@ -6,7 +6,7 @@
       </svg>
     </div>
     <p class="error-message">{{ message }}</p>
-    <button v-haptic @click="$emit('retry')" class="retry-button">
+    <button @click="$emit('retry')" class="retry-button">
       Try Again
     </button>
   </div>

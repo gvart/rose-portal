@@ -1,5 +1,5 @@
 <template>
-  <button v-haptic class="dish-card" @click="$emit('click')">
+  <button class="dish-card" @click="$emit('click')">
     <h3 class="dish-name">{{ dishName }}</h3>
     <p class="dish-description">{{ description }}</p>
   </button>

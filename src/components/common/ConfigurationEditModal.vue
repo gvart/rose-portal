@@ -7,7 +7,7 @@
           <div class="modal-header">
             <h2 class="modal-title">{{ title }}</h2>
             <button
-              v-haptic:light
+             
               type="button"
               class="close-button"
               @touchend.prevent="closeModal"
@@ -42,14 +42,14 @@
           <!-- Modal Actions -->
           <div class="modal-actions">
             <button
-              v-haptic
+             
               @click="closeModal"
               class="btn-secondary"
             >
               Cancel
             </button>
             <button
-              v-haptic
+             
               :disabled="!isValid"
               @click="handleSave"
               class="btn-primary"

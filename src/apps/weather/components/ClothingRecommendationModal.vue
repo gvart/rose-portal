@@ -6,8 +6,8 @@
           <!-- Header -->
           <div class="modal-header">
             <h2 class="modal-title">What to Wear</h2>
-            <button class="close-btn" @click="close" v-haptic>
-              <Icon icon="mdi:close" :width="24" :height="24" />
+            <button class="close-btn" @click="close">
+              <q-icon name="close" size="24px" />
             </button>
           </div>
 
@@ -15,17 +15,17 @@
           <div class="modal-content">
             <!-- Loading State -->
             <div v-if="loading" class="loading-state">
-              <Icon icon="mdi:loading" class="spin" :width="48" :height="48" />
+              <q-icon name="sync" class="spin" size="48px" />
               <p class="loading-text">Getting recommendations...</p>
             </div>
 
             <!-- Error State -->
             <div v-else-if="error" class="error-state">
-              <Icon icon="mdi:alert-circle-outline" :width="48" :height="48" class="error-icon" />
+              <q-icon name="error_outline" size="48px" class="error-icon" />
               <p class="error-title">Unable to Load Recommendations</p>
               <p class="error-message">{{ error }}</p>
-              <button class="retry-btn" @click="$emit('retry')" v-haptic>
-                <Icon icon="mdi:refresh" :width="20" :height="20" />
+              <button class="retry-btn" @click="$emit('retry')">
+                <q-icon name="refresh" size="20px" />
                 <span>Try Again</span>
               </button>
             </div>
@@ -97,7 +97,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
-import { Icon } from '@iconify/vue'
 import ClothingIcon from './ClothingIcon.vue'
 import type { ClothingRecommendationResponse } from '../types/clothing'
 import { BodyPart, getBodyPartLabel, CLOTHING_ICONS } from '../types/clothing'

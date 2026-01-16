@@ -99,7 +99,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 #app {
-  @apply min-h-screen w-full;
+  min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
 }
 

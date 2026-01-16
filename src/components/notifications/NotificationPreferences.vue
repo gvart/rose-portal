@@ -12,7 +12,7 @@
     <!-- Error State -->
     <div v-else-if="error" class="error-state">
       <p class="error-text">{{ error }}</p>
-      <button v-haptic class="btn-retry" @click="fetchPreferences">
+      <button class="btn-retry" @click="fetchPreferences">
         Retry
       </button>
     </div>
@@ -34,7 +34,7 @@
           :aria-checked="pref.enabled"
           class="toggle-switch"
           :class="{ active: pref.enabled }"
-          v-haptic:medium
+         
           @click="togglePreference(pref)"
         >
           <span class="toggle-slider" :class="{ active: pref.enabled }"></span>

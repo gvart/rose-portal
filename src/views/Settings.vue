@@ -15,7 +15,7 @@
               v-for="theme in themes"
               :key="theme.value"
               :class="['theme-btn', { active: currentTheme === theme.value }]"
-              v-haptic:light
+             
               @click="setTheme(theme.value)"
             >
               {{ theme.label }}
@@ -43,7 +43,7 @@
             :disabled="!settingsStore.hapticSupported"
             class="toggle-switch"
             :class="{ active: settingsStore.hapticEnabled }"
-            v-haptic:medium
+           
             @click="handleToggle"
           >
             <span class="toggle-slider" :class="{ active: settingsStore.hapticEnabled }"></span>
@@ -66,7 +66,7 @@
             :aria-checked="settingsStore.screensaverEnabled"
             class="toggle-switch"
             :class="{ active: settingsStore.screensaverEnabled }"
-            v-haptic:medium
+           
             @click="settingsStore.toggleScreensaver"
           >
             <span class="toggle-slider" :class="{ active: settingsStore.screensaverEnabled }"></span>
@@ -81,7 +81,7 @@
 
           <div class="timeout-controls">
             <button
-              v-haptic:light
+             
               @click="decreaseTimeout"
               class="timeout-btn"
               :disabled="settingsStore.screensaverTimeout <= 1"
@@ -94,7 +94,7 @@
             <span class="timeout-value">{{ settingsStore.screensaverTimeout }} min</span>
 
             <button
-              v-haptic:light
+             
               @click="increaseTimeout"
               class="timeout-btn"
               :disabled="settingsStore.screensaverTimeout >= 60"
@@ -120,7 +120,7 @@
 
           <button
             v-if="isInstallable && !isInstalled"
-            v-haptic
+           
             @click="handleInstall"
             class="btn-primary"
           >
@@ -141,7 +141,7 @@
 
           <button
             v-if="!isNotificationsGranted && isNotificationsSupported"
-            v-haptic
+           
             @click="handleEnableNotifications"
             class="btn-primary"
             :disabled="isNotificationsDenied || notificationLoading"
@@ -150,7 +150,7 @@
           </button>
           <button
             v-else-if="isNotificationsGranted"
-            v-haptic
+           
             @click="handleDisableNotifications"
             class="btn-secondary"
             :disabled="notificationLoading"
@@ -184,7 +184,7 @@
           </div>
 
           <button
-            v-haptic
+           
             @click="handleExportPwaData"
             class="btn-primary"
           >
@@ -201,7 +201,7 @@
           </div>
 
           <button
-            v-haptic
+           
             @click="handleCheckForUpdates"
             class="btn-primary"
             :disabled="isCheckingForUpdates"
@@ -234,7 +234,7 @@
             </p>
           </div>
           <button
-            v-haptic
+           
             @click="showProjectKeyEdit = true"
             class="btn-primary"
           >
@@ -275,7 +275,7 @@
 
         <div v-else-if="inviteCodeError" class="invite-code-section error">
           <p class="error-text">{{ inviteCodeError }}</p>
-          <button v-haptic @click="fetchInviteCode" class="btn-retry">
+          <button @click="fetchInviteCode" class="btn-retry">
             Retry
           </button>
         </div>
@@ -287,7 +287,7 @@
           </p>
           <div class="code-display">
             <span class="code-text">{{ inviteCode.code }}</span>
-            <button v-haptic @click="copyInviteCode" class="btn-copy">
+            <button @click="copyInviteCode" class="btn-copy">
               {{ codeCopied ? '✓ Copied' : 'Copy' }}
             </button>
           </div>

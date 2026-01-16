@@ -1,6 +1,6 @@
 <template>
   <div class="attribute-group">
-    <button v-haptic @click="toggleExpanded" class="group-header">
+    <button @click="toggleExpanded" class="group-header">
       <span class="group-title">{{ title }}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -17,7 +17,7 @@
     <Transition name="slide">
       <div v-if="isExpanded" class="attributes-container">
         <button
-          v-haptic
+         
           v-for="attribute in attributes"
           :key="attribute"
           @click="toggleAttribute(attribute)"

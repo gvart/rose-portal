@@ -1,6 +1,6 @@
 <template>
   <div
-    v-haptic
+   
     role="button"
     :aria-label="`Open ${name} app`"
     tabindex="0"

@@ -76,7 +76,7 @@
       <!-- FAB (mobile only) -->
       <button
         v-if="isMobile"
-        v-haptic
+       
         class="chores-fab"
         aria-label="Create new chore"
         @click="store.openCreateModal()"

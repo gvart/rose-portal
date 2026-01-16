@@ -3,38 +3,35 @@
     class="clothing-btn"
     :disabled="state === 'loading' || disabled"
     @click="$emit('click')"
-    v-haptic
+
   >
     <div class="btn-content">
       <!-- Loading state -->
-      <Icon
+      <q-icon
         v-if="state === 'loading'"
-        icon="mdi:loading"
+        name="sync"
         class="btn-icon spin"
-        :width="20"
-        :height="20"
+        size="20px"
       />
 
       <!-- Ready state -->
-      <Icon
+      <q-icon
         v-else-if="state === 'ready'"
-        icon="mdi:tshirt-crew"
+        name="checkroom"
         class="btn-icon"
-        :width="20"
-        :height="20"
+        size="20px"
       />
 
       <!-- Error state -->
-      <Icon
+      <q-icon
         v-else-if="state === 'error'"
-        icon="mdi:alert-circle-outline"
+        name="error_outline"
         class="btn-icon"
-        :width="20"
-        :height="20"
+        size="20px"
       />
 
       <!-- Idle state (fallback) -->
-      <Icon v-else icon="mdi:tshirt-crew" class="btn-icon" :width="20" :height="20" />
+      <q-icon v-else name="checkroom" class="btn-icon" size="20px" />
 
       <span class="btn-text">{{ buttonText }}</span>
     </div>
@@ -43,7 +40,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Icon } from '@iconify/vue'
 
 const props = withDefaults(
   defineProps<{

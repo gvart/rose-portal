@@ -52,7 +52,7 @@
         <div class="error-icon">⚠️</div>
         <div class="error-title">Failed to Load Weather</div>
         <div class="error-message">{{ store.error }}</div>
-        <button v-haptic @click="handleRetry" class="glass-btn">
+        <button @click="handleRetry" class="glass-btn">
           Try Again
         </button>
       </div>
@@ -78,7 +78,7 @@
           <button
             v-for="tab in tabs"
             :key="tab.id"
-            v-haptic:light
+           
             @click="currentTab = tab.id"
             class="glass-tab-btn"
             :class="{ active: currentTab === tab.id }"
@@ -109,7 +109,7 @@
         <div class="empty-message">
           Allow location access to see weather data for your area
         </div>
-        <button v-haptic @click="handleGetWeather" class="glass-btn">
+        <button @click="handleGetWeather" class="glass-btn">
           Get Weather
         </button>
       </div>

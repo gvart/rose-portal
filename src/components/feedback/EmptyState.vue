@@ -20,7 +20,7 @@
       <slot name="action">
         <button
           v-if="actionLabel"
-          v-haptic
+         
           @click="$emit('action')"
           class="empty-state__button"
         >

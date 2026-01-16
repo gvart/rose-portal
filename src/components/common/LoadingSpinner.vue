@@ -1,6 +1,10 @@
 <template>
   <div class="loading-container">
-    <div class="spinner"></div>
+    <q-spinner
+      color="primary"
+      size="64px"
+      :thickness="4"
+    />
     <p v-if="message" class="loading-message">{{ message }}</p>
   </div>
 </template>
@@ -19,21 +23,6 @@ defineProps<{
   justify-content: center;
   gap: var(--space-4);
   padding: var(--space-8);
-}
-
-.spinner {
-  width: 64px;
-  height: 64px;
-  border: 4px solid var(--color-border-primary);
-  border-top-color: var(--color-accent-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .loading-message {

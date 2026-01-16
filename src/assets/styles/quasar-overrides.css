@@ -1,0 +1,340 @@
+/**
+ * Quasar Component Overrides
+ * Customize Quasar components to match Rose Portal design system
+ * Design Direction: Technical, minimal, borders-only depth
+ */
+
+// ==================================================
+// BUTTON OVERRIDES
+// ==================================================
+
+.q-btn {
+  // Touch-friendly active state (scale down on touch)
+  &:active:not(.disabled) {
+    transform: scale(0.96);
+    transition: transform 100ms cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  // Ensure minimum touch target
+  min-height: 44px;
+
+  // Sharp corners
+  border-radius: 6px;
+
+  // Remove default shadows
+  box-shadow: none !important;
+
+  // Button variants
+  &--standard {
+    border: 1px solid var(--color-border-primary, #E2E8F0);
+  }
+
+  &--outline {
+    border-width: 1px;
+  }
+}
+
+// ==================================================
+// CARD OVERRIDES
+// ==================================================
+
+.q-card {
+  // Borders-only depth strategy
+  border: 1px solid var(--color-border-primary, #E2E8F0);
+  box-shadow: none !important;
+
+  // Sharp corners
+  border-radius: 8px;
+
+  // Standard padding
+  .q-card__section {
+    padding: 20px; // space-5
+  }
+
+  // Left-side colored border for status indication (optional utility class)
+  &.card-status {
+    border-left-width: 4px;
+
+    &.card-status--success {
+      border-left-color: var(--color-success-solid, #22C55E);
+    }
+
+    &.card-status--warning {
+      border-left-color: var(--color-warning-solid, #F59E0B);
+    }
+
+    &.card-status--error {
+      border-left-color: var(--color-error-solid, #EF4444);
+    }
+
+    &.card-status--info {
+      border-left-color: var(--color-info-solid, #3B82F6);
+    }
+  }
+}
+
+// ==================================================
+// DIALOG/MODAL OVERRIDES
+// ==================================================
+
+.q-dialog__inner {
+  // Remove excessive padding
+  padding: var(--space-4, 16px);
+}
+
+.q-dialog__backdrop {
+  // Subtle backdrop blur
+  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.7) !important; // Dark with opacity
+}
+
+.q-card {
+  // Modal card specific overrides
+  .q-dialog__inner & {
+    max-width: 600px;
+    width: 90vw;
+  }
+}
+
+// ==================================================
+// INPUT OVERRIDES
+// ==================================================
+
+.q-field {
+  // Sharp corners
+  .q-field__control {
+    border-radius: 6px;
+
+    &::before {
+      border-color: var(--color-border-primary, #E2E8F0);
+    }
+  }
+
+  // Focus state with accent color
+  &--focused .q-field__control::after {
+    border-color: var(--color-accent-primary, #3B82F6);
+    border-width: 2px;
+  }
+
+  // Remove shadows
+  box-shadow: none !important;
+}
+
+.q-input,
+.q-select {
+  // Monospace font for numeric inputs (optional class)
+  &.input-monospace input {
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+  }
+}
+
+// ==================================================
+// BADGE OVERRIDES
+// ==================================================
+
+.q-badge {
+  // Uppercase text with wide spacing
+  text-transform: uppercase;
+  letter-spacing: 0.025em; // wide
+  font-size: 0.75rem; // 12px
+  font-weight: 600;
+  padding: 4px 12px; // space-1 space-3
+  border-radius: 9999px; // fully rounded
+}
+
+// ==================================================
+// CHIP OVERRIDES
+// ==================================================
+
+.q-chip {
+  // Technical aesthetic
+  border-radius: 6px; // sharp corners
+  font-size: 0.875rem; // 14px
+  border: 1px solid var(--color-border-primary, #E2E8F0);
+}
+
+// ==================================================
+// LIST OVERRIDES
+// ==================================================
+
+.q-item {
+  // Minimal border styling
+  border-bottom: 1px solid var(--color-border-primary, #E2E8F0);
+
+  // Active/hover states
+  &:hover {
+    background-color: var(--color-bg-hover, #E2E8F0);
+  }
+
+  &:active {
+    background-color: var(--color-bg-active, #CBD5E1);
+  }
+
+  // Remove last border
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// ==================================================
+// NAVIGATION OVERRIDES
+// ==================================================
+
+.q-bottom-navigation {
+  // Ensure touch-friendly height
+  .q-tab {
+    min-height: 56px;
+  }
+
+  // Border separator
+  border-top: 1px solid var(--color-border-primary, #E2E8F0);
+
+  // Remove shadows
+  box-shadow: none !important;
+}
+
+// ==================================================
+// LOADING/PROGRESS OVERRIDES
+// ==================================================
+
+.q-spinner {
+  // Match accent color
+  color: var(--color-accent-primary, #3B82F6);
+}
+
+.q-linear-progress {
+  // Sharp corners
+  border-radius: 0;
+
+  // Minimal height for precision
+  height: 2px;
+}
+
+.q-circular-progress {
+  // Match accent color
+  color: var(--color-accent-primary, #3B82F6);
+}
+
+// ==================================================
+// SKELETON LOADER OVERRIDES
+// ==================================================
+
+.q-skeleton {
+  // Sharp corners
+  border-radius: 4px;
+
+  // Subtle animation
+  &::before {
+    animation-duration: 2s; // Slower, more subtle
+  }
+}
+
+// ==================================================
+// BANNER OVERRIDES
+// ==================================================
+
+.q-banner {
+  // Borders instead of shadows
+  border: 1px solid var(--color-border-primary, #E2E8F0);
+  border-left-width: 4px;
+  box-shadow: none !important;
+  border-radius: 8px;
+
+  // Semantic border colors
+  &--dense {
+    padding: 12px; // space-3
+  }
+}
+
+// ==================================================
+// SEPARATOR OVERRIDES
+// ==================================================
+
+.q-separator {
+  background-color: var(--color-border-primary, #E2E8F0);
+}
+
+// ==================================================
+// MENU/DROPDOWN OVERRIDES
+// ==================================================
+
+.q-menu {
+  // Borders-only depth
+  border: 1px solid var(--color-border-primary, #E2E8F0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 8px;
+}
+
+// ==================================================
+// NOTIFICATION (NOTIFY) OVERRIDES
+// ==================================================
+
+.q-notification {
+  // Borders instead of heavy shadows
+  border: 1px solid var(--color-border-primary, #E2E8F0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 8px;
+  padding: 16px; // space-4
+
+  // Left-side colored border for semantic notifications
+  border-left-width: 4px;
+
+  &--positive {
+    border-left-color: var(--color-success-solid, #22C55E);
+  }
+
+  &--negative {
+    border-left-color: var(--color-error-solid, #EF4444);
+  }
+
+  &--warning {
+    border-left-color: var(--color-warning-solid, #F59E0B);
+  }
+
+  &--info {
+    border-left-color: var(--color-info-solid, #3B82F6);
+  }
+}
+
+// ==================================================
+// DARK MODE OVERRIDES
+// ==================================================
+
+body.body--dark {
+  .q-card,
+  .q-field__control,
+  .q-item,
+  .q-chip,
+  .q-menu,
+  .q-banner,
+  .q-notification {
+    border-color: var(--color-border-primary-dark, #334155);
+  }
+
+  .q-separator {
+    background-color: var(--color-border-primary-dark, #334155);
+  }
+
+  .q-item:hover {
+    background-color: var(--color-bg-hover-dark, #1E293B);
+  }
+
+  .q-item:active {
+    background-color: var(--color-bg-active-dark, #334155);
+  }
+}
+
+// ==================================================
+// PWA SAFE AREA INSETS
+// ==================================================
+
+// Ensure bottom navigation respects safe areas
+.q-bottom-navigation {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// Ensure dialogs respect safe areas
+.q-dialog__inner {
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}

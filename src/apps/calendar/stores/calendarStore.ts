@@ -7,6 +7,7 @@
 
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import type { Calendar as CalendarApi } from '@fullcalendar/core'
 import * as calendarApi from '../services/calendarApi'
 import type {
   CalendarEvent,
@@ -17,6 +18,7 @@ import type {
   EventFormData,
   DEFAULT_EVENT_FORM
 } from '../types/calendar'
+import { getFullCalendarView } from '../utils/fullcalendarHelpers'
 
 export const useCalendarStore = defineStore('calendar', () => {
   // ============================================================================
@@ -54,6 +56,9 @@ export const useCalendarStore = defineStore('calendar', () => {
 
   // Cache tracking - avoid duplicate API calls
   const fetchedRanges = ref<DateRange[]>([])
+
+  // FullCalendar API reference
+  const fullCalendarApi = ref<CalendarApi | null>(null)
 
   // ============================================================================
   // Computed
@@ -189,7 +194,20 @@ export const useCalendarStore = defineStore('calendar', () => {
    */
   function setView(view: CalendarView) {
     currentView.value = view
+
+    if (fullCalendarApi.value) {
+      const fcView = getFullCalendarView(view)
+      fullCalendarApi.value.changeView(fcView)
+    }
+
     fetchEventsForCurrentView()
+  }
+
+  /**
+   * Set the FullCalendar API reference
+   */
+  function setFullCalendarApi(api: CalendarApi) {
+    fullCalendarApi.value = api
   }
 
   /**
@@ -205,25 +223,35 @@ export const useCalendarStore = defineStore('calendar', () => {
    * Navigate to today
    */
   function goToToday() {
-    navigateToDate(new Date())
+    if (fullCalendarApi.value) {
+      fullCalendarApi.value.today()
+      selectedDate.value = fullCalendarApi.value.getDate()
+    } else {
+      navigateToDate(new Date())
+    }
   }
 
   /**
    * Navigate to previous period (month/week/day)
    */
   function navigatePrevious() {
-    const date = selectedDate.value
+    if (fullCalendarApi.value) {
+      fullCalendarApi.value.prev()
+      selectedDate.value = fullCalendarApi.value.getDate()
+    } else {
+      const date = selectedDate.value
 
-    switch (currentView.value) {
-      case 'month':
-        navigateToDate(addMonths(date, -1))
-        break
-      case 'week':
-        navigateToDate(addDays(date, -7))
-        break
-      case 'day':
-        navigateToDate(addDays(date, -1))
-        break
+      switch (currentView.value) {
+        case 'month':
+          navigateToDate(addMonths(date, -1))
+          break
+        case 'week':
+          navigateToDate(addDays(date, -7))
+          break
+        case 'day':
+          navigateToDate(addDays(date, -1))
+          break
+      }
     }
   }
 
@@ -231,18 +259,23 @@ export const useCalendarStore = defineStore('calendar', () => {
    * Navigate to next period (month/week/day)
    */
   function navigateNext() {
-    const date = selectedDate.value
+    if (fullCalendarApi.value) {
+      fullCalendarApi.value.next()
+      selectedDate.value = fullCalendarApi.value.getDate()
+    } else {
+      const date = selectedDate.value
 
-    switch (currentView.value) {
-      case 'month':
-        navigateToDate(addMonths(date, 1))
-        break
-      case 'week':
-        navigateToDate(addDays(date, 7))
-        break
-      case 'day':
-        navigateToDate(addDays(date, 1))
-        break
+      switch (currentView.value) {
+        case 'month':
+          navigateToDate(addMonths(date, 1))
+          break
+        case 'week':
+          navigateToDate(addDays(date, 7))
+          break
+        case 'day':
+          navigateToDate(addDays(date, 1))
+          break
+      }
     }
   }
 
@@ -697,6 +730,7 @@ export const useCalendarStore = defineStore('calendar', () => {
     navigatePrevious,
     navigateNext,
     selectDay,
+    setFullCalendarApi,
 
     // Events CRUD
     fetchEventsForCurrentView,

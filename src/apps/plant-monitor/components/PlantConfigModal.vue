@@ -6,7 +6,7 @@
           <div class="modal-header">
             <h2 class="modal-title">Plant Configuration</h2>
             <button
-              v-haptic:light
+             
               type="button"
               @touchend.prevent="closeModal"
               @click.prevent="closeModal"
@@ -120,7 +120,7 @@
                   </p>
                 </div>
                 <button
-                  v-haptic:light
+                 
                   type="button"
                   @click="localConfig.displayDimEnabled = !localConfig.displayDimEnabled"
                   :class="['toggle-button', { active: localConfig.displayDimEnabled }]"
@@ -162,7 +162,7 @@
 
             <div class="action-buttons">
               <button
-                v-haptic:light
+               
                 type="button"
                 @touchend.prevent="closeModal"
                 @click.prevent="closeModal"
@@ -172,7 +172,7 @@
                 Cancel
               </button>
               <button
-                v-haptic:medium
+               
                 type="button"
                 @touchend.prevent="saveConfig"
                 @click.prevent="saveConfig"

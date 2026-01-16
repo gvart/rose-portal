@@ -59,7 +59,7 @@
           <!-- Modal Actions -->
           <div class="modal-actions">
             <button
-              v-haptic
+             
               :disabled="!isValid"
               @click="handleSave"
               class="btn-primary"

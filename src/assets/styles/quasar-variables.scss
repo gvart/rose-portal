@@ -1,0 +1,79 @@
+/**
+ * Quasar Variables
+ * Map Rose Portal design tokens to Quasar brand colors
+ */
+
+// Brand Colors (mapped from Rose Portal design tokens)
+$primary: #3B82F6;      // Accent primary (blue)
+$secondary: #64748B;    // Text muted (cool slate)
+$accent: #22C55E;       // Success color (green)
+$positive: #22C55E;     // Success
+$negative: #EF4444;     // Error
+$warning: #F59E0B;      // Warning
+$info: #3B82F6;         // Info (same as primary)
+$dark: #0F172A;         // Text primary (very dark slate)
+
+// Dark mode colors (auto-detected by Quasar Dark plugin)
+$dark-page: #0F172A;
+$dark-primary: #3B82F6;
+$dark-secondary: #64748B;
+$dark-accent: #22C55E;
+
+// Typography (inheriting from Rose Portal tokens.css)
+// Quasar will use these as base values
+$typography-font-family: 'Inter var', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$h1-font-size: 2rem;    // 32px
+$h2-font-size: 1.5rem;  // 24px
+$h3-font-size: 1.25rem; // 20px
+$h4-font-size: 1.125rem; // 18px
+$h5-font-size: 1rem;    // 16px
+$h6-font-size: 0.875rem; // 14px
+
+// Spacing (4px grid - Quasar will handle responsive spacing)
+// Note: Rose Portal uses --space-1 through --space-12
+// Quasar uses its own spacing utilities (q-pa-*, q-ma-*)
+// Custom spacing tokens remain in tokens.css
+
+// Border Radius (sharp corners for technical aesthetic)
+$generic-border-radius: 8px;  // md radius (default for cards, buttons)
+$button-border-radius: 6px;   // sm radius for buttons
+$input-border-radius: 6px;    // sm radius for inputs
+
+// Shadows (minimal - borders-only depth strategy)
+$shadow-0: none;
+$shadow-1: 0 1px 2px rgba(0, 0, 0, 0.05);  // Minimal depth
+$shadow-2: 0 1px 3px rgba(0, 0, 0, 0.08);  // Subtle depth
+$shadow-3: none;  // Disabled
+$shadow-4: none;  // Disabled
+
+// Button Configuration
+$button-padding: 8px 16px;  // space-2 space-4
+$button-dense-padding: 4px 12px;  // space-1 space-3
+$button-font-size: 0.875rem;  // 14px
+$button-font-weight: 500;
+
+// Card Configuration
+$card-padding: 20px;  // space-5
+$card-border-radius: $generic-border-radius;
+$card-shadow: none;  // Borders-only strategy
+
+// Input Configuration
+$input-padding: 12px;  // space-3
+$input-font-size: 0.9375rem;  // 15px
+$input-border-width: 1px;
+$input-border-color: #E2E8F0;  // color-border-primary
+
+// Separator/Divider
+$separator-color: #E2E8F0;  // color-border-primary
+
+// Focus states
+$focus-outline-width: 2px;
+$focus-outline-color: $primary;
+
+// Touch targets (PWA optimization)
+$button-min-height: 44px;  // space-11 (Apple/Google recommendation)
+
+// Animations (matching Rose Portal timing)
+$generic-transition: 200ms cubic-bezier(0.25, 1, 0.5, 1);
+$fast-transition: 150ms cubic-bezier(0.25, 1, 0.5, 1);
+$instant-transition: 100ms cubic-bezier(0.25, 1, 0.5, 1);

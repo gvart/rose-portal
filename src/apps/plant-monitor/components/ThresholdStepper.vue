@@ -1,7 +1,7 @@
 <template>
   <div class="threshold-stepper">
     <button
-      v-haptic:medium
+     
       type="button"
       @touchend.prevent="decrement"
       @click.prevent="decrement"
@@ -20,7 +20,7 @@
     </div>
 
     <button
-      v-haptic:medium
+     
       type="button"
       @touchend.prevent="increment"
       @click.prevent="increment"

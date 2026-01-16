@@ -6,7 +6,7 @@
         :key="item.id"
         :class="['nav-item', { active: isActive(item.route) }]"
         @click="navigate(item.route)"
-        v-haptic
+       
       >
         <component :is="item.icon" class="nav-icon" />
         <span class="nav-label">{{ item.label }}</span>
