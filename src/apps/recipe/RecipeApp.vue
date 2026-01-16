@@ -7,6 +7,7 @@
         @select-recommendations="goToRecommendationsInput"
         @select-recipe="goToRecipeForm"
         @select-meal-prep="goToMealPrep"
+        @select-saved-plans="goToSavedPlans"
       />
 
       <!-- Recommendations Input -->
@@ -54,6 +55,12 @@
         @back="goToEntry"
       />
 
+      <!-- Saved Plans -->
+      <SavedPlansView
+        v-if="currentView === 'saved-plans'"
+        @back="goToEntry"
+      />
+
       <!-- Error Message -->
       <ErrorMessage
         v-if="error"
@@ -75,10 +82,11 @@ import RecipeResult from './components/RecipeResult.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import ErrorMessage from '@/components/common/ErrorMessage.vue'
 import MealPrepApp from './meal-prep/MealPrepApp.vue'
+import SavedPlansView from './meal-prep/components/SavedPlansView.vue'
 import { getRecipe, getRecommendations } from './services/recipeApi'
 import type { RecipeResponse, Recommendation } from './types'
 
-type ViewState = 'entry' | 'recommendations-input' | 'recommendations-loading' | 'recommendations-results' | 'recipe-form' | 'recipe-loading' | 'recipe-result' | 'meal-prep'
+type ViewState = 'entry' | 'recommendations-input' | 'recommendations-loading' | 'recommendations-results' | 'recipe-form' | 'recipe-loading' | 'recipe-result' | 'meal-prep' | 'saved-plans'
 
 // State
 const currentView = ref<ViewState>('entry')
@@ -115,6 +123,11 @@ function goToRecipeForm() {
 
 function goToMealPrep() {
   currentView.value = 'meal-prep'
+  error.value = null
+}
+
+function goToSavedPlans() {
+  currentView.value = 'saved-plans'
   error.value = null
 }
 
