@@ -9,10 +9,10 @@
       <q-card-section class="q-pb-none">
         <div class="row q-gutter-sm">
           <q-chip color="positive" text-color="white">
-            {{ plan.dishList.length }} dish{{ plan.dishList.length !== 1 ? 'es' : '' }}
+            {{ plan.dishList?.length || 0 }} dish{{ (plan.dishList?.length || 0) !== 1 ? 'es' : '' }}
           </q-chip>
           <q-chip color="positive" text-color="white">
-            {{ plan.groceryList.length }} ingredient{{ plan.groceryList.length !== 1 ? 's' : '' }}
+            {{ plan.groceryList?.length || 0 }} ingredient{{ (plan.groceryList?.length || 0) !== 1 ? 's' : '' }}
           </q-chip>
         </div>
       </q-card-section>
@@ -35,7 +35,7 @@
             <!-- Dishes Tab -->
             <div v-if="activeTab === 'dishes'" class="dishes-list">
               <div
-                v-for="dish in plan.dishList"
+                v-for="dish in (plan.dishList || [])"
                 :key="dish.id"
                 class="dish-item"
               >
@@ -58,7 +58,7 @@
             <!-- Grocery List Tab -->
             <div v-else class="grocery-list">
               <div
-                v-for="(ingredient, idx) in plan.groceryList"
+                v-for="(ingredient, idx) in (plan.groceryList || [])"
                 :key="idx"
                 class="grocery-item"
               >
