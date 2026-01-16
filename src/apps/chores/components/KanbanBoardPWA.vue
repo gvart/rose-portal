@@ -353,7 +353,8 @@ export default defineComponent({
   }
 
   :deep(.q-carousel__navigation) {
-    bottom: calc(var(--safe-bottom, 0px) + 80px);
+    bottom: calc(var(--safe-bottom, 0px) + 90px);
+    z-index: 10;
   }
 
   :deep(.q-carousel__navigation-inner) {
@@ -379,6 +380,7 @@ export default defineComponent({
 
 .kanban-slide {
   padding: 0 8px;
+  padding-bottom: calc(var(--safe-bottom, 0px) + 140px);
   overflow: hidden;
 }
 
@@ -386,6 +388,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-height: 100%;
   background: #F9FAFB;
   border-radius: 12px;
   overflow: hidden;
