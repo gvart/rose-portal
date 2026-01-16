@@ -1,52 +1,43 @@
 <template>
   <div class="duration-stepper">
     <div class="stepper-row">
-      <button
-       
-        type="button"
-        @touchend.prevent="decrement"
-        @click.prevent="decrement"
-        class="stepper-button"
-        :disabled="modelValue <= min"
+      <q-btn
+        icon="remove"
+        color="info"
+        unelevated
+        @click="decrement"
+        :disable="modelValue <= min"
         aria-label="Decrease duration"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="stepper-icon">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
-        </svg>
-      </button>
+        class="stepper-button"
+      />
 
       <div class="value-display">
         <span class="value-number">{{ displayValue }}</span>
         <span class="value-unit">{{ displayUnit }}</span>
       </div>
 
-      <button
-       
-        type="button"
-        @touchend.prevent="increment"
-        @click.prevent="increment"
-        class="stepper-button"
-        :disabled="modelValue >= max"
+      <q-btn
+        icon="add"
+        color="info"
+        unelevated
+        @click="increment"
+        :disable="modelValue >= max"
         aria-label="Increase duration"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="stepper-icon">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-      </button>
+        class="stepper-button"
+      />
     </div>
 
     <div v-if="presets && presets.length > 0" class="preset-buttons">
-      <button
+      <q-chip
         v-for="preset in presets"
         :key="preset"
-       
-        type="button"
-        @touchend.prevent="setPreset(preset)"
-        @click.prevent="setPreset(preset)"
-        :class="['preset-button', { active: isPresetActive(preset) }]"
-      >
-        {{ formatPreset(preset) }}
-      </button>
+        :label="formatPreset(preset)"
+        clickable
+        :color="isPresetActive(preset) ? 'info' : undefined"
+        :outline="!isPresetActive(preset)"
+        @click="setPreset(preset)"
+        class="preset-chip"
+      />
     </div>
   </div>
 </template>
@@ -138,35 +129,8 @@ function formatPreset(seconds: number) {
 }
 
 .stepper-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  background: var(--color-info-bg);
-  color: var(--color-info-solid);
-  transition: all var(--duration-fast) var(--ease-in-out);
   min-height: 56px;
   min-width: 56px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.stepper-button:active:not(:disabled) {
-  transform: scale(0.95);
-  background: #bfdbfe;
-}
-
-.stepper-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.stepper-icon {
-  width: 24px;
-  height: 24px;
 }
 
 .value-display {
@@ -200,30 +164,5 @@ function formatPreset(seconds: number) {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
-}
-
-.preset-button {
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-medium);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  border: 2px solid var(--color-border-secondary);
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  min-height: 44px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-.preset-button:active {
-  transform: scale(0.95);
-}
-
-.preset-button.active {
-  background-color: var(--color-info-solid);
-  border-color: var(--color-info-solid);
-  color: white;
 }
 </style>
