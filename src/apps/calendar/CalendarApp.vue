@@ -494,6 +494,94 @@ watch([isSmallViewport, () => store.currentView], ([small, view]) => {
   box-shadow: var(--depth-2-shadow);
 }
 
+/* Table and cell backgrounds */
+:deep(.fc-scrollgrid) {
+  border-color: var(--color-border-primary) !important;
+}
+
+:deep(.fc-scrollgrid-section > td) {
+  border-color: var(--color-border-primary) !important;
+}
+
+:deep(.fc-theme-standard td),
+:deep(.fc-theme-standard th) {
+  border-color: var(--color-border-primary) !important;
+}
+
+:deep(.fc-theme-standard .fc-scrollgrid) {
+  border-color: var(--color-border-primary) !important;
+}
+
+/* Day header (Mon, Tue, Wed, etc.) */
+:deep(.fc-col-header) {
+  background: var(--color-bg-secondary);
+}
+
+:deep(.fc-col-header-cell) {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary) !important;
+}
+
+:deep(.fc-col-header-cell-cushion) {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Time slot labels (00:00, 01:00, etc.) */
+:deep(.fc-timegrid-slot-label) {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-12);
+}
+
+:deep(.fc-timegrid-slot-label-cushion) {
+  color: var(--color-text-secondary);
+}
+
+:deep(.fc-timegrid-axis-cushion) {
+  color: var(--color-text-secondary);
+}
+
+/* Time grid slots background */
+:deep(.fc-timegrid-slot) {
+  background: var(--color-bg-primary);
+  border-color: var(--color-border-primary) !important;
+}
+
+:deep(.fc-timegrid-slot-lane) {
+  background: var(--color-bg-primary);
+}
+
+/* Day grid cells */
+:deep(.fc-daygrid-day) {
+  background: var(--color-bg-primary);
+}
+
+:deep(.fc-daygrid-day-frame) {
+  background: var(--color-bg-primary);
+}
+
+:deep(.fc-daygrid-day-number) {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* All-day section */
+:deep(.fc-daygrid-body) {
+  background: var(--color-bg-primary);
+}
+
+:deep(.fc-timegrid-divider) {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary) !important;
+}
+
+/* Axis (left side with times) */
+:deep(.fc-timegrid-axis) {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-primary) !important;
+}
+
 :deep(.fc-event) {
   border-radius: var(--radius-xs);
   font-weight: var(--font-weight-medium);
@@ -523,6 +611,28 @@ watch([isSmallViewport, () => store.currentView], ([small, view]) => {
 /* Now indicator */
 :deep(.fc-timegrid-now-indicator-line) {
   border-color: var(--color-info-solid);
+}
+
+/* More link ("+2 more") */
+:deep(.fc-daygrid-more-link) {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Popover for more events */
+:deep(.fc-popover) {
+  background: var(--color-bg-primary);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--depth-3-shadow);
+}
+
+:deep(.fc-popover-header) {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+:deep(.fc-popover-body) {
+  background: var(--color-bg-primary);
 }
 
 /* Mobile optimizations */

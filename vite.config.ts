@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
       strategies: 'injectManifest',
       srcDir: 'public',
       filename: 'sw.js',
-      includeAssets: ['icons/**/*.svg', 'apple-touch-icon.png'],
+      includeAssets: ['icons/**/*.svg', 'apple-touch-icon.png', 'splash/**/*.png'],
       manifest: {
         name: 'ROSE Smart Hub',
         short_name: 'ROSE',
@@ -204,7 +204,7 @@ export default defineConfig(({ mode }) => ({
     devSourcemap: mode === 'development',
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/assets/styles/quasar-variables.scss";`
+        loadPaths: [path.resolve(__dirname, './')]
       }
     }
   }

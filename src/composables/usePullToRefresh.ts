@@ -9,6 +9,7 @@ export interface PullToRefreshOptions {
   maxPull?: number         // Maximum pull distance (px)
   onRefresh: () => Promise<void>
   hapticOnTrigger?: boolean
+  edgeZoneExclusion?: number  // Ignore touches starting within this distance from left edge (px) for swipe-back
 }
 
 export function usePullToRefresh(
@@ -20,7 +21,8 @@ export function usePullToRefresh(
     resistance = 2.5,
     maxPull = 120,
     onRefresh,
-    hapticOnTrigger = true
+    hapticOnTrigger = true,
+    edgeZoneExclusion = 50  // Default to 50px to match swipe-back edge zone
   } = options
 
   const { vibrate } = useHapticFeedback()
@@ -31,11 +33,13 @@ export function usePullToRefresh(
   const pullProgress = ref(0)
 
   // Touch tracking
+  let startX = 0
   let startY = 0
   let currentY = 0
   let scrollElement: HTMLElement | null = null
   let isRefreshing = false
   let hasTriggeredReady = false
+  let isInEdgeZone = false
 
   // Apply resistance curve for natural feel
   function applyResistance(distance: number): number {
@@ -50,6 +54,13 @@ export function usePullToRefresh(
     const element = elementRef.value
     if (!element) return
 
+    const touch = event.touches[0]
+    startX = touch.clientX
+
+    // Check if touch starts in edge zone (reserved for swipe-back navigation)
+    isInEdgeZone = edgeZoneExclusion > 0 && startX <= edgeZoneExclusion
+    if (isInEdgeZone) return // Let swipe-back handle this touch
+
     // Check if at scroll top - check both element and document scroll
     const elementScrollTop = element.scrollTop
     const documentScrollTop = window.scrollY || document.documentElement.scrollTop || 0
@@ -57,7 +68,6 @@ export function usePullToRefresh(
 
     if (scrollTop !== 0) return // Not at top, ignore
 
-    const touch = event.touches[0]
     startY = touch.clientY
     currentY = startY
     scrollElement = element
@@ -71,6 +81,7 @@ export function usePullToRefresh(
   function handleTouchMove(event: TouchEvent) {
     if (event.touches.length !== 1) return
     if (isRefreshing) return
+    if (isInEdgeZone) return // Touch started in edge zone, let swipe-back handle it
 
     const touch = event.touches[0]
     currentY = touch.clientY
@@ -179,9 +190,11 @@ export function usePullToRefresh(
     pullState.value = 'idle'
     pullDistance.value = 0
     pullProgress.value = 0
+    startX = 0
     startY = 0
     currentY = 0
     hasTriggeredReady = false
+    isInEdgeZone = false
   }
 
   // Register listeners
