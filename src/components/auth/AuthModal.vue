@@ -1,80 +1,68 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="show" class="modal-overlay">
-        <div class="modal-container">
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <button
-              v-if="canGoBack"
-             
-              class="back-button"
-              @click="goBack"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <h2 class="modal-title">{{ modalTitle }}</h2>
-            <div class="header-spacer"></div>
-          </div>
+  <q-dialog :model-value="show" @update:model-value="val => $emit('update:show', val)" persistent>
+    <q-card class="auth-modal-card">
+      <q-card-section class="modal-header">
+        <q-btn
+          v-if="canGoBack"
+          icon="arrow_back"
+          flat
+          round
+          dense
+          @click="goBack"
+        />
+        <div class="text-h6 text-center flex-1">{{ modalTitle }}</div>
+        <div v-if="!canGoBack" class="header-spacer"></div>
+      </q-card-section>
 
-          <!-- Modal Content -->
-          <div class="modal-content">
+      <q-card-section class="modal-content">
             <!-- Step 1: Username Input -->
             <div v-if="currentStep === 'username'" class="step-container">
               <p class="step-description">
                 {{ mode === 'signup' ? 'Choose a username for your profile' : 'Enter your username' }}
               </p>
 
-              <div class="username-display" @click="!isMobileOrTablet && (showKeyboard = true)">
-                <input
-                  ref="usernameInputRef"
-                  v-model="username"
-                  type="text"
-                  class="text-input"
-                  :placeholder="mode === 'signup' ? 'Your Name' : 'Username'"
-                  :readonly="!isMobileOrTablet"
-                />
-              </div>
-
-              <button
-               
-                :disabled="!username.trim()"
-                class="btn-primary"
-                @click="nextStep"
-              >
-                Continue
-              </button>
-            </div>
-
-            <!-- Step 2: PIN Input -->
-            <div v-else-if="currentStep === 'pin'" class="step-container">
-              <p class="step-description">
-                {{ mode === 'signup' ? 'Create a 4-digit PIN' : `Enter PIN for ${username}` }}
-              </p>
-
-              <PinInput
-                v-model="pin"
-                :error="pinError"
-                @complete="handlePinComplete"
+              <q-input
+                ref="usernameInputRef"
+                v-model="username"
+                type="text"
+                outlined
+                :placeholder="mode === 'signup' ? 'Your Name' : 'Username'"
+                :readonly="!isMobileOrTablet"
+                @click="!isMobileOrTablet && (showKeyboard = true)"
+                class="q-mb-md"
               />
-            </div>
 
-            <!-- Loading State -->
-            <div v-else-if="currentStep === 'loading'" class="step-container">
-              <div class="loading-spinner">
-                <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-              <p class="loading-text">{{ loadingText }}</p>
-            </div>
-          </div>
+              <q-btn
+                label="Continue"
+                color="primary"
+                unelevated
+                :disable="!username.trim()"
+                @click="nextStep"
+                class="full-width"
+              />
         </div>
-      </div>
-    </Transition>
+
+        <!-- Step 2: PIN Input -->
+        <div v-else-if="currentStep === 'pin'" class="step-container">
+          <p class="step-description">
+            {{ mode === 'signup' ? 'Create a 4-digit PIN' : `Enter PIN for ${username}` }}
+          </p>
+
+          <PinInput
+            v-model="pin"
+            :error="pinError"
+            @complete="handlePinComplete"
+          />
+        </div>
+
+        <!-- Loading State -->
+        <div v-else-if="currentStep === 'loading'" class="step-container">
+          <q-spinner color="primary" size="48px" />
+          <p class="loading-text q-mt-md">{{ loadingText }}</p>
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 
     <!-- Floating Keyboard (Desktop only) -->
     <FloatingKeyboard
@@ -219,56 +207,16 @@ async function handlePinComplete(completedPin: string): Promise<void> {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: var(--space-4);
-}
-
-.modal-container {
-  width: 100%;
+.auth-modal-card {
   max-width: 448px;
-  background: var(--color-bg-primary);
-  border-radius: var(--radius-lg);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
-  max-height: 90vh;
-  overflow-y: auto;
+  width: 100%;
 }
 
 .modal-header {
-  position: sticky;
-  top: 0;
-  background: var(--color-bg-primary);
-  border-bottom: var(--depth-1-border);
-  padding: var(--space-4) var(--space-6);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  z-index: 1;
-}
-
-.back-button {
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: none;
-  cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  flex-shrink: 0;
-}
-
-.back-button:active {
-  background: var(--color-bg-tertiary);
 }
 
 .header-spacer {
@@ -276,23 +224,12 @@ async function handlePinComplete(completedPin: string): Promise<void> {
   height: 36px;
 }
 
-.modal-title {
-  flex: 1;
-  font-size: var(--font-size-20);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  text-align: center;
-}
-
-.modal-content {
-  padding: var(--space-6);
-}
-
 .step-container {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   align-items: center;
+  width: 100%;
 }
 
 .step-description {
@@ -301,89 +238,13 @@ async function handlePinComplete(completedPin: string): Promise<void> {
   text-align: center;
 }
 
-.username-display {
-  width: 100%;
-}
-
-.text-input {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: var(--depth-1-border);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-16);
-  color: var(--color-text-primary);
-  background: var(--color-bg-primary);
-  text-align: center;
-  cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-in-out);
-}
-
-.text-input:focus {
-  outline: none;
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.btn-primary {
-  width: 100%;
-  padding: var(--space-3) var(--space-6);
-  background: var(--color-accent-primary);
-  color: white;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-14);
-  border: none;
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-}
-
-.btn-primary:active:not(:disabled) {
-  transform: scale(0.98);
-  background: var(--color-accent-primary-active);
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.loading-spinner {
-  width: 48px;
-  height: 48px;
-  color: var(--color-accent-primary);
-}
-
 .loading-text {
   font-size: var(--font-size-14);
   color: var(--color-text-secondary);
+  text-align: center;
 }
 
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Modal Transition */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.95) translateY(var(--space-4));
+.flex-1 {
+  flex: 1;
 }
 </style>
