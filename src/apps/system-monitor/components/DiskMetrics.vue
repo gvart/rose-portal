@@ -12,10 +12,14 @@
       <span class="label">Used:</span>
       <span class="value">{{ formatBytes(metrics.used) }}</span>
     </div>
-    <div class="usage-bar-container">
-      <div class="usage-bar" :style="{ width: `${metrics.usagePercent}%` }"></div>
-    </div>
-    <p class="usage-text">{{ metrics.usagePercent.toFixed(1) }}% used</p>
+    <q-linear-progress
+      :value="metrics.usagePercent / 100"
+      color="info"
+      size="16px"
+      rounded
+      class="q-mt-sm"
+    />
+    <p class="usage-text q-mt-xs">{{ metrics.usagePercent.toFixed(1) }}% used</p>
   </MetricCard>
 </template>
 
@@ -61,27 +65,11 @@ function formatBytes(bytes: number): string {
   font-variant-numeric: tabular-nums;
 }
 
-.usage-bar-container {
-  width: 100%;
-  height: 16px;
-  background: var(--color-bg-tertiary);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  margin-top: var(--space-2);
-}
-
-.usage-bar {
-  height: 100%;
-  background: var(--color-info-solid);
-  transition: all var(--duration-normal) var(--ease-in-out);
-}
-
 .usage-text {
   text-align: center;
   font-size: var(--font-size-14);
   color: var(--color-text-secondary);
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  margin-top: var(--space-1);
 }
 </style>
