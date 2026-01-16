@@ -20,8 +20,10 @@
     </q-header>
 
     <q-page-container>
-      <q-page ref="contentRef" class="app-content">
-        <slot />
+      <q-page class="app-content">
+        <div ref="contentRef" class="page-wrapper">
+          <slot />
+        </div>
       </q-page>
     </q-page-container>
 
@@ -76,8 +78,13 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
 }
 
 .app-content {
-  padding: var(--space-5);
   background: var(--color-bg-secondary);
+}
+
+.page-wrapper {
+  padding: var(--space-5);
+  min-height: 100%;
+  width: 100%;
 }
 
 .invisible {
