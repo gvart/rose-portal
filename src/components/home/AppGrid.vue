@@ -8,7 +8,7 @@
         v-for="app in apps"
         :key="app.id"
         :name="app.name"
-        :icon="app.icon"
+        :icon-name="app.iconName"
         :color="app.color"
         @click="navigateToApp(app)"
       />

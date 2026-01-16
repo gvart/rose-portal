@@ -1,39 +1,35 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="store.showCompletionModal" class="completion-overlay" @click="handleAcknowledge">
-        <div class="completion-content" @click.stop>
-          <!-- Completion Icon -->
-          <div class="completion-icon-container">
-            <svg class="completion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
+  <q-dialog v-model="store.showCompletionModal" @hide="handleAcknowledge" persistent>
+    <q-card class="completion-card">
+      <q-card-section class="text-center q-pa-lg">
+        <!-- Completion Icon -->
+        <q-icon name="check_circle" size="96px" color="positive" class="completion-icon" />
 
-          <!-- Completion Message -->
-          <h2 class="completion-title">Timer Complete!</h2>
-          <p class="completion-message">{{ message }}</p>
+        <!-- Completion Message -->
+        <h2 class="completion-title q-mt-md">Timer Complete!</h2>
+        <p class="completion-message q-mb-md">{{ message }}</p>
 
-          <!-- Pomodoro Phase Info -->
-          <div v-if="isPomodoroTransition" class="pomodoro-phase">
-            <span class="phase-badge" :class="phaseClass">
-              {{ nextPhaseLabel }}
-            </span>
-          </div>
-
-          <!-- Acknowledge Button -->
-          <button v-haptic:heavy @click="handleAcknowledge" class="acknowledge-btn">
-            Got it!
-          </button>
+        <!-- Pomodoro Phase Info -->
+        <div v-if="isPomodoroTransition" class="q-mb-md">
+          <q-chip
+            :color="store.completedTimer?.pomodoroConfig?.currentPhase === 'work' ? 'positive' : 'negative'"
+            text-color="white"
+            :label="nextPhaseLabel"
+          />
         </div>
-      </div>
-    </Transition>
-  </Teleport>
+
+        <!-- Acknowledge Button -->
+        <q-btn
+          unelevated
+          color="warning"
+          label="Got it!"
+          @click="handleAcknowledge"
+          class="full-width"
+          size="lg"
+        />
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -78,55 +74,12 @@ function handleAcknowledge() {
 </script>
 
 <style scoped>
-/* Completion Overlay */
-.completion-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  padding: var(--space-4);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    background-color: rgba(0, 0, 0, 0.6);
-  }
-  50% {
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-}
-
-/* Completion Content */
-.completion-content {
-  width: 100%;
+.completion-card {
   max-width: 448px;
-  background: var(--color-bg-primary);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
   border-radius: var(--radius-lg);
-  padding: var(--space-8);
-  text-align: center;
-  transform: scale(1);
-  transition: all var(--duration-slow) var(--ease-in-out);
-}
-
-/* Completion Icon */
-.completion-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-6);
 }
 
 .completion-icon {
-  width: 96px;
-  height: 96px;
-  color: var(--color-success-solid);
   animation: check-bounce 0.6s var(--ease-in-out);
 }
 
@@ -142,88 +95,15 @@ function handleAcknowledge() {
   }
 }
 
-/* Completion Text */
 .completion-title {
   font-size: var(--font-size-32);
   font-weight: var(--font-weight-bold);
   letter-spacing: var(--letter-spacing-tight);
   color: var(--color-text-primary);
-  margin-bottom: var(--space-3);
 }
 
 .completion-message {
   font-size: var(--font-size-16);
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-6);
-}
-
-/* Pomodoro Phase Info */
-.pomodoro-phase {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--space-6);
-}
-
-.phase-badge {
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-full);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-13);
-}
-
-.phase-work {
-  background: var(--color-error-bg);
-  color: var(--color-error-text);
-}
-
-.phase-break {
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
-}
-
-/* Acknowledge Button */
-.acknowledge-btn {
-  width: 100%;
-  padding: var(--space-4) var(--space-8);
-  background: var(--color-warning-solid);
-  color: white;
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-16);
-  border: none;
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-}
-
-.acknowledge-btn:active {
-  transform: scale(0.96);
-  background: #d97706;
-}
-
-.acknowledge-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
-}
-
-/* Modal Transition */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-from .completion-content,
-.modal-leave-to .completion-content {
-  transform: scale(0.9) translateY(var(--space-8));
-  transition: transform var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-active .completion-content,
-.modal-leave-active .completion-content {
-  transition: transform var(--duration-slow) var(--ease-in-out);
 }
 </style>

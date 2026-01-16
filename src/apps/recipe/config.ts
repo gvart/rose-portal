@@ -3,7 +3,6 @@ import type { AppConfig } from '@/types/app'
 export const recipeAppConfig: AppConfig = {
   id: 'recipe',
   name: 'Recipe Finder',
-  icon: '/icons/recipe.svg',
   description: 'Find recipes and ingredients',
   route: '/recipe',
   component: () => import('./RecipeApp.vue'),

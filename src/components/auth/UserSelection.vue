@@ -7,7 +7,7 @@
       <button
         v-for="user in sortedUsers"
         :key="user.id"
-        v-haptic
+       
         class="user-card"
         @click="selectUser(user)"
         @touchstart="handleTouchStart(user)"
@@ -22,22 +22,20 @@
           <div class="user-name">{{ user.username }}</div>
           <div class="user-last-login">Last login: {{ formatLastLogin(user.lastLoginAt) }}</div>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="chevron-icon">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
+        <q-icon name="chevron_right" size="24px" class="chevron-icon" />
       </button>
     </div>
 
     <div class="action-buttons" :class="{ 'no-users': sortedUsers.length === 0 }">
       <button
-        v-haptic
+       
         class="btn-secondary"
         @click="$emit('new-user')"
       >
         Create New User
       </button>
       <button
-        v-haptic
+       
         class="btn-secondary"
         @click="$emit('sign-in')"
       >
@@ -55,10 +53,10 @@
               Remove {{ userToRemove.username }} from this device?
             </p>
             <div class="dialog-buttons">
-              <button v-haptic class="btn-cancel" @click="cancelRemove">
+              <button class="btn-cancel" @click="cancelRemove">
                 Cancel
               </button>
-              <button v-haptic class="btn-confirm" @click="confirmRemove">
+              <button class="btn-confirm" @click="confirmRemove">
                 Remove
               </button>
             </div>
@@ -360,5 +358,30 @@ function formatLastLogin(dateString: string): string {
 .modal-enter-from .confirmation-dialog,
 .modal-leave-to .confirmation-dialog {
   transform: scale(0.95);
+}
+
+/* Mobile-specific optimizations for phones */
+@media (max-width: 768px) {
+  .user-selection {
+    gap: var(--space-4) !important;
+    padding: var(--space-4) !important;
+  }
+
+  .selection-title {
+    font-size: var(--font-size-24) !important;
+  }
+
+  .selection-subtitle {
+    margin-top: calc(-1 * var(--space-3)) !important;
+  }
+
+  .user-list {
+    gap: var(--space-2) !important;
+  }
+
+  .action-buttons {
+    gap: var(--space-2) !important;
+    margin-top: var(--space-3) !important;
+  }
 }
 </style>

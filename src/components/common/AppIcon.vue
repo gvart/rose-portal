@@ -1,6 +1,6 @@
 <template>
   <div
-    v-haptic
+   
     role="button"
     :aria-label="`Open ${name} app`"
     tabindex="0"
@@ -10,7 +10,7 @@
     @keydown.space.prevent="$emit('click')"
   >
     <div class="icon-container" :style="{ '--app-color': color }">
-      <img :src="icon" alt="" class="icon-image" aria-hidden="true" />
+      <q-icon :name="iconName" class="icon-material" color="white" />
     </div>
     <span class="app-name">{{ name }}</span>
   </div>
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 defineProps<{
   name: string
-  icon: string
+  iconName?: string
   color: string
 }>()
 
@@ -64,6 +64,8 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  position: relative;
 
   /* Keep gradient for visual brand identity */
   background: linear-gradient(135deg, var(--app-color), color-mix(in srgb, var(--app-color) 80%, black));
@@ -93,6 +95,27 @@ defineEmits<{
   .icon-image {
     width: 64px;
     height: 64px;
+  }
+}
+
+.icon-material {
+  font-size: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  flex-shrink: 0;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* Desktop/Pi5 - bigger Material icons */
+@media (min-width: 768px) {
+  .icon-material {
+    font-size: 56px !important;
+    width: 56px !important;
+    height: 56px !important;
   }
 }
 

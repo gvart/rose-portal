@@ -38,8 +38,8 @@
           <div class="plan-info">
             <h3 class="plan-title">Meal Plan #{{ index + 1 }}</h3>
             <p class="plan-meta">
-              {{ plan.dishList.length }} dish{{ plan.dishList.length !== 1 ? 'es' : '' }} •
-              {{ plan.groceryList.length }} ingredient{{ plan.groceryList.length !== 1 ? 's' : '' }}
+              {{ plan.dishList?.length || 0 }} dish{{ (plan.dishList?.length || 0) !== 1 ? 'es' : '' }} •
+              {{ plan.groceryList?.length || 0 }} ingredient{{ (plan.groceryList?.length || 0) !== 1 ? 's' : '' }}
             </p>
           </div>
           <svg

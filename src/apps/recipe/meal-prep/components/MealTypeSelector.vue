@@ -2,15 +2,16 @@
   <div class="meal-type-selector">
     <label class="selector-label">Meal Type</label>
     <div class="type-chips">
-      <button
-        v-haptic
+      <q-chip
         v-for="type in mealTypes"
         :key="type"
+        :label="formatMealType(type)"
+        clickable
+        :color="modelValue === type ? 'positive' : undefined"
+        :outline="modelValue !== type"
         @click="$emit('update:modelValue', type)"
-        :class="['type-chip', { active: modelValue === type }]"
-      >
-        {{ formatMealType(type) }}
-      </button>
+        class="type-chip"
+      />
     </div>
   </div>
 </template>
@@ -49,31 +50,7 @@ const mealTypes = [MealType.BREAKFAST, MealType.BRUNCH, MealType.LUNCH, MealType
 }
 
 .type-chip {
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-sm);
-  font-weight: var(--font-weight-medium);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  border: 2px solid var(--color-border-primary);
-  cursor: pointer;
   min-height: 48px;
   min-width: 120px;
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text-secondary);
-}
-
-.type-chip:active:not(.active) {
-  background-color: var(--color-success-bg);
-  border-color: var(--color-success-border);
-}
-
-.type-chip.active {
-  background-color: var(--color-success-solid);
-  border-color: var(--color-success-solid);
-  color: white;
-}
-
-.type-chip.active:active {
-  background-color: #059669;
-  border-color: #059669;
 }
 </style>

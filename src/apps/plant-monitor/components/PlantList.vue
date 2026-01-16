@@ -8,9 +8,14 @@
         <p v-if="lastRefresh" class="plant-list__last-refresh">
           Last updated: {{ formatTime(lastRefresh) }}
         </p>
-        <button v-haptic @click="refresh" :disabled="loading" class="plant-list__refresh-btn">
-          {{ loading ? 'Refreshing...' : 'Refresh Now' }}
-        </button>
+        <q-btn
+          :label="loading ? 'Refreshing...' : 'Refresh Now'"
+          color="positive"
+          unelevated
+          @click="refresh"
+          :loading="loading"
+          :disable="loading"
+        />
       </div>
 
       <!-- Loading skeletons on first load -->
@@ -114,27 +119,6 @@ function onSelectPlant(deviceId: string) {
 .plant-list__last-refresh {
   color: var(--color-text-secondary);
   font-size: var(--font-size-13);
-}
-
-.plant-list__refresh-btn {
-  min-height: 44px;
-  min-width: 44px;
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-success-solid);
-  color: white;
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-semibold);
-  transition: all var(--duration-fast) var(--ease-in-out);
-}
-
-.plant-list__refresh-btn:active:not(:disabled) {
-  transform: scale(0.96);
-  background: #16a34a;
-}
-
-.plant-list__refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .plant-list__grid {

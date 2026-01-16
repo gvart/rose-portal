@@ -1,34 +1,33 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click="close">
-        <div class="modal-container" @click.stop>
-          <!-- Header -->
-          <div class="modal-header">
-            <h2 class="modal-title">What to Wear</h2>
-            <button class="close-btn" @click="close" v-haptic>
-              <Icon icon="mdi:close" :width="24" :height="24" />
-            </button>
-          </div>
+  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)" maximized>
+    <q-card class="clothing-recommendation-card">
+      <q-card-section class="modal-header">
+        <div class="text-h5">What to Wear</div>
+        <q-btn icon="close" flat round dense @click="close" />
+      </q-card-section>
 
-          <!-- Content -->
-          <div class="modal-content">
-            <!-- Loading State -->
-            <div v-if="loading" class="loading-state">
-              <Icon icon="mdi:loading" class="spin" :width="48" :height="48" />
-              <p class="loading-text">Getting recommendations...</p>
-            </div>
+      <q-card-section class="modal-content">
+        <!-- Loading State -->
+        <div v-if="loading" class="loading-state">
+          <q-spinner color="info" size="48px" />
+          <p class="loading-text">Getting recommendations...</p>
+        </div>
 
-            <!-- Error State -->
-            <div v-else-if="error" class="error-state">
-              <Icon icon="mdi:alert-circle-outline" :width="48" :height="48" class="error-icon" />
-              <p class="error-title">Unable to Load Recommendations</p>
-              <p class="error-message">{{ error }}</p>
-              <button class="retry-btn" @click="$emit('retry')" v-haptic>
-                <Icon icon="mdi:refresh" :width="20" :height="20" />
-                <span>Try Again</span>
-              </button>
-            </div>
+        <!-- Error State -->
+        <div v-else-if="error" class="error-state">
+          <q-icon name="error_outline" size="48px" color="negative" />
+          <p class="error-title">Unable to Load Recommendations</p>
+          <p class="error-message">{{ error }}</p>
+          <q-btn
+            unelevated
+            color="info"
+            @click="$emit('retry')"
+            class="q-mt-lg"
+          >
+            <q-icon name="refresh" size="20px" class="q-mr-sm" />
+            <span>Try Again</span>
+          </q-btn>
+        </div>
 
             <!-- Recommendations -->
             <div v-else-if="recommendations" class="recommendations">
@@ -84,20 +83,17 @@
               </div>
             </div>
 
-            <!-- Empty State -->
-            <div v-else class="empty-state">
-              <p>No recommendations available</p>
-            </div>
-          </div>
+        <!-- Empty State -->
+        <div v-else class="empty-state">
+          <p>No recommendations available</p>
         </div>
-      </div>
-    </Transition>
-  </Teleport>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
-import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
 import ClothingIcon from './ClothingIcon.vue'
 import type { ClothingRecommendationResponse } from '../types/clothing'
 import { BodyPart, getBodyPartLabel, CLOTHING_ICONS } from '../types/clothing'
@@ -131,135 +127,24 @@ function getClothingItemLabel(item: string): string {
 function close() {
   emit('update:modelValue', false)
 }
-
-function handleEscape(event: KeyboardEvent) {
-  if (event.key === 'Escape' && props.modelValue) {
-    close()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('keydown', handleEscape)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscape)
-})
 </script>
 
 <style scoped>
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  background: rgba(0, 0, 0, 0.6);
-  padding: var(--space-2);
-}
-
-@media (min-width: 640px) {
-  .modal-overlay {
-    padding: var(--space-4);
-  }
-}
-
-/* Modal Container */
-.modal-container {
+.clothing-recommendation-card {
+  max-width: 1280px;
   width: 100%;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--depth-3-shadow);
-  display: flex;
-  flex-direction: column;
-  max-width: 95vw;
-  max-height: 95vh;
-  background: var(--color-bg-primary);
-  border: var(--depth-3-border);
+  height: 100%;
 }
 
-@media (min-width: 768px) {
-  .modal-container {
-    max-width: 90vw;
-  }
-}
-
-@media (min-width: 1024px) {
-  .modal-container {
-    max-width: 80vw;
-  }
-}
-
-@media (min-width: 1280px) {
-  .modal-container {
-    max-width: 1280px;
-  }
-}
-
-/* Modal Header */
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: var(--depth-1-border);
-  background: var(--color-bg-primary);
-  border-top-left-radius: var(--radius-lg);
-  border-top-right-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-4);
-  flex-shrink: 0;
 }
 
-@media (min-width: 640px) {
-  .modal-header {
-    padding: var(--space-4) var(--space-6);
-  }
-}
-
-.modal-title {
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-}
-
-@media (min-width: 640px) {
-  .modal-title {
-    font-size: var(--font-size-24);
-  }
-}
-
-.close-btn {
-  padding: var(--space-2);
-  border-radius: var(--radius-sm);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  color: var(--color-text-secondary);
-  flex-shrink: 0;
-}
-
-@media (min-width: 640px) {
-  .close-btn {
-    padding: var(--space-2);
-  }
-}
-
-.close-btn:active {
-  background: var(--color-bg-active);
-  color: var(--color-text-primary);
-}
-
-/* Modal Content */
 .modal-content {
   overflow-y: auto;
   flex: 1;
-  min-height: 0;
-  padding: var(--space-3) var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .modal-content {
-    padding: var(--space-4) var(--space-6);
-  }
 }
 
 /* Loading State */
@@ -278,11 +163,6 @@ onUnmounted(() => {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
 }
 
-.spin {
-  animation: spin 1s linear infinite;
-  color: var(--color-info-solid);
-}
-
 /* Error State */
 .error-state {
   display: flex;
@@ -290,10 +170,6 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: var(--space-16) 0;
-}
-
-.error-icon {
-  color: var(--color-error-solid);
 }
 
 .error-title {
@@ -310,25 +186,6 @@ onUnmounted(() => {
   color: var(--color-text-secondary);
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-}
-
-.retry-btn {
-  margin-top: var(--space-8);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  background: var(--color-info-solid);
-  color: white;
-  font-weight: var(--font-weight-semibold);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-}
-
-.retry-btn:active {
-  transform: scale(0.95);
-  background: #2563eb;
 }
 
 /* Weather Summary */
@@ -508,31 +365,5 @@ onUnmounted(() => {
   padding: var(--space-16) 0;
   color: var(--color-text-secondary);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-}
-
-/* Modal Transition */
-.modal-enter-active,
-.modal-leave-active {
-  @apply transition-all duration-300 ease-out;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  @apply opacity-0;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  @apply scale-95;
-  transform: translateY(1rem) scale(0.95);
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

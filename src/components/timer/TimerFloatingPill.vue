@@ -19,7 +19,7 @@
               <span class="timer-type">{{ getTimerTypeLabel(store.primaryTimer.type) }}</span>
             </div>
             <span class="timer-time" @click="toggleExpanded">{{ formattedTime }}</span>
-            <button v-haptic:medium @click.stop="togglePrimaryTimer" class="control-btn" aria-label="Toggle timer">
+            <button @click.stop="togglePrimaryTimer" class="control-btn" aria-label="Toggle timer">
               <svg v-if="store.primaryTimer.status === 'paused'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
@@ -27,7 +27,7 @@
                 <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
               </svg>
             </button>
-            <button v-haptic:light @click.stop="isMinimized = true" class="minimize-btn" aria-label="Minimize">
+            <button @click.stop="isMinimized = true" class="minimize-btn" aria-label="Minimize">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
@@ -39,12 +39,12 @@
             <div class="expanded-header">
               <h3 class="expanded-title">Active Timers ({{ store.activeTimers.length }})</h3>
               <div class="expanded-actions">
-                <button v-haptic:light @click="minimizeFromExpanded" class="minimize-header-btn" aria-label="Minimize">
+                <button @click="minimizeFromExpanded" class="minimize-header-btn" aria-label="Minimize">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                <button v-haptic:light @click="toggleExpanded" class="close-btn" aria-label="Collapse">
+                <button @click="toggleExpanded" class="close-btn" aria-label="Collapse">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="expanded-timer-controls">
                   <button
-                    v-haptic:light
+                   
                     @click="toggleTimer(timer)"
                     class="mini-control-btn"
                     :aria-label="timer.status === 'paused' ? 'Resume' : 'Pause'"
@@ -76,7 +76,7 @@
                     </svg>
                   </button>
                   <button
-                    v-haptic:light
+                   
                     @click="store.stopTimer(timer.id)"
                     class="mini-control-btn danger"
                     aria-label="Stop timer"

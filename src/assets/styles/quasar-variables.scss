@@ -1,0 +1,142 @@
+/**
+ * Quasar Variables
+ * Map Rose Portal design tokens to Quasar brand colors
+ * Updated for compact layouts
+ */
+
+// ============================================
+// BRAND COLORS
+// ============================================
+
+$primary: #3B82F6;      // Accent primary (blue)
+$secondary: #64748B;    // Text muted (cool slate)
+$accent: #22C55E;       // Success color (green)
+$positive: #22C55E;     // Success
+$negative: #EF4444;     // Error
+$warning: #F59E0B;      // Warning
+$info: #3B82F6;         // Info (same as primary)
+$dark: #0F172A;         // Text primary (very dark slate)
+
+// ============================================
+// DARK MODE COLORS
+// ============================================
+
+$dark-page: #0F172A;
+$dark-primary: #60A5FA;
+$dark-secondary: #94A3B8;
+$dark-accent: #4ADE80;
+
+// ============================================
+// TYPOGRAPHY
+// ============================================
+
+$typography-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+$h1-font-size: 1.75rem;   // 28px (reduced from 32px)
+$h2-font-size: 1.375rem;  // 22px (reduced from 24px)
+$h3-font-size: 1.125rem;  // 18px (reduced from 20px)
+$h4-font-size: 1rem;      // 16px (reduced from 18px)
+$h5-font-size: 0.9375rem; // 15px (reduced from 16px)
+$h6-font-size: 0.875rem;  // 14px (same)
+
+// Letter spacing
+$letter-spacing: -0.01em;
+$caption-letter-spacing: 0.02em;
+
+// ============================================
+// BORDER RADIUS
+// ============================================
+
+$generic-border-radius: 8px;
+$button-border-radius: 6px;
+$input-border-radius: 6px;
+
+// ============================================
+// SHADOWS (Minimal)
+// ============================================
+
+$shadow-0: none;
+$shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-2: 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-3: 0 4px 8px rgba(0, 0, 0, 0.08);
+$shadow-4: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+// ============================================
+// BUTTON CONFIGURATION
+// ============================================
+
+$button-padding: 6px 14px;         // Compact padding
+$button-dense-padding: 4px 10px;   // Extra compact
+$button-font-size: 0.8125rem;      // 13px
+$button-font-weight: 500;
+$button-min-height: 40px;          // Reduced from 44px for compact
+
+// ============================================
+// CARD CONFIGURATION
+// ============================================
+
+$card-padding: 16px;               // Reduced from 20px
+$card-border-radius: $generic-border-radius;
+$card-shadow: none;
+
+// ============================================
+// INPUT CONFIGURATION
+// ============================================
+
+$input-padding: 10px 12px;         // Compact padding
+$input-font-size: 0.875rem;        // 14px
+$input-border-width: 1px;
+$input-border-color: #E2E8F0;
+
+// Dense input overrides
+$input-dense-padding: 8px 10px;
+
+// ============================================
+// DIALOG CONFIGURATION
+// ============================================
+
+$dialog-card-min-width: 320px;
+$dialog-card-max-width: 600px;
+
+// ============================================
+// SEPARATOR/DIVIDER
+// ============================================
+
+$separator-color: #E2E8F0;
+$separator-dark-color: rgba(255, 255, 255, 0.1);
+
+// ============================================
+// FOCUS STATES
+// ============================================
+
+$focus-outline-width: 2px;
+$focus-outline-color: $primary;
+$focus-outline-offset: 2px;
+
+// ============================================
+// TRANSITIONS
+// ============================================
+
+$generic-transition: 150ms cubic-bezier(0.25, 1, 0.5, 1);
+$fast-transition: 100ms cubic-bezier(0.25, 1, 0.5, 1);
+$slow-transition: 250ms cubic-bezier(0.25, 1, 0.5, 1);
+
+// ============================================
+// BREAKPOINTS (Match Quasar defaults)
+// ============================================
+
+$breakpoint-xs: 0;
+$breakpoint-sm: 600px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1440px;
+$breakpoint-xl: 1920px;
+
+// ============================================
+// Z-INDEX LAYERS
+// ============================================
+
+$z-index-fab: 990;
+$z-index-side: 1000;
+$z-index-dialog: 6000;
+$z-index-menu: 6000;
+$z-index-notify: 9500;
+$z-index-fullscreen: 10000;

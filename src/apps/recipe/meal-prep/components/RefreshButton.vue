@@ -1,6 +1,6 @@
 <template>
   <button
-    v-haptic
+   
     @click="$emit('click')"
     :disabled="loading"
     class="refresh-button"

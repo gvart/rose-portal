@@ -14,7 +14,7 @@
         </div>
 
         <button
-          v-haptic
+         
           @click="handleUpdate"
           class="btn-update"
         >

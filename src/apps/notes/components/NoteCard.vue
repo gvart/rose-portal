@@ -1,5 +1,5 @@
 <template>
-  <div
+  <q-card
     class="note-card"
     :class="{ 'note-card--selected': selected, 'note-card--long-press': isLongPressing }"
     @click="handleClick"
@@ -7,22 +7,22 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
     @touchcancel="handleTouchCancel"
+    flat
+    bordered
   >
-    <div class="note-card__content">
+    <q-card-section>
       <div class="note-card__header">
         <h3 class="note-card__title">{{ note.name || 'Untitled' }}</h3>
-        <button
-          class="menu-btn"
+        <q-btn
+          flat
+          dense
+          round
+          icon="more_vert"
+          color="grey-6"
           @click.stop="handleMenuClick"
-          title="Note options"
           aria-label="Note options"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
-            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-            <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
-          </svg>
-        </button>
+          class="menu-btn"
+        />
       </div>
 
       <p v-if="notePreview" class="note-card__preview">
@@ -35,15 +35,14 @@
         </div>
         <span class="note-card__date">{{ formattedDate }}</span>
       </div>
-    </div>
-  </div>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { Note } from '../types/notes'
 import TagChip from './TagChip.vue'
-import { useHapticFeedback } from '@/composables/useHapticFeedback'
 
 const props = defineProps<{
   note: Note
@@ -56,7 +55,6 @@ const emit = defineEmits<{
   menu: []
 }>()
 
-const { vibrate } = useHapticFeedback()
 
 // Long press detection
 const LONG_PRESS_DURATION = 500 // ms
@@ -78,7 +76,6 @@ function handleTouchStart(event: TouchEvent) {
   longPressTimer = setTimeout(() => {
     if (isLongPressing.value) {
       longPressTriggered = true
-      vibrate('medium')
       emit('long-press')
     }
   }, LONG_PRESS_DURATION)
@@ -164,10 +161,10 @@ const formattedDate = computed(() => {
 
 <style scoped>
 .note-card {
-  padding: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .note-card:hover {
@@ -184,11 +181,10 @@ const formattedDate = computed(() => {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.note-card__content {
+.note-card:deep(.q-card__section) {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
 }
 
 .note-card__header {
@@ -208,33 +204,8 @@ const formattedDate = computed(() => {
   white-space: nowrap;
 }
 
-.menu-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #6b7280;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.menu-btn:hover,
 .menu-btn:active {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: #4b5563;
   transform: scale(1.05);
-}
-
-.menu-btn:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
 .note-card__preview {
@@ -266,12 +237,6 @@ const formattedDate = computed(() => {
   color: #9ca3af;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-/* Remove default focus outline */
-.note-card:focus,
-.menu-btn:focus {
-  outline: none;
 }
 
 /* Reduced motion support */

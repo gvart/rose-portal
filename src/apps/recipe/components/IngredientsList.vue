@@ -1,14 +1,18 @@
 <template>
-  <div class="ingredients-list">
-    <div
+  <q-list class="ingredients-list">
+    <q-item
       v-for="(ingredient, index) in ingredients"
       :key="index"
       class="ingredient-item"
     >
-      <span class="ingredient-name">{{ ingredient.name }}</span>
-      <span class="ingredient-quantity">{{ formatQuantityWithUnit(ingredient) }}</span>
-    </div>
-  </div>
+      <q-item-section>
+        <q-item-label class="ingredient-name">{{ ingredient.name }}</q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-item-label class="ingredient-quantity">{{ formatQuantityWithUnit(ingredient) }}</q-item-label>
+      </q-item-section>
+    </q-item>
+  </q-list>
 </template>
 
 <script setup lang="ts">
@@ -45,6 +49,7 @@ function formatQuantityWithUnit(ingredient: Ingredient): string {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-3);
+  padding: 0;
 }
 
 @media (min-width: 768px) {
@@ -54,9 +59,6 @@ function formatQuantityWithUnit(ingredient: Ingredient): string {
 }
 
 .ingredient-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: var(--space-4);
   background: var(--color-success-bg);
   border-radius: var(--radius-md);

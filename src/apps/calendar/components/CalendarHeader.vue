@@ -3,7 +3,7 @@
     <!-- Navigation Controls -->
     <div class="nav-controls">
       <button
-        v-haptic:light
+       
         class="nav-btn"
         @click="$emit('previous')"
         aria-label="Previous"
@@ -14,7 +14,7 @@
       </button>
 
       <button
-        v-haptic:light
+       
         class="today-btn"
         :class="{ 'today-btn--active': isToday }"
         @click="$emit('today')"
@@ -23,7 +23,7 @@
       </button>
 
       <button
-        v-haptic:light
+       
         class="nav-btn"
         @click="$emit('next')"
         aria-label="Next"
@@ -40,7 +40,7 @@
     <!-- Username Filter -->
     <div v-if="availableUsernames.length > 0" class="username-filter">
       <button
-        v-haptic:light
+       
         class="filter-btn"
         :class="{ 'filter-btn--active': selectedUsernames.length > 0 }"
         @click.stop="showFilterDropdown = !showFilterDropdown"
@@ -59,7 +59,7 @@
             <span class="filter-dropdown-title">Filter by Creator</span>
             <button
               v-if="selectedUsernames.length > 0"
-              v-haptic:light
+             
               class="clear-filter-btn"
               @click="$emit('clear-filter')"
             >
@@ -92,7 +92,7 @@
         <button
           v-for="view in viewOptions"
           :key="view.id"
-          v-haptic:light
+         
           class="view-btn"
           :class="{ 'view-btn--active': currentView === view.id }"
           @click="$emit('view-change', view.id)"
@@ -106,7 +106,7 @@
         <button
           v-for="view in viewOptions"
           :key="view.id"
-          v-haptic:light
+         
           class="view-btn view-btn--compact"
           :class="{ 'view-btn--active': currentView === view.id }"
           @click="$emit('view-change', view.id)"
@@ -118,7 +118,7 @@
 
       <!-- Create Event Button -->
       <button
-        v-haptic:medium
+       
         class="create-btn"
         @click="$emit('create-event')"
         aria-label="Create event"

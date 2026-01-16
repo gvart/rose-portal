@@ -1,118 +1,124 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click.self="close">
-        <div class="modal-container">
-          <!-- Header -->
-          <div class="modal-header">
-            <h2 class="modal-title">
-              {{ mode === 'create' ? 'Create Chore' : 'Edit Chore' }}
-            </h2>
-            <button class="modal-close" @click="close">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
+  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
+    <q-card class="chore-modal-card modal-lg">
+      <q-card-section class="modal-header">
+        <div class="text-h6">
+          {{ mode === 'create' ? 'Create Chore' : 'Edit Chore' }}
+        </div>
+        <q-btn icon="close" flat round dense @click="close" />
+      </q-card-section>
 
-          <!-- Content -->
-          <div class="modal-content">
-            <!-- Main Content Area (Left Column on Desktop) -->
-            <div class="content-main">
-              <!-- Title -->
-              <div class="form-group">
-                <input
-                  id="chore-title"
-                  v-model="localFormData.title"
-                  type="text"
-                  class="form-input form-input-title"
-                  :class="{ 'form-input-error': errors.title }"
-                  placeholder="Chore title"
-                  maxlength="255"
-                />
-                <p v-if="errors.title" class="form-error">{{ errors.title }}</p>
-              </div>
-
-              <!-- Description -->
-              <div class="form-group">
-                <label for="chore-description" class="form-label">Description</label>
-                <ChoreDescriptionEditor
-                  v-model="localFormData.description"
-                  placeholder="Add details about this chore..."
-                />
-              </div>
+      <q-card-section class="modal-content scrollable-content">
+        <div class="modal-two-column">
+          <!-- Main Content Area -->
+          <div class="modal-main">
+            <!-- Title -->
+            <div class="input-section">
+              <q-input
+                v-model="localFormData.title"
+                placeholder="Chore title"
+                maxlength="255"
+                outlined
+                dense
+                input-class="text-subtitle1 text-weight-medium"
+                :error="!!errors.title"
+                :error-message="errors.title"
+                :readonly="isPi5"
+                @click="isPi5 && handleTitleFocus()"
+              />
             </div>
 
-            <!-- Details Sidebar (Right Column on Desktop) -->
-            <div class="content-sidebar">
-              <!-- Priority -->
-              <div class="form-group">
-                <label class="form-label">Priority</label>
-                <PrioritySegmentedControl v-model="localFormData.priority" />
-              </div>
-
-              <!-- Due Date -->
-              <div class="form-group">
-                <label class="form-label">Due Date</label>
-                <VueDatePicker
-                  v-model="localFormData.dueDate"
-                  :enable-time-picker="false"
-                  format="MMM dd, yyyy"
-                  auto-apply
-                  :teleport="true"
-                >
-                  <template #dp-input="{ value }">
-                    <div class="date-picker-input">
-                      {{ value }}
-                    </div>
-                  </template>
-                </VueDatePicker>
-              </div>
-
-              <!-- Assigned To (Edit mode only) -->
-              <AssignmentSelector
-                v-if="mode === 'edit'"
-                v-model="localFormData.assignedToId"
-                :users="availableUsers"
+            <!-- Description -->
+            <div class="input-section">
+              <label class="input-label">Description</label>
+              <ChoreDescriptionEditor
+                v-model="localFormData.description"
+                placeholder="Add details about this chore..."
+                :compact="true"
+                @focus="isPi5 && handleDescriptionFocus()"
               />
             </div>
           </div>
 
-          <!-- Actions -->
-          <div class="modal-actions">
-            <button
-              type="button"
-              class="modal-button modal-button-secondary"
-              @click="close"
-            >
-              Cancel
-            </button>
-            <button
-              v-if="mode === 'edit' && canDelete"
-              type="button"
-              class="modal-button modal-button-danger"
-              :disabled="loading"
-              @click="handleDelete"
-            >
-              Delete
-            </button>
-            <button
-              type="button"
-              class="modal-button modal-button-primary"
-              :disabled="loading || !isValid"
-              @click="handleSave"
-            >
-              {{ loading ? 'Saving...' : 'Save' }}
-            </button>
+          <!-- Details Sidebar -->
+          <div class="modal-sidebar">
+            <!-- Priority -->
+            <div class="input-section">
+              <label class="input-label">Priority</label>
+              <PrioritySegmentedControl v-model="localFormData.priority" dense />
+            </div>
+
+            <!-- Due Date -->
+            <div class="input-section">
+              <label class="input-label">Due Date</label>
+              <VueDatePicker
+                v-model="localFormData.dueDate"
+                :enable-time-picker="false"
+                format="MMM dd, yyyy"
+                auto-apply
+                :teleport="true"
+              >
+                <template #dp-input="{ value }">
+                  <q-input
+                    :model-value="value"
+                    readonly
+                    outlined
+                    dense
+                    placeholder="Select date"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer" />
+                    </template>
+                  </q-input>
+                </template>
+              </VueDatePicker>
+            </div>
+
+            <!-- Assigned To (Edit mode only) -->
+            <AssignmentSelector
+              v-if="mode === 'edit'"
+              v-model="localFormData.assignedToId"
+              :users="availableUsers"
+              dense
+            />
           </div>
         </div>
-      </div>
-    </Transition>
+      </q-card-section>
+
+      <q-card-actions class="modal-footer modal-footer--between">
+        <q-btn
+          v-if="mode === 'edit' && canDelete"
+          label="Delete"
+          color="negative"
+          flat
+          :disable="loading"
+          @click="handleDelete"
+        />
+        <q-space v-else />
+
+        <div class="row q-gutter-sm">
+          <q-btn label="Cancel" flat @click="close" />
+          <q-btn
+            :label="loading ? 'Saving...' : 'Save'"
+            color="primary"
+            unelevated
+            :disable="loading || !isValid"
+            :loading="loading"
+            @click="handleSave"
+          />
+        </div>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <!-- On-Screen Keyboard (Pi5 only) -->
+  <Teleport to="body">
+    <FloatingKeyboard
+      v-if="isPi5"
+      v-model="keyboardValue"
+      v-model:show="showKeyboard"
+      :docked="true"
+    />
   </Teleport>
 </template>
 
@@ -120,6 +126,8 @@
 import { ref, computed, watch } from 'vue'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
+import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
 import AssignmentSelector from './AssignmentSelector.vue'
 import ChoreDescriptionEditor from './ChoreDescriptionEditor.vue'
 import PrioritySegmentedControl from './PrioritySegmentedControl.vue'
@@ -145,10 +153,44 @@ const emit = defineEmits<{
 
 const localFormData = ref<ChoreFormData>({ ...props.formData })
 const errors = ref<Record<string, string>>({})
+const showKeyboard = ref(false)
+const activeField = ref<'title' | 'description'>('title')
+const { isPi5 } = useDeviceDetection()
 
 const isValid = computed(() => {
   return localFormData.value.title.trim().length > 0
 })
+
+// Unified keyboard value - switches between title and description
+const keyboardValue = computed({
+  get: () => {
+    if (activeField.value === 'title') {
+      return localFormData.value.title
+    } else {
+      // Strip HTML for description on Pi5
+      const div = document.createElement('div')
+      div.innerHTML = localFormData.value.description
+      return div.textContent || div.innerText || ''
+    }
+  },
+  set: (value: string) => {
+    if (activeField.value === 'title') {
+      localFormData.value.title = value
+    } else {
+      localFormData.value.description = value
+    }
+  }
+})
+
+function handleTitleFocus() {
+  activeField.value = 'title'
+  showKeyboard.value = true
+}
+
+function handleDescriptionFocus() {
+  activeField.value = 'description'
+  showKeyboard.value = true
+}
 
 watch(
   () => props.formData,
@@ -192,344 +234,92 @@ function close(): void {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.modal-container {
-  background: white;
-  border-radius: 0.75rem;
-  width: 100%;
-  max-width: 56rem;
-  max-height: 90vh;
+.chore-modal-card {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-}
-
-.modal-close {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
-}
-
-.modal-close:hover {
-  background: #f3f4f6;
-  color: #111827;
+  width: 100%;
 }
 
 .modal-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 2rem;
-  display: flex;
-  gap: 2rem;
+  min-height: 0;
+  max-height: 60vh;
 }
 
-.content-main {
-  flex: 1;
-  min-width: 0;
+/* Mobile: Single column */
+.modal-two-column {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-5);
 }
 
-.content-sidebar {
-  width: 280px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 0;
-}
-
-.content-main .form-group:last-child,
-.content-sidebar .form-group:last-child {
-  margin-bottom: 0;
-}
-
-.form-label {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.form-required {
-  color: #ef4444;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  color: #111827;
-  transition: all 0.2s ease;
-}
-
-.form-input-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  padding: 0.75rem 0;
-  border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  background: transparent;
-}
-
-.form-input-title:hover {
-  border-bottom-color: #e5e7eb;
-}
-
-.form-input-title:focus {
-  border-bottom-color: #EC4899;
-  box-shadow: none;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #EC4899;
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
-}
-
-.form-input-error {
-  border-color: #ef4444;
-}
-
-.form-error {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  color: #ef4444;
-}
-
-.date-picker-input {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  color: #111827;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-
-.date-picker-input:hover {
-  border-color: #9ca3af;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.modal-button {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.modal-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.modal-button-secondary {
-  background: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.modal-button-secondary:hover:not(:disabled) {
-  background: #f9fafb;
-}
-
-.modal-button-danger {
-  background: #ef4444;
-  color: white;
-}
-
-.modal-button-danger:hover:not(:disabled) {
-  background: #dc2626;
-}
-
-.modal-button-primary {
-  background: #EC4899;
-  color: white;
-}
-
-.modal-button-primary:hover:not(:disabled) {
-  background: #db2777;
-}
-
-/* Modal Transition */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container {
-  transition: transform 0.2s ease;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.95);
-}
-
-/* Desktop sidebar styling */
-@media (min-width: 769px) {
-  .content-sidebar {
-    background: #f9fafb;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    border: 1px solid #e5e7eb;
-  }
-
-  .content-sidebar .form-group {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .content-sidebar .form-group:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-}
-
-/* Mobile responsive */
+/* Mobile-specific optimizations for phones */
 @media (max-width: 768px) {
-  .modal-container {
-    max-height: 100vh;
-    border-radius: 0;
+  .modal-two-column {
+    gap: 12px !important;
   }
 
-  .modal-header {
-    padding: 1rem;
+  .modal-sidebar {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
   }
 
   .modal-content {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1.5rem;
+    max-height: 70vh;
   }
 
-  .content-main,
-  .content-sidebar {
-    width: 100%;
+  .input-section {
+    gap: 4px !important;
+  }
+}
+
+/* Desktop: Side by side */
+@media (min-width: 768px) {
+  .modal-two-column {
+    flex-direction: row;
   }
 
-  .content-sidebar {
-    gap: 1rem;
+  .modal-sidebar {
+    width: 240px;
+    padding: var(--space-4);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: var(--depth-1-border);
+  }
+}
+
+.modal-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Ultra-compact optimizations for Pi5 */
+@media (max-height: 768px) {
+  .chore-modal-card.modal-lg {
+    max-height: 90vh !important;
+    max-width: 92vw !important; /* Use more horizontal space */
   }
 
-  .form-group {
-    margin-bottom: 0;
+  /* Force two-column on landscape small displays */
+  .modal-two-column {
+    flex-direction: row !important;
   }
 
-  .content-main .form-group {
-    gap: 1rem;
+  /* Narrower sidebar */
+  .modal-sidebar {
+    width: 200px !important;
+    gap: 8px !important;
+    padding: var(--space-3) !important;
   }
 
-  .content-sidebar .form-group {
-    gap: 1rem;
+  /* Compact date picker */
+  .q-input--dense {
+    font-size: 12px !important;
   }
 
-  .form-label {
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    text-transform: none;
-    letter-spacing: normal;
-  }
-
-  .form-input {
-    font-size: 16px;
-    padding: 0.75rem;
-  }
-
-  .form-input-title {
-    font-size: 1.125rem;
-  }
-
-  .modal-actions {
-    padding: 1rem;
-    gap: 0.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-  }
-
-  .modal-button-primary {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .modal-button-secondary {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .modal-button-danger {
-    grid-column: 1 / -1;
-    grid-row: 2;
+  .modal-content {
+    max-height: 75vh;
   }
 }
 </style>

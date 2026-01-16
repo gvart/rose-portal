@@ -1,44 +1,68 @@
 <template>
-  <div class="dish-detail-card">
-    <div class="dish-header">
+  <q-card class="dish-detail-card">
+    <q-card-section class="dish-header">
       <div class="header-main">
         <h3 class="dish-name">{{ dish.name }}</h3>
         <div class="dish-meta">
-          <span v-if="dish.type" class="meta-badge meal-type">{{ formatMealType(dish.type) }}</span>
-          <span class="meta-badge prep-time">{{ dish.preparationTime }} min</span>
+          <q-chip
+            v-if="dish.type"
+            dense
+            color="positive"
+            text-color="white"
+            :label="formatMealType(dish.type)"
+            class="meal-type"
+          />
+          <q-chip
+            dense
+            color="info"
+            text-color="white"
+            :label="`${dish.preparationTime} min`"
+            class="prep-time"
+          />
         </div>
       </div>
       <p class="dish-description">{{ dish.description }}</p>
-    </div>
+    </q-card-section>
 
-    <div v-if="dish.attributes && dish.attributes.length > 0" class="attributes-section">
+    <q-separator v-if="dish.attributes && dish.attributes.length > 0" />
+
+    <q-card-section v-if="dish.attributes && dish.attributes.length > 0" class="attributes-section">
       <h4 class="section-label">Attributes</h4>
       <div class="attributes-tags">
-        <span
+        <q-chip
           v-for="attribute in dish.attributes"
           :key="attribute"
-          class="attribute-tag"
-        >
-          {{ formatAttribute(attribute) }}
-        </span>
+          dense
+          color="grey-3"
+          text-color="grey-7"
+          :label="formatAttribute(attribute)"
+        />
       </div>
-    </div>
+    </q-card-section>
 
-    <div v-if="dish.ingredients.length > 0" class="ingredients-section">
+    <q-separator v-if="dish.ingredients.length > 0" />
+
+    <q-card-section v-if="dish.ingredients.length > 0" class="ingredients-section">
       <h4 class="section-label">Ingredients</h4>
-      <ul class="ingredients-list">
-        <li
+      <q-list dense class="ingredients-list">
+        <q-item
           v-for="(ingredient, index) in dish.ingredients"
           :key="index"
           class="ingredient-item"
         >
-          <span class="ingredient-quantity">{{ ingredient.quantity }}</span>
-          <span class="ingredient-unit">{{ formatUnit(ingredient.unitType) }}</span>
-          <span class="ingredient-name">{{ ingredient.name }}</span>
-        </li>
-      </ul>
-    </div>
-  </div>
+          <q-item-section side class="ingredient-quantity">
+            {{ ingredient.quantity }}
+          </q-item-section>
+          <q-item-section side class="ingredient-unit">
+            {{ formatUnit(ingredient.unitType) }}
+          </q-item-section>
+          <q-item-section class="ingredient-name">
+            {{ ingredient.name }}
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -67,21 +91,14 @@ function formatUnit(unitType: string): string {
 
 <style scoped>
 .dish-detail-card {
-  background: var(--color-bg-primary);
   border: 2px solid var(--color-success-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
 }
 
 .dish-header {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--color-border-primary);
 }
 
 .header-main {
@@ -102,21 +119,7 @@ function formatUnit(unitType: string): string {
   flex-wrap: wrap;
 }
 
-.meta-badge {
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-semibold);
-}
-
-.meal-type {
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
-}
-
-.prep-time {
-  background: var(--color-info-bg);
-  color: var(--color-info-text);
+.prep-time:deep(.q-chip__content) {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
@@ -127,18 +130,13 @@ function formatUnit(unitType: string): string {
   line-height: 1.6;
 }
 
-.attributes-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
 .section-label {
   font-size: var(--font-size-12);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
+  margin-bottom: var(--space-2);
 }
 
 .attributes-tags {
@@ -147,32 +145,12 @@ function formatUnit(unitType: string): string {
   gap: var(--space-2);
 }
 
-.attribute-tag {
-  padding: var(--space-1) var(--space-3);
-  background: var(--color-bg-secondary);
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-14);
-  font-weight: var(--font-weight-medium);
-}
-
-.ingredients-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
 .ingredients-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  padding: 0;
 }
 
 .ingredient-item {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  font-size: var(--font-size-16);
+  padding: var(--space-1) 0;
 }
 
 .ingredient-quantity {

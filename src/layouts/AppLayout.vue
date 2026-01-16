@@ -1,29 +1,40 @@
 <template>
-  <div class="app-layout" :style="{ '--theme-color': themeColor }">
-    <!-- App Header -->
-    <header class="app-header">
-      <div class="header-content">
-        <BackButton @click="goBack" />
-        <h1 class="app-title">{{ title }}</h1>
-        <div class="spacer"></div>
-      </div>
+  <q-layout view="hHh lpR fFf" :style="{ '--theme-color': themeColor }">
+    <q-header bordered class="bg-white text-dark">
+      <q-toolbar>
+        <q-btn
+          flat
+          dense
+          round
+          icon="chevron_left"
+          @click="goBack"
+          aria-label="Go back"
+          color="grey-8"
+        />
+        <q-toolbar-title class="text-center text-weight-medium">
+          {{ title }}
+        </q-toolbar-title>
+        <q-btn flat dense round icon="chevron_left" class="invisible" />
+      </q-toolbar>
       <div class="header-accent"></div>
-    </header>
+    </q-header>
 
-    <!-- Main Content -->
-    <main ref="contentRef" class="app-content">
-      <slot />
-    </main>
+    <q-page-container>
+      <q-page class="app-content">
+        <div ref="contentRef" class="page-wrapper">
+          <slot />
+        </div>
+      </q-page>
+    </q-page-container>
 
     <!-- Swipe gesture indicator -->
     <SwipeIndicator :progress="swipeProgress" :distance="swipeDistance" />
-  </div>
+  </q-layout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import BackButton from '@/components/common/BackButton.vue'
 import SwipeIndicator from '@/components/common/SwipeIndicator.vue'
 import { useSwipeGesture } from '@/composables/useSwipeGesture'
 
@@ -34,11 +45,14 @@ defineProps<{
 
 const router = useRouter()
 const goBack = () => {
+  console.log('Back button clicked') // Debug log
   // Use browser history to go back
   if (window.history.length > 1) {
+    console.log('Going back in history')
     router.back()
   } else {
     // Fallback to home if no history
+    console.log('Navigating to home')
     router.push('/')
   }
 }
@@ -57,48 +71,6 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
 </script>
 
 <style scoped>
-.app-layout {
-  background: var(--color-bg-secondary);
-  padding-top: var(--safe-top);
-  padding-bottom: var(--safe-bottom);
-  min-height: 100vh;
-}
-
-.app-header {
-  position: fixed;
-  top: var(--safe-top);
-  left: 0;
-  right: 0;
-  z-index: 100;
-  overflow: hidden;
-
-  /* Borders-only depth strategy */
-  background: var(--color-bg-primary);
-  border-bottom: var(--depth-2-border);
-
-  transition: all var(--duration-normal) var(--ease-in-out);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  padding: var(--space-4);
-  gap: var(--space-3);
-}
-
-.app-title {
-  flex: 1;
-  text-align: center;
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-}
-
-.spacer {
-  width: var(--space-11);
-}
-
 .header-accent {
   height: 4px;
   background: var(--theme-color);
@@ -106,8 +78,22 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
 }
 
 .app-content {
+  background: var(--color-bg-secondary);
+}
+
+.page-wrapper {
   padding: var(--space-5);
-  padding-top: calc(68px + var(--space-6));
-  padding-bottom: calc(var(--space-5) + var(--safe-bottom));
+  min-height: 100%;
+  width: 100%;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+/* Ensure toolbar buttons are properly sized and clickable */
+:deep(.q-toolbar .q-btn) {
+  min-width: 40px;
+  min-height: 40px;
 }
 </style>

@@ -1,59 +1,60 @@
 <template>
-  <div class="recipe-form-card">
-    <h2 class="form-title">What would you like to cook?</h2>
+  <q-card class="recipe-form-card">
+    <q-card-section>
+      <div class="text-h4 text-weight-bold q-mb-md">What would you like to cook?</div>
 
-    <form @submit.prevent="submit" class="form-content">
-      <div class="form-group">
-        <label for="dish" class="form-label">Dish Name</label>
-        <div class="input-wrapper">
-          <input
-            id="dish"
+      <form @submit.prevent="submit" class="form-content">
+        <div class="form-group">
+          <label class="form-label">Dish Name</label>
+          <q-input
             v-model="dishName"
             type="text"
-            class="form-input"
+            outlined
             placeholder="e.g., Spaghetti Carbonara"
-            required
             autofocus
-          />
-          <MicrophoneButton
-            ref="dishNameMic"
-            v-model="dishName"
-            inputType="input"
-            @error="handleMicError"
-            class="mic-inside-input"
-          />
+          >
+            <template v-slot:append>
+              <MicrophoneButton
+                ref="dishNameMic"
+                v-model="dishName"
+                inputType="input"
+                @error="handleMicError"
+              />
+            </template>
+          </q-input>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="question" class="form-label">Question</label>
-        <div class="input-wrapper">
-          <textarea
-            id="question"
+        <div class="form-group">
+          <label class="form-label">Question</label>
+          <q-input
             v-model="question"
-            class="form-textarea"
-            rows="4"
-            required
-          ></textarea>
-          <MicrophoneButton
-            ref="questionMic"
-            v-model="question"
-            inputType="textarea"
-            @error="handleMicError"
-            class="mic-inside-input"
-          />
+            type="textarea"
+            outlined
+            :input-style="{ minHeight: '100px' }"
+          >
+            <template v-slot:append>
+              <MicrophoneButton
+                ref="questionMic"
+                v-model="question"
+                inputType="textarea"
+                @error="handleMicError"
+              />
+            </template>
+          </q-input>
         </div>
-      </div>
 
-      <button
-        type="submit"
-        class="submit-button"
-        :disabled="!dishName.trim() || !question.trim()"
-      >
-        Find Recipe
-      </button>
-    </form>
-  </div>
+        <q-btn
+          type="submit"
+          label="Find Recipe"
+          color="positive"
+          unelevated
+          size="lg"
+          :disable="!dishName.trim() || !question.trim()"
+          class="full-width"
+        />
+      </form>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -86,18 +87,7 @@ function handleMicError(message: string) {
 .recipe-form-card {
   max-width: 42rem;
   margin: 0 auto;
-  background: var(--color-bg-primary);
-  border: var(--depth-1-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-8);
   margin-top: var(--space-8);
-}
-
-.form-title {
-  font-size: var(--font-size-32);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-6);
 }
 
 .form-content {
@@ -117,54 +107,5 @@ function handleMicError(message: string) {
   font-size: var(--font-size-18);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
-}
-
-.input-wrapper {
-  position: relative;
-}
-
-.form-input, .form-textarea {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-18);
-  border: 2px solid var(--color-border-secondary);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  outline: none;
-  padding-right: 52px;
-}
-
-.form-input:focus, .form-textarea:focus {
-  border-color: var(--color-success-solid);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-.mic-inside-input {
-  position: absolute;
-  top: 50%;
-  right: var(--space-2);
-  transform: translateY(-50%);
-}
-
-.submit-button {
-  width: 100%;
-  padding: var(--space-4);
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-bold);
-  color: white;
-  background: var(--color-success-solid);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 44px;
-}
-
-.submit-button:active:not(:disabled) {
-  transform: scale(0.98);
-  background: #059669;
-}
-
-.submit-button:disabled {
-  background: var(--color-border-secondary);
-  cursor: not-allowed;
 }
 </style>

@@ -7,82 +7,48 @@
     @touchcancel="handleTouchCancel"
     @click="handleClick"
   >
-    <div
+    <q-card
       :class="['chore-card', { 'chore-card-long-press': isLongPressing }]"
       :style="{ '--priority-color': priorityColor }"
     >
-      <!-- Title and Priority -->
-      <div class="chore-card-header">
-        <h3 class="chore-card-title">{{ chore.title }}</h3>
-        <PriorityBadge :priority="chore.priority" size="sm" />
-      </div>
-
-      <!-- Description with Markdown -->
-      <MarkdownRenderer
-        v-if="chore.description"
-        class="chore-card-description"
-        :markdown="chore.description"
-        :max-lines="2"
-      />
-
-      <!-- Due Date with Visual Warnings -->
-      <div class="chore-card-meta">
-        <div v-if="overdueStatus" :class="['chore-card-due', overdueStatus.class]">
-          <svg
-            class="chore-card-icon"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>{{ overdueStatus.text }}</span>
+      <q-card-section>
+        <!-- Title and Priority -->
+        <div class="chore-card-header">
+          <h3 class="chore-card-title">{{ chore.title }}</h3>
+          <PriorityBadge :priority="chore.priority" size="sm" />
         </div>
 
-        <!-- Assigned User -->
-        <div class="chore-card-assignee">
-          <svg
-            class="chore-card-icon"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-          <span>{{ chore.assignedTo?.username || 'Unassigned' }}</span>
-        </div>
-      </div>
+        <!-- Description with Markdown -->
+        <MarkdownRenderer
+          v-if="chore.description"
+          class="chore-card-description"
+          :markdown="chore.description"
+          :max-lines="2"
+        />
 
-      <!-- Completion Info (DONE only) -->
-      <div v-if="chore.completedAt && chore.completedBy" class="chore-card-completion">
-        <svg
-          class="chore-card-icon"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span>
-          Completed by {{ chore.completedBy.username }} on {{ formatCompletedDate }}
-        </span>
-      </div>
-    </div>
+        <!-- Due Date with Visual Warnings -->
+        <div class="chore-card-meta">
+          <div v-if="overdueStatus" :class="['chore-card-due', overdueStatus.class]">
+            <q-icon name="schedule" size="16px" />
+            <span>{{ overdueStatus.text }}</span>
+          </div>
+
+          <!-- Assigned User -->
+          <div class="chore-card-assignee">
+            <q-icon name="person" size="16px" />
+            <span>{{ chore.assignedTo?.username || 'Unassigned' }}</span>
+          </div>
+        </div>
+
+        <!-- Completion Info (DONE only) -->
+        <div v-if="chore.completedAt && chore.completedBy" class="chore-card-completion">
+          <q-icon name="check_circle" size="16px" />
+          <span>
+            Completed by {{ chore.completedBy.username }} on {{ formatCompletedDate }}
+          </span>
+        </div>
+      </q-card-section>
+    </q-card>
   </div>
 </template>
 
@@ -92,7 +58,6 @@ import PriorityBadge from './PriorityBadge.vue'
 import MarkdownRenderer from './MarkdownRenderer.vue'
 import type { Chore } from '../types/chores'
 import { isOverdue, isDueSoon, formatDueDate, ChoreStatus, PRIORITY_CONFIGS } from '../types/chores'
-import { useHapticFeedback } from '@/composables/useHapticFeedback'
 
 interface Props {
   chore: Chore
@@ -106,7 +71,6 @@ const emit = defineEmits<{
   'long-press': []
 }>()
 
-const { vibrate } = useHapticFeedback()
 
 const isLongPressing = ref(false)
 let longPressTimer: NodeJS.Timeout | null = null
@@ -162,7 +126,6 @@ function handleTouchStart(event: TouchEvent): void {
   // Start long press timer
   longPressTimer = setTimeout(() => {
     isLongPressing.value = true
-    vibrate('medium')
     emit('long-press')
   }, LONG_PRESS_DURATION)
 }
@@ -219,17 +182,10 @@ function handleClick(): void {
 }
 
 .chore-card {
-  background: white;
-  border: 1px solid #e5e7eb;
   border-left: 4px solid var(--priority-color);
-  border-radius: 0.5rem;
-  padding: 1rem;
   position: relative;
-  transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease, transform 150ms ease;
   will-change: transform;
-  max-width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
 }
 
 .chore-card:active {
@@ -282,12 +238,6 @@ function handleClick(): void {
   font-size: 0.875rem;
 }
 
-.chore-card-icon {
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
-}
-
 .chore-card-due-overdue {
   color: #dc2626;
   font-weight: 600;
@@ -338,7 +288,6 @@ function handleClick(): void {
   }
 
   .chore-card {
-    padding: 0.875rem;
     cursor: pointer;
   }
 }

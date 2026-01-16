@@ -1,15 +1,7 @@
 <template>
   <div class="location-selector">
     <div class="location-display">
-      <svg class="location-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path
-          d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <circle cx="12" cy="10" r="3" stroke-width="2" />
-      </svg>
+      <q-icon name="location_on" color="info" size="20px" class="location-icon" />
       <div class="location-info">
         <div v-if="location" class="location-coords">
           {{ location.latitude.toFixed(4) }}°, {{ location.longitude.toFixed(4) }}°
@@ -17,28 +9,17 @@
         <div v-else class="location-placeholder">No location</div>
       </div>
     </div>
-    <button
-      v-haptic:light
+    <q-btn
+      icon="refresh"
+      flat
+      round
+      dense
+      color="info"
       @click="$emit('refresh')"
-      class="refresh-btn"
-      :disabled="loading"
+      :loading="loading"
+      :disable="loading"
       aria-label="Refresh location"
-    >
-      <svg
-        class="refresh-icon"
-        :class="{ 'animate-spin': loading }"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-      >
-        <path
-          d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
+    />
   </div>
 </template>
 
@@ -76,13 +57,6 @@ defineEmits<{
   min-width: 0;
 }
 
-.location-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-info-solid);
-  flex-shrink: 0;
-}
-
 .location-info {
   display: flex;
   flex-direction: column;
@@ -103,42 +77,5 @@ defineEmits<{
 .location-placeholder {
   font-size: var(--font-size-13);
   color: var(--color-text-muted);
-}
-
-.refresh-btn {
-  padding: var(--space-2);
-  color: var(--color-info-solid);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-}
-
-.refresh-btn:active:not(:disabled) {
-  background: var(--color-info-bg);
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.refresh-icon {
-  width: 20px;
-  height: 20px;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 </style>

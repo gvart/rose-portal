@@ -1,8 +1,15 @@
 <template>
-  <button v-haptic class="dish-card" @click="$emit('click')">
-    <h3 class="dish-name">{{ dishName }}</h3>
-    <p class="dish-description">{{ description }}</p>
-  </button>
+  <q-card
+    class="dish-card"
+    @click="$emit('click')"
+    clickable
+    v-ripple
+  >
+    <q-card-section>
+      <h3 class="dish-name">{{ dishName }}</h3>
+      <p class="dish-description">{{ description }}</p>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -18,20 +25,13 @@ defineEmits<{
 
 <style scoped>
 .dish-card {
-  background: var(--color-bg-primary);
-  border: var(--depth-1-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
-  cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  text-align: left;
   border-left: 4px solid var(--color-success-solid);
   min-height: 120px;
+  transition: transform var(--duration-fast) var(--ease-in-out);
 }
 
 .dish-card:active {
   transform: scale(0.96);
-  border-color: var(--color-border-secondary);
 }
 
 .dish-name {

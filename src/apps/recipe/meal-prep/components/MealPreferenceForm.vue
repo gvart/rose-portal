@@ -2,21 +2,22 @@
   <div class="meal-preference-form">
     <!-- User Input (Optional) -->
     <div class="user-input-section">
-      <div class="input-wrapper">
-        <textarea
-          v-model="localUserInput"
-          placeholder="Additional notes (optional): dietary restrictions, preferences, etc..."
-          class="user-input"
-          rows="2"
-        />
-        <MicrophoneButton
-          ref="userInputMic"
-          v-model="localUserInput"
-          inputType="textarea"
-          @error="handleMicError"
-          class="mic-inside-input"
-        />
-      </div>
+      <q-input
+        v-model="localUserInput"
+        type="textarea"
+        outlined
+        placeholder="Additional notes (optional): dietary restrictions, preferences, etc..."
+        rows="2"
+      >
+        <template v-slot:append>
+          <MicrophoneButton
+            ref="userInputMic"
+            v-model="localUserInput"
+            inputType="textarea"
+            @error="handleMicError"
+          />
+        </template>
+      </q-input>
     </div>
 
     <!-- Meal Preferences -->
@@ -47,25 +48,22 @@
               </span>
             </div>
             <div class="header-right">
-              <button
+              <q-btn
                 v-if="mealPreferences.length > 1"
+                icon="close"
+                flat
+                round
+                dense
+                color="negative"
                 @click.stop="removePreference(index)"
-                class="remove-button"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="remove-icon">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
+                size="sm"
+              />
+              <q-icon
+                name="expand_more"
+                color="grey-7"
+                size="20px"
                 :class="['expand-icon', { rotated: expandedIndex === index }]"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-              </svg>
+              />
             </div>
           </button>
 
@@ -79,23 +77,27 @@
         </div>
       </div>
 
-      <button @click="addPreference" class="add-button">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="add-icon">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-        Add Dish
-      </button>
+      <q-btn
+        label="Add Dish"
+        icon="add"
+        color="positive"
+        outline
+        @click="addPreference"
+        class="full-width"
+      />
     </div>
 
     <!-- Submit Button -->
     <div class="submit-section">
-      <button
+      <q-btn
+        label="Generate Plan"
+        color="positive"
+        unelevated
+        size="lg"
         @click="handleSubmit"
-        :disabled="!isValid"
-        class="submit-button"
-      >
-        Generate Plan
-      </button>
+        :disable="!isValid"
+        class="full-width"
+      />
       <p v-if="validationError" class="error-message">{{ validationError }}</p>
     </div>
   </div>
@@ -210,38 +212,6 @@ function handleMicError(message: string) {
   gap: var(--space-6);
 }
 
-.user-input-section {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-wrapper {
-  position: relative;
-}
-
-.user-input {
-  width: 100%;
-  padding: var(--space-2) var(--space-4);
-  padding-right: 52px;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--color-border-primary);
-  font-size: var(--font-size-14);
-  color: var(--color-text-primary);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  resize: none;
-}
-
-.user-input:focus {
-  outline: none;
-  border-color: var(--color-success-solid);
-}
-
-.mic-inside-input {
-  position: absolute;
-  top: 50%;
-  right: var(--space-2);
-  transform: translateY(-50%);
-}
 
 .preferences-section {
   display: flex;
@@ -363,28 +333,7 @@ function handleMicError(message: string) {
   gap: var(--space-2);
 }
 
-.remove-button {
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
-  color: var(--color-error-solid);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 40px;
-  min-width: 40px;
-}
-
-.remove-button:active {
-  background: var(--color-error-bg);
-}
-
-.remove-icon {
-  width: 16px;
-  height: 16px;
-}
-
 .expand-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-text-secondary);
   transition: transform var(--duration-fast) var(--ease-in-out);
 }
 
@@ -400,57 +349,11 @@ function handleMicError(message: string) {
   padding-top: 0;
 }
 
-.add-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
-  font-weight: var(--font-weight-semibold);
-  border-radius: var(--radius-md);
-  border: 2px solid var(--color-success-border);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 52px;
-}
-
-.add-button:active {
-  background: var(--color-success-border);
-}
-
-.add-icon {
-  width: 20px;
-  height: 20px;
-}
-
 .submit-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   margin-top: var(--space-2);
-}
-
-.submit-button {
-  width: 100%;
-  padding: var(--space-3) var(--space-6);
-  background: var(--color-success-solid);
-  color: white;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-18);
-  border-radius: var(--radius-md);
-  transition: all var(--duration-fast) var(--ease-in-out);
-  min-height: 52px;
-}
-
-.submit-button:active:not(:disabled) {
-  transform: scale(0.98);
-  background: #059669;
-}
-
-.submit-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .error-message {

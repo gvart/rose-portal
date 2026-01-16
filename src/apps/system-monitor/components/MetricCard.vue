@@ -1,13 +1,15 @@
 <template>
-  <div class="metric-card">
-    <div class="metric-header">
-      <h3 class="metric-title">{{ title }}</h3>
-      <div v-if="icon" class="metric-icon" v-html="icon"></div>
-    </div>
-    <div class="metric-content">
-      <slot />
-    </div>
-  </div>
+  <q-card class="metric-card">
+    <q-card-section>
+      <div class="metric-header">
+        <h3 class="metric-title">{{ title }}</h3>
+        <div v-if="icon" class="metric-icon" v-html="icon"></div>
+      </div>
+      <div class="metric-content">
+        <slot />
+      </div>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -19,10 +21,6 @@ defineProps<{
 
 <style scoped>
 .metric-card {
-  background: var(--color-bg-primary);
-  border: var(--depth-1-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-6);
   border-left: 4px solid var(--color-info-solid);
   min-height: 150px;
 }

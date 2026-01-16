@@ -4,18 +4,17 @@
       <div
         v-if="show"
         ref="keyboardContainer"
-        class="floating-keyboard"
-        :style="{ left: `${position.x}px`, top: `${position.y}px` }"
+        :class="[docked ? 'docked-keyboard' : 'floating-keyboard']"
+        :style="!docked ? { left: `${position.x}px`, top: `${position.y}px` } : {}"
       >
         <div
+          v-if="!docked"
           class="keyboard-header"
           @mousedown="startDrag"
           @touchstart="startDrag"
         >
           <div class="keyboard-drag-handle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
-            </svg>
+            <q-icon name="drag_indicator" size="20px" />
             <span>Keyboard</span>
           </div>
           <button
@@ -24,9 +23,7 @@
             @click="close"
             @touchend.prevent="close"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <q-icon name="close" size="20px" />
           </button>
         </div>
         <div class="keyboard-body">
@@ -45,9 +42,12 @@ import 'simple-keyboard/build/css/index.css'
 interface Props {
   show: boolean
   modelValue: string
+  docked?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  docked: false
+})
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'update:show': [value: boolean]
@@ -189,6 +189,13 @@ onUnmounted(() => {
   border: 2px solid #e5e7eb;
 }
 
+.docked-keyboard {
+  @apply fixed bottom-0 left-0 right-0 z-[9999] bg-white border-t-2 border-gray-300;
+  height: 33vh;
+  max-height: 400px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+}
+
 .keyboard-header {
   @apply flex items-center justify-between px-4 py-3 bg-gray-100 rounded-t-lg cursor-move select-none;
   touch-action: none;
@@ -207,6 +214,14 @@ onUnmounted(() => {
   @apply p-3;
 }
 
+.docked-keyboard .keyboard-body {
+  @apply p-4;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .keyboard-enter-active,
 .keyboard-leave-active {
   transition: all 0.3s ease;
@@ -218,10 +233,23 @@ onUnmounted(() => {
   transform: translateY(20px);
 }
 
+/* Docked keyboard animations */
+.docked-keyboard.keyboard-enter-from,
+.docked-keyboard.keyboard-leave-to {
+  transform: translateY(100%);
+  opacity: 1;
+}
+
+.docked-keyboard.keyboard-enter-active,
+.docked-keyboard.keyboard-leave-active {
+  transition: transform 0.3s ease-out;
+}
+
 /* Simple keyboard customization */
 :deep(.simple-keyboard) {
   background-color: transparent;
   font-family: inherit;
+  max-width: 100%;
 }
 
 :deep(.hg-button) {
@@ -234,6 +262,13 @@ onUnmounted(() => {
   font-weight: 500;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Larger buttons for docked mode (touchscreen) */
+.docked-keyboard :deep(.hg-button) {
+  height: 56px;
+  font-size: 18px;
+  border-radius: 8px;
 }
 
 :deep(.hg-button:active) {

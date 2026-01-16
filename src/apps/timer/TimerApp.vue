@@ -4,7 +4,7 @@
       <!-- Header with Create Button -->
       <div class="app-header">
         <h2 class="header-title">My Timers</h2>
-        <button v-haptic @click="store.openCreateModal()" class="create-btn">
+        <button @click="store.openCreateModal()" class="create-btn">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -81,7 +81,7 @@
         </svg>
         <p class="empty-text">No timers yet</p>
         <p class="empty-subtext">Create your first timer to get started</p>
-        <button v-haptic @click="store.openCreateModal()" class="empty-cta">
+        <button @click="store.openCreateModal()" class="empty-cta">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>

@@ -1,11 +1,11 @@
 <template>
-  <span
-    class="tag-chip"
-    :class="{ 'tag-chip--filled': filled }"
+  <q-chip
+    :label="tag.name"
+    :outline="!filled"
     :style="chipStyles"
-  >
-    {{ tag.name }}
-  </span>
+    size="sm"
+    dense
+  />
 </template>
 
 <script setup lang="ts">
@@ -21,8 +21,7 @@ const chipStyles = computed(() => {
   if (props.filled) {
     return {
       backgroundColor: props.tag.color,
-      color: 'white',
-      borderColor: props.tag.color
+      color: 'white'
     }
   }
   return {
@@ -32,29 +31,3 @@ const chipStyles = computed(() => {
   }
 })
 </script>
-
-<style scoped>
-.tag-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.tag-chip--filled {
-  opacity: 0.9;
-  font-weight: 500;
-  border: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tag-chip {
-    transition: none !important;
-  }
-}
-</style>

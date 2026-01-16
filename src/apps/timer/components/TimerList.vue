@@ -1,18 +1,12 @@
 <template>
   <div class="timer-list">
     <!-- Empty State -->
-    <div v-if="timers.length === 0" class="empty-state">
-      <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <p class="empty-text">No timers yet</p>
-      <p class="empty-subtext">Create a timer to get started</p>
-    </div>
+    <EmptyState
+      v-if="timers.length === 0"
+      icon="timer"
+      title="No timers yet"
+      description="Create a timer to get started"
+    />
 
     <!-- Timer Cards -->
     <div v-else class="timer-grid">
@@ -31,6 +25,7 @@
 
 <script setup lang="ts">
 import TimerCard from './TimerCard.vue'
+import EmptyState from '@/components/feedback/EmptyState.vue'
 import type { Timer } from '../types/timer'
 import { useTimerStore } from '../stores/timerStore'
 
@@ -69,36 +64,6 @@ function handleDelete(id: string) {
   width: 100%;
 }
 
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-16) var(--space-4);
-}
-
-.empty-icon {
-  width: 96px;
-  height: 96px;
-  color: var(--color-border-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.empty-text {
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.empty-subtext {
-  font-size: var(--font-size-13);
-  color: var(--color-text-muted);
-}
-
-/* Timer Grid */
 .timer-grid {
   display: grid;
   grid-template-columns: 1fr;

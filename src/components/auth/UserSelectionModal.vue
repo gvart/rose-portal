@@ -1,18 +1,14 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="show" class="modal-overlay">
-        <div class="modal-container">
-          <UserSelection
-            @select-user="handleSelectUser"
-            @new-user="handleNewUser"
-            @sign-in="handleSignIn"
-            @remove-user="handleRemoveUser"
-          />
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+  <q-dialog :model-value="show" @update:model-value="val => $emit('update:show', val)" persistent>
+    <q-card class="user-selection-card">
+      <UserSelection
+        @select-user="handleSelectUser"
+        @new-user="handleNewUser"
+        @sign-in="handleSignIn"
+        @remove-user="handleRemoveUser"
+      />
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -51,42 +47,8 @@ function handleRemoveUser(user: StoredUser): void {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: var(--space-4);
-}
-
-.modal-container {
-  width: 100%;
+.user-selection-card {
   max-width: 600px;
-  background: var(--color-bg-primary);
-  border-radius: var(--radius-lg);
-  border: var(--depth-3-border);
-  box-shadow: var(--depth-3-shadow);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity var(--duration-slow) var(--ease-in-out);
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.95) translateY(var(--space-4));
+  width: 100%;
 }
 </style>
