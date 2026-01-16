@@ -43,7 +43,7 @@
   }
 
   body {
-    background: var(--color-bg-secondary);
+    background: var(--color-bg-secondary) !important;
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     font-size: var(--font-size-14);
@@ -51,12 +51,17 @@
     overflow-y: auto;
   }
 
+  /* Ensure dark mode body background */
+  body.body--dark {
+    background: var(--color-bg-secondary) !important;
+  }
+
   /* Prevent Safari swipe navigation in PWA mode */
   @media (display-mode: standalone), (display-mode: fullscreen) {
     html,
     body {
       overscroll-behavior-x: none;
-      overscroll-behavior-y: auto; /* Preserve vertical scrolling */
+      overscroll-behavior-y: contain; /* Prevent over-scroll bounce */
     }
 
     body {

@@ -61,7 +61,7 @@
               <span>Edit</span>
             </button>
             <button
-              v-if="canEdit"
+              v-if="canDelete"
               class="context-menu-item context-menu-item--danger"
               @click="handleAction('delete')"
             >
@@ -91,6 +91,7 @@ interface Props {
   modelValue: boolean
   chore: Chore | null
   canEdit: boolean
+  canDelete: boolean
 }
 
 defineProps<Props>()

@@ -34,9 +34,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import SwipeIndicator from '@/components/common/SwipeIndicator.vue'
 import { useSwipeGesture } from '@/composables/useSwipeGesture'
+import { useNavigationHistory } from '@/composables/useNavigationHistory'
 
 defineProps<{
   title: string
@@ -44,16 +45,21 @@ defineProps<{
 }>()
 
 const router = useRouter()
+const route = useRoute()
+const { canGoBack, getParentRoute } = useNavigationHistory()
+
 const goBack = () => {
   console.log('Back button clicked') // Debug log
-  // Use browser history to go back
-  if (window.history.length > 1) {
+
+  // Try to use browser history first
+  if (canGoBack() && window.history.length > 1) {
     console.log('Going back in history')
     router.back()
   } else {
-    // Fallback to home if no history
-    console.log('Navigating to home')
-    router.push('/')
+    // Fallback to parent route based on current path
+    const fallbackRoute = getParentRoute(route.path)
+    console.log('Navigating to fallback route:', fallbackRoute)
+    router.push(fallbackRoute)
   }
 }
 
@@ -95,5 +101,20 @@ const { swipeProgress, swipeDistance } = useSwipeGesture(contentRef, {
 :deep(.q-toolbar .q-btn) {
   min-width: 40px;
   min-height: 40px;
+}
+
+/* Fix long text overflow in toolbar title (e.g., plant names) */
+:deep(.q-toolbar) {
+  gap: var(--space-2);
+}
+
+:deep(.q-toolbar-title) {
+  flex: 1;
+  min-width: 0; /* Allow flex item to shrink below content size */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-16);
 }
 </style>

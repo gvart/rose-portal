@@ -341,47 +341,72 @@ onUnmounted(() => {
   }
 }
 
-/* Mobile adjustments */
+/* Mobile adjustments - Compact 2-row layout */
 @media (max-width: 640px) {
   .calendar-header {
     flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-3);
+    gap: var(--space-2); /* Reduced from space-3 (12px) to space-2 (8px) */
+    padding: var(--space-2); /* Reduced from space-3 (12px) to space-2 (8px) */
   }
 
+  /* Row 1: Nav controls + Title */
   .nav-controls {
-    order: 2;
+    order: 1;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
   }
 
   .header-title {
     order: 1;
-    width: 100%;
-    font-size: var(--font-size-18);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size-16); /* Reduced from 18px to 16px */
     min-width: auto;
+    max-width: 50%;
+    text-align: center;
+    pointer-events: none;
   }
 
+  /* Row 2: View toggles + Create button (hide filter) */
   .header-actions {
-    order: 3;
+    order: 2;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
+  }
+
+  /* Hide filter on very small screens to save space */
+  .username-filter {
+    display: none;
+  }
+
+  /* Reduce button sizes */
+  .nav-btn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: var(--space-1);
   }
 
   .today-btn {
-    padding-left: var(--space-3);
-    padding-right: var(--space-3);
+    padding: var(--space-1) var(--space-2); /* Reduced padding */
     font-size: var(--font-size-14);
   }
 
   .view-btn {
-    padding: var(--space-1) var(--space-3);
-    font-size: var(--font-size-14);
+    padding: var(--space-1) var(--space-2); /* Reduced padding */
+    font-size: var(--font-size-13); /* Reduced from 14px to 13px */
+  }
+
+  /* Create button: hide text label, show only icon */
+  .create-btn .q-btn__content span {
+    display: none;
   }
 
   .create-btn {
-    padding-left: var(--space-3);
-    padding-right: var(--space-3);
+    padding: var(--space-2);
+    min-width: 40px; /* Ensure touch target */
   }
 }
 

@@ -101,6 +101,13 @@ router.beforeEach((to, from) => {
   }
 })
 
+// Track navigation history for PWA back button support
+import { useNavigationHistory } from '@/composables/useNavigationHistory'
+router.afterEach((to) => {
+  const { addToHistory } = useNavigationHistory()
+  addToHistory(to.path)
+})
+
 // Authentication guard
 router.beforeEach((to, from, next) => {
   // Handle install flow from query parameter

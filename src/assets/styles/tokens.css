@@ -158,6 +158,13 @@
   --duration-slow: 250ms;     /* Larger transitions */
 
   /* ========================================
+     DIALOG & MODAL
+     ======================================== */
+
+  /* Dialog backdrop color for light mode */
+  --backdrop-color: rgba(15, 23, 42, 0.3);
+
+  /* ========================================
      SAFE AREA INSETS (PWA Support)
      ======================================== */
 
@@ -218,6 +225,9 @@
   --color-accent-primary-hover: #3B82F6;
   --color-accent-primary-active: #2563EB;
 
+  /* Dialog backdrop color for dark mode */
+  --backdrop-color: rgba(0, 0, 0, 0.5);
+
   /* Depth backgrounds stay same structure, borders have opacity */
   --depth-1-border: 1px solid var(--color-border-primary);
   --depth-2-border: 1px solid var(--color-border-secondary);
@@ -270,6 +280,8 @@
     --color-accent-primary: #60A5FA;
     --color-accent-primary-hover: #3B82F6;
     --color-accent-primary-active: #2563EB;
+
+    --backdrop-color: rgba(0, 0, 0, 0.5);
 
     --depth-3-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     --depth-4-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);

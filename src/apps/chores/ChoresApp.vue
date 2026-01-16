@@ -48,7 +48,8 @@
       <ChoreContextMenu
         v-model="showContextMenu"
         :chore="selectedChoreForMenu"
-        :can-edit="canEditSelectedChoreForMenu"
+        :can-edit="true"
+        :can-delete="canEditSelectedChoreForMenu"
         @move-to-todo="handleMoveToStatus(ChoreStatus.TODO)"
         @move-to-in-progress="handleMoveToStatus(ChoreStatus.IN_PROGRESS)"
         @move-to-done="handleMoveToStatus(ChoreStatus.DONE)"

@@ -85,7 +85,7 @@
 .q-dialog__backdrop {
   // Subtle backdrop blur
   backdrop-filter: blur(4px);
-  background: rgba(15, 23, 42, 0.7) !important; // Dark with opacity
+  background: var(--backdrop-color) !important; // Theme-aware backdrop
 }
 
 .q-card {
