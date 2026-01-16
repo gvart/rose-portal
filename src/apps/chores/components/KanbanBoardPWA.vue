@@ -23,7 +23,7 @@
     />
 
     <!-- Swipeable Columns using QCarousel -->
-    <QCarousel
+    <q-carousel
       v-model="activeSlide"
       :swipeable="!isDragging"
       animated
@@ -36,18 +36,18 @@
       class="kanban-carousel"
     >
       <!-- TODO Slide -->
-      <QCarouselSlide name="TODO" class="kanban-slide">
+      <q-carousel-slide name="TODO" class="kanban-slide">
         <div class="kanban-column">
           <div class="kanban-column-header todo-header">
             <div class="kanban-column-title-row">
-              <QIcon name="list" size="20px" color="#6B7280" />
+              <q-icon name="list" size="20px" color="grey-7" />
               <h2 class="kanban-column-title">To Do</h2>
-              <QBadge :label="todoChores.length" color="grey-6" />
+              <q-badge :label="sortedTodoChores.length" color="grey-6" />
             </div>
           </div>
           <div class="kanban-column-content">
             <ChoreCardPWA
-              v-for="chore in todoChores"
+              v-for="chore in sortedTodoChores"
               :key="chore.id"
               :chore="chore"
               :can-edit="true"
@@ -56,28 +56,28 @@
               @drag-move="handleDragMove"
               @drag-end="handleDragEnd"
             />
-            <div v-if="todoChores.length === 0" class="kanban-empty">
-              <QIcon name="assignment" size="48px" color="#D1D5DB" />
+            <div v-if="sortedTodoChores.length === 0" class="kanban-empty">
+              <q-icon name="assignment" size="48px" color="grey-4" />
               <p class="kanban-empty-title">No tasks yet</p>
               <p class="kanban-empty-subtitle">Create a new task to get started</p>
             </div>
           </div>
         </div>
-      </QCarouselSlide>
+      </q-carousel-slide>
 
       <!-- IN_PROGRESS Slide -->
-      <QCarouselSlide name="IN_PROGRESS" class="kanban-slide">
+      <q-carousel-slide name="IN_PROGRESS" class="kanban-slide">
         <div class="kanban-column">
           <div class="kanban-column-header in-progress-header">
             <div class="kanban-column-title-row">
-              <QIcon name="play_arrow" size="20px" color="#3B82F6" />
+              <q-icon name="play_arrow" size="20px" color="blue" />
               <h2 class="kanban-column-title">In Progress</h2>
-              <QBadge :label="inProgressChores.length" color="blue" />
+              <q-badge :label="sortedInProgressChores.length" color="blue" />
             </div>
           </div>
           <div class="kanban-column-content">
             <ChoreCardPWA
-              v-for="chore in inProgressChores"
+              v-for="chore in sortedInProgressChores"
               :key="chore.id"
               :chore="chore"
               :can-edit="true"
@@ -86,28 +86,28 @@
               @drag-move="handleDragMove"
               @drag-end="handleDragEnd"
             />
-            <div v-if="inProgressChores.length === 0" class="kanban-empty">
-              <QIcon name="schedule" size="48px" color="#D1D5DB" />
+            <div v-if="sortedInProgressChores.length === 0" class="kanban-empty">
+              <q-icon name="schedule" size="48px" color="grey-4" />
               <p class="kanban-empty-title">Nothing in progress</p>
               <p class="kanban-empty-subtitle">Long-press a task and drag to edge to start</p>
             </div>
           </div>
         </div>
-      </QCarouselSlide>
+      </q-carousel-slide>
 
       <!-- DONE Slide -->
-      <QCarouselSlide name="DONE" class="kanban-slide">
+      <q-carousel-slide name="DONE" class="kanban-slide">
         <div class="kanban-column">
           <div class="kanban-column-header done-header">
             <div class="kanban-column-title-row">
-              <QIcon name="check_circle" size="20px" color="#10B981" />
+              <q-icon name="check_circle" size="20px" color="green" />
               <h2 class="kanban-column-title">Done</h2>
-              <QBadge :label="doneChores.length" color="green" />
+              <q-badge :label="sortedDoneChores.length" color="green" />
             </div>
           </div>
           <div class="kanban-column-content">
             <ChoreCardPWA
-              v-for="chore in doneChores"
+              v-for="chore in sortedDoneChores"
               :key="chore.id"
               :chore="chore"
               :can-edit="true"
@@ -116,24 +116,24 @@
               @drag-move="handleDragMove"
               @drag-end="handleDragEnd"
             />
-            <div v-if="doneChores.length === 0" class="kanban-empty">
-              <QIcon name="celebration" size="48px" color="#D1D5DB" />
+            <div v-if="sortedDoneChores.length === 0" class="kanban-empty">
+              <q-icon name="celebration" size="48px" color="grey-4" />
               <p class="kanban-empty-title">No completed tasks</p>
               <p class="kanban-empty-subtitle">Complete tasks to see them here</p>
             </div>
           </div>
         </div>
-      </QCarouselSlide>
-    </QCarousel>
+      </q-carousel-slide>
+    </q-carousel>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed } from 'vue';
 import ChoreCardPWA from './ChoreCardPWA.vue';
 import EdgeDropZone from './EdgeDropZone.vue';
 import type { Chore } from '../types/chores';
-import { ChoreStatus } from '../types/chores';
+import { ChoreStatus, ChorePriority } from '../types/chores';
 import { useHapticFeedback } from '@/composables/useHapticFeedback';
 import { useToast } from '@/composables/useToast';
 
@@ -152,6 +152,25 @@ const emit = defineEmits<{
 
 const { vibrate } = useHapticFeedback();
 const { success, error } = useToast();
+
+// Priority order for sorting (HIGH = 0, MEDIUM = 1, LOW = 2)
+const PRIORITY_ORDER: Record<ChorePriority, number> = {
+  [ChorePriority.HIGH]: 0,
+  [ChorePriority.MEDIUM]: 1,
+  [ChorePriority.LOW]: 2,
+};
+
+// Sort chores by priority (HIGH first)
+function sortByPriority(chores: Chore[]): Chore[] {
+  return [...chores].sort((a, b) => {
+    return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+  });
+}
+
+// Computed sorted chores
+const sortedTodoChores = computed(() => sortByPriority(props.todoChores));
+const sortedInProgressChores = computed(() => sortByPriority(props.inProgressChores));
+const sortedDoneChores = computed(() => sortByPriority(props.doneChores));
 
 // Active carousel slide
 const activeSlide = ref<'TODO' | 'IN_PROGRESS' | 'DONE'>('TODO');
