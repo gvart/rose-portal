@@ -1,75 +1,87 @@
 <template>
-  <div class="timer-card" :class="{ running: timer.status === 'running' }">
-    <!-- Timer Header -->
-    <div class="timer-header">
-      <div class="timer-info">
-        <h3 class="timer-name">{{ timer.name }}</h3>
-        <span class="timer-type-badge">{{ timerTypeLabel }}</span>
+  <q-card class="timer-card" :class="{ running: timer.status === 'running' }">
+    <q-card-section>
+      <!-- Timer Header -->
+      <div class="timer-header">
+        <div class="timer-info">
+          <h3 class="timer-name">{{ timer.name }}</h3>
+          <q-chip
+            dense
+            size="sm"
+            :label="timerTypeLabel"
+            color="grey-3"
+            text-color="grey-7"
+            class="timer-type-badge"
+          />
+        </div>
+        <q-btn
+          flat
+          dense
+          round
+          icon="close"
+          color="grey-5"
+          @click="$emit('delete', timer.id)"
+          aria-label="Delete timer"
+          class="delete-btn"
+        />
       </div>
-      <button @click="$emit('delete', timer.id)" class="delete-btn" aria-label="Delete timer">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
 
-    <!-- Timer Display -->
-    <div class="timer-display">
-      <span class="time-value">{{ formattedTime }}</span>
-      <span v-if="showRemaining" class="time-label">{{ timeLabel }}</span>
-    </div>
+      <!-- Timer Display -->
+      <div class="timer-display">
+        <span class="time-value">{{ formattedTime }}</span>
+        <span v-if="showRemaining" class="time-label">{{ timeLabel }}</span>
+      </div>
 
-    <!-- Pomodoro Phase Indicator -->
-    <div v-if="timer.type === 'pomodoro' && timer.pomodoroConfig" class="pomodoro-info">
-      <span class="phase-badge" :class="phaseClass">
-        {{ timer.pomodoroConfig.currentPhase === 'work' ? 'Work' : 'Break' }}
-      </span>
-      <span class="cycle-count">
-        Cycle {{ timer.pomodoroConfig.currentCycle }} / {{ timer.pomodoroConfig.cyclesUntilLongBreak }}
-      </span>
-    </div>
+      <!-- Pomodoro Phase Indicator -->
+      <div v-if="timer.type === 'pomodoro' && timer.pomodoroConfig" class="pomodoro-info">
+        <q-chip
+          dense
+          :color="timer.pomodoroConfig.currentPhase === 'work' ? 'negative' : 'positive'"
+          text-color="white"
+          :label="timer.pomodoroConfig.currentPhase === 'work' ? 'Work' : 'Break'"
+        />
+        <span class="cycle-count">
+          Cycle {{ timer.pomodoroConfig.currentCycle }} / {{ timer.pomodoroConfig.cyclesUntilLongBreak }}
+        </span>
+      </div>
 
-    <!-- Timer Controls -->
-    <div class="timer-controls">
-      <!-- Play/Pause Button -->
-      <button
-        v-if="timer.status === 'idle' || timer.status === 'paused'"
-       
-        @click="handleStart"
-        class="control-btn primary"
-      >
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-        <span>{{ timer.status === 'idle' ? 'Start' : 'Resume' }}</span>
-      </button>
+      <!-- Timer Controls -->
+      <div class="timer-controls">
+        <!-- Play/Pause Button -->
+        <q-btn
+          v-if="timer.status === 'idle' || timer.status === 'paused'"
+          unelevated
+          color="warning"
+          icon="play_arrow"
+          :label="timer.status === 'idle' ? 'Start' : 'Resume'"
+          @click="handleStart"
+          class="control-btn"
+        />
 
-      <button
-        v-if="timer.status === 'running'"
-       
-        @click="$emit('pause', timer.id)"
-        class="control-btn secondary"
-      >
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-        </svg>
-        <span>Pause</span>
-      </button>
+        <q-btn
+          v-if="timer.status === 'running'"
+          unelevated
+          color="grey-4"
+          text-color="grey-9"
+          icon="pause"
+          label="Pause"
+          @click="$emit('pause', timer.id)"
+          class="control-btn"
+        />
 
-      <!-- Stop Button -->
-      <button
-        v-if="timer.status !== 'idle'"
-       
-        @click="$emit('stop', timer.id)"
-        class="control-btn danger"
-      >
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M6 6h12v12H6z" />
-        </svg>
-        <span>Stop</span>
-      </button>
-    </div>
-  </div>
+        <!-- Stop Button -->
+        <q-btn
+          v-if="timer.status !== 'idle'"
+          flat
+          color="negative"
+          icon="stop"
+          label="Stop"
+          @click="$emit('stop', timer.id)"
+          class="control-btn"
+        />
+      </div>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -145,19 +157,18 @@ function handleStart() {
 
 <style scoped>
 .timer-card {
-  background: var(--color-bg-primary);
-  border-radius: var(--radius-md);
-  border: var(--depth-1-border);
-  padding: var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
   transition: all var(--duration-normal) var(--ease-in-out);
 }
 
 .timer-card.running {
   border-color: var(--color-warning-solid);
   box-shadow: 0 0 0 1px var(--color-warning-solid);
+}
+
+.timer-card:deep(.q-card__section) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 /* Header */
@@ -180,30 +191,8 @@ function handleStart() {
   color: var(--color-text-primary);
 }
 
-.timer-type-badge {
-  display: inline-block;
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--font-size-11);
-  font-weight: var(--font-weight-medium);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-  border-radius: var(--radius-full);
-}
-
-.delete-btn {
-  padding: var(--space-2);
-  color: var(--color-text-faint);
-  border-radius: var(--radius-md);
-  border: none;
-  background: transparent;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-}
-
 .delete-btn:active {
   transform: scale(0.96);
-  background: var(--color-error-bg);
-  color: var(--color-error-solid);
 }
 
 /* Timer Display */
@@ -237,22 +226,6 @@ function handleStart() {
   font-size: var(--font-size-13);
 }
 
-.phase-badge {
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  font-weight: var(--font-weight-medium);
-}
-
-.phase-work {
-  background: var(--color-error-bg);
-  color: var(--color-error-text);
-}
-
-.phase-break {
-  background: var(--color-success-bg);
-  color: var(--color-success-text);
-}
-
 .cycle-count {
   color: var(--color-text-secondary);
 }
@@ -264,44 +237,7 @@ function handleStart() {
   justify-content: center;
 }
 
-.control-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-14);
-  border: none;
-  transition: all var(--duration-fast) var(--ease-in-out);
-  cursor: pointer;
-}
-
 .control-btn:active {
   transform: scale(0.96);
-}
-
-.control-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.control-btn.primary {
-  background: var(--color-warning-solid);
-  color: white;
-}
-
-.control-btn.primary:active {
-  background: #d97706;
-}
-
-.control-btn.secondary {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.control-btn.danger {
-  background: var(--color-error-bg);
-  color: var(--color-error-text);
 }
 </style>
