@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.0](https://github.com/gvart/rose-portal/compare/v1.2.0...v1.3.0) (2026-01-17)
+
+
+### Features
+
+* **chores:** implement PWA kanban board with gesture-based drag-and-drop ([10caf39](https://github.com/gvart/rose-portal/commit/10caf39ab067c00b0b799fdff5bced8023150feb))
+* **chores:** restore swipeable columns layout for PWA kanban board ([#9](https://github.com/gvart/rose-portal/issues/9)) ([b9aab8d](https://github.com/gvart/rose-portal/commit/b9aab8d066e15260d417f9859b0a5d19b649f770))
+* **pwa:** add splash screen for PWA launch experience ([#8](https://github.com/gvart/rose-portal/issues/8)) ([d3f63df](https://github.com/gvart/rose-portal/commit/d3f63df7494c0ea889fcbdff8f5b563e8f29d847))
+
+
+### Bug Fixes
+
+* **chores:** fix PWA kanban carousel and add priority sorting ([#10](https://github.com/gvart/rose-portal/issues/10)) ([c4581b4](https://github.com/gvart/rose-portal/commit/c4581b490e6ce76ca98dfa0e13f8b69519d72ea0))
+* **chores:** fix PWA kanban swipe gestures and resolve technical debt ([9191ae2](https://github.com/gvart/rose-portal/commit/9191ae281e8ca74d14ff7d0cf0b1d5df3258249e))
+* **chores:** position carousel navigation dots below card content ([#11](https://github.com/gvart/rose-portal/issues/11)) ([578a7d8](https://github.com/gvart/rose-portal/commit/578a7d8398270d18441a7c713e9d92de24287dc1))
+* **pwa:** resolve theme, navigation, and layout issues ([3d5e898](https://github.com/gvart/rose-portal/commit/3d5e8986be119993a646c10f91f691be037f97e3))
+
 ## [1.2.0](https://github.com/gvart/rose-portal/compare/v1.1.0...v1.2.0) (2026-01-16)
 
 
