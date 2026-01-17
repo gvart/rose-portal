@@ -1,15 +1,31 @@
 <template>
   <div
     ref="cardRef"
-    :class="['chore-card-pwa-wrapper', { 'is-dragging': isDragging }]"
+    :class="['chore-card-pwa-wrapper', { 'is-dragging': isDragging, 'is-swiping': isSwipeMode }]"
     :style="cardStyle"
     @touchstart="handleTouchStart"
-    @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
     @touchcancel="handleTouchCancel"
   >
+    <!-- Swipe Indicator -->
+    <div
+      v-if="showSwipeIndicator && swipeDirection"
+      :class="['swipe-indicator', `swipe-indicator--${swipeDirection}`]"
+    >
+      <div class="swipe-indicator-content">
+        <q-icon
+          :name="getStatusIcon(getTargetStatus(swipeDirection) || ChoreStatus.TODO)"
+          size="24px"
+          class="swipe-indicator-icon"
+        />
+        <span class="swipe-indicator-label">
+          {{ getStatusLabel(getTargetStatus(swipeDirection) || ChoreStatus.TODO) }}
+        </span>
+      </div>
+    </div>
+
     <q-card
-      :class="['chore-card-pwa', { 'chore-card-pwa-dragging': isDragging }]"
+      :class="['chore-card-pwa', { 'chore-card-pwa-dragging': isDragging, 'chore-card-pwa-swiping': isSwipeMode }]"
       :style="{ '--priority-color': priorityColor }"
     >
       <q-card-section>
@@ -54,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import PriorityBadge from './PriorityBadge.vue';
 import MarkdownRenderer from './MarkdownRenderer.vue';
 import type { Chore } from '../types/chores';
@@ -73,6 +89,7 @@ const emit = defineEmits<{
   'drag-start': [choreId: number];
   'drag-move': [{ x: number; y: number; choreId: number }];
   'drag-end': [choreId: number];
+  'swipe-status-change': [choreId: number, targetStatus: ChoreStatus];
 }>();
 
 const { vibrate } = useHapticFeedback();
@@ -80,13 +97,20 @@ const { vibrate } = useHapticFeedback();
 const cardRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const dragPosition = ref({ x: 0, y: 0 });
+const swipeOffset = ref(0);
+const swipeDirection = ref<'left' | 'right' | null>(null);
+const showSwipeIndicator = ref(false);
 let longPressTimer: NodeJS.Timeout | null = null;
 let startX = 0;
 let startY = 0;
 let initialCardRect: DOMRect | null = null;
 const LONG_PRESS_DURATION = 500; // ms
 const MOVEMENT_THRESHOLD = 10; // px
+const SWIPE_THRESHOLD = 80; // px distance to trigger status change
+const SWIPE_ACTIVATION_THRESHOLD = 20; // px to show indicator
 let hasMoved = false;
+let isSwipeMode = false;
+let hasVibrated = false;
 
 // Priority color for left border
 const priorityColor = computed(() => {
@@ -128,31 +152,88 @@ const formatCompletedDate = computed(() => {
 });
 
 const cardStyle = computed(() => {
-  if (!isDragging.value) {
-    return {};
+  if (isDragging.value) {
+    return {
+      position: 'fixed' as const,
+      left: `${dragPosition.value.x}px`,
+      top: `${dragPosition.value.y}px`,
+      width: initialCardRect ? `${initialCardRect.width}px` : 'auto',
+      zIndex: 10000,
+      pointerEvents: 'none' as const,
+    };
   }
 
-  return {
-    position: 'fixed' as const,
-    left: `${dragPosition.value.x}px`,
-    top: `${dragPosition.value.y}px`,
-    width: initialCardRect ? `${initialCardRect.width}px` : 'auto',
-    zIndex: 10000,
-    pointerEvents: 'none' as const,
-  };
+  if (isSwipeMode && swipeOffset.value !== 0) {
+    return {
+      transform: `translateX(${swipeOffset.value}px)`,
+      transition: 'none',
+    };
+  }
+
+  return {};
 });
+
+// Get valid status transitions based on current status
+const validSwipeDirections = computed(() => {
+  const { status } = props.chore;
+  if (status === ChoreStatus.TODO) return ['right'];
+  if (status === ChoreStatus.IN_PROGRESS) return ['left', 'right'];
+  if (status === ChoreStatus.DONE) return ['left'];
+  return [];
+});
+
+// Get target status for swipe direction
+function getTargetStatus(direction: 'left' | 'right'): ChoreStatus | null {
+  const { status } = props.chore;
+
+  if (status === ChoreStatus.TODO && direction === 'right') {
+    return ChoreStatus.IN_PROGRESS;
+  }
+  if (status === ChoreStatus.IN_PROGRESS) {
+    return direction === 'left' ? ChoreStatus.TODO : ChoreStatus.DONE;
+  }
+  if (status === ChoreStatus.DONE && direction === 'left') {
+    return ChoreStatus.IN_PROGRESS;
+  }
+  return null;
+}
+
+// Get status label for display
+function getStatusLabel(status: ChoreStatus): string {
+  const labels: Record<ChoreStatus, string> = {
+    [ChoreStatus.TODO]: 'To Do',
+    [ChoreStatus.IN_PROGRESS]: 'In Progress',
+    [ChoreStatus.DONE]: 'Done',
+  };
+  return labels[status] || '';
+}
+
+// Get icon for status
+function getStatusIcon(status: ChoreStatus): string {
+  const icons: Record<ChoreStatus, string> = {
+    [ChoreStatus.TODO]: 'list',
+    [ChoreStatus.IN_PROGRESS]: 'play_arrow',
+    [ChoreStatus.DONE]: 'check_circle',
+  };
+  return icons[status] || 'arrow_forward';
+}
 
 function handleTouchStart(event: TouchEvent): void {
   const touch = event.touches[0];
   startX = touch.clientX;
   startY = touch.clientY;
   hasMoved = false;
+  isSwipeMode = false;
+  hasVibrated = false;
+  swipeOffset.value = 0;
+  swipeDirection.value = null;
+  showSwipeIndicator.value = false;
 
   if (cardRef.value) {
     initialCardRect = cardRef.value.getBoundingClientRect();
   }
 
-  // Start long press timer
+  // Start long press timer for drag mode
   longPressTimer = setTimeout(() => {
     activateDragMode(touch);
   }, LONG_PRESS_DURATION);
@@ -160,10 +241,12 @@ function handleTouchStart(event: TouchEvent): void {
 
 function handleTouchMove(event: TouchEvent): void {
   const touch = event.touches[0];
-  const deltaX = Math.abs(touch.clientX - startX);
-  const deltaY = Math.abs(touch.clientY - startY);
+  const deltaX = touch.clientX - startX;
+  const deltaY = touch.clientY - startY;
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
 
-  // If dragging, update position and emit event
+  // If dragging (legacy drag-to-edge mode), update position and emit event
   if (isDragging.value) {
     event.preventDefault(); // Prevent scrolling while dragging
 
@@ -182,17 +265,81 @@ function handleTouchMove(event: TouchEvent): void {
     return;
   }
 
+  // Detect swipe mode - horizontal swipe dominates vertical
+  if (absDeltaX > MOVEMENT_THRESHOLD && absDeltaX > absDeltaY * 1.5) {
+    hasMoved = true;
+    cancelLongPress();
+
+    const direction: 'left' | 'right' = deltaX < 0 ? 'left' : 'right';
+
+    // Check if this swipe direction is valid for current status
+    if (validSwipeDirections.value.includes(direction)) {
+      isSwipeMode = true;
+      swipeDirection.value = direction;
+
+      // Prevent default to stop scrolling/pull-to-refresh during swipe
+      event.preventDefault();
+
+      // Update swipe offset with elastic resistance
+      const maxSwipe = 120; // px
+      const resistance = 0.6; // resistance factor
+      let offset = deltaX * resistance;
+      offset = Math.max(-maxSwipe, Math.min(maxSwipe, offset));
+      swipeOffset.value = offset;
+
+      // Show indicator when swipe exceeds activation threshold
+      if (absDeltaX > SWIPE_ACTIVATION_THRESHOLD) {
+        showSwipeIndicator.value = true;
+
+        // Haptic feedback at threshold (debounced - only once per crossing)
+        if (absDeltaX >= SWIPE_THRESHOLD && !hasVibrated) {
+          vibrate('medium');
+          hasVibrated = true;
+        } else if (absDeltaX < SWIPE_THRESHOLD && hasVibrated) {
+          // Reset flag when user pulls back below threshold
+          // Allows re-trigger if they cross again
+          hasVibrated = false;
+        }
+      }
+    }
+    return;
+  }
+
   // Cancel long press if user moves finger too much before drag activates
-  if (deltaX > MOVEMENT_THRESHOLD || deltaY > MOVEMENT_THRESHOLD) {
+  if (absDeltaX > MOVEMENT_THRESHOLD || absDeltaY > MOVEMENT_THRESHOLD) {
     hasMoved = true;
     cancelLongPress();
   }
 }
 
 function handleTouchEnd(event: TouchEvent): void {
+  // Handle drag mode end (legacy)
   if (isDragging.value) {
     event.preventDefault();
     deactivateDragMode();
+    return;
+  }
+
+  // Handle swipe mode end
+  if (isSwipeMode && swipeDirection.value) {
+    const absDelta = Math.abs(swipeOffset.value / 0.6); // Undo resistance calculation
+
+    if (absDelta >= SWIPE_THRESHOLD) {
+      // Swipe threshold reached - trigger status change
+      const targetStatus = getTargetStatus(swipeDirection.value);
+
+      if (targetStatus) {
+        // Emit dedicated swipe status change event
+        emit('swipe-status-change', props.chore.id, targetStatus);
+        vibrate('heavy');
+      }
+    } else {
+      // Swipe cancelled - provide light feedback
+      vibrate('light');
+    }
+
+    // Reset swipe state with animation
+    resetSwipeState();
     return;
   }
 
@@ -208,7 +355,29 @@ function handleTouchCancel(): void {
   if (isDragging.value) {
     deactivateDragMode();
   }
+  if (isSwipeMode) {
+    resetSwipeState();
+  }
   cancelLongPress();
+}
+
+function resetSwipeState(): void {
+  // Add transition for smooth return
+  if (cardRef.value) {
+    cardRef.value.style.transition = 'transform 0.2s ease-out';
+  }
+
+  isSwipeMode = false;
+  swipeOffset.value = 0;
+  swipeDirection.value = null;
+  showSwipeIndicator.value = false;
+
+  // Remove transition after animation
+  setTimeout(() => {
+    if (cardRef.value) {
+      cardRef.value.style.transition = '';
+    }
+  }, 200);
 }
 
 function activateDragMode(touch: Touch): void {
@@ -241,6 +410,21 @@ function cancelLongPress(): void {
     longPressTimer = null;
   }
 }
+
+// Register touchmove with passive: false for proper preventDefault()
+onMounted(() => {
+  if (cardRef.value) {
+    cardRef.value.addEventListener('touchmove', handleTouchMove as EventListener, { passive: false });
+  }
+});
+
+// Cleanup on unmount to prevent memory leaks
+onBeforeUnmount(() => {
+  cancelLongPress();
+  if (cardRef.value) {
+    cardRef.value.removeEventListener('touchmove', handleTouchMove as EventListener);
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -250,11 +434,65 @@ function cancelLongPress(): void {
   user-select: none;
   -webkit-user-select: none;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   transition: opacity 0.15s ease;
 
   &.is-dragging {
     opacity: 0.9;
+  }
+
+  &.is-swiping {
+    overflow: visible;
+  }
+}
+
+// Swipe indicator
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: swipe-indicator-fade-in 0.2s ease;
+
+  &--left {
+    left: 8px;
+  }
+
+  &--right {
+    right: 8px;
+  }
+}
+
+.swipe-indicator-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swipe-indicator-icon {
+  color: #2563EB;
+}
+
+.swipe-indicator-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+@keyframes swipe-indicator-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
   }
 }
 
@@ -267,11 +505,15 @@ function cancelLongPress(): void {
   position: relative;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
   will-change: transform;
-  touch-action: none;
+  touch-action: pan-y; // Allow vertical scroll, prevent horizontal
 
-  &:active {
+  &:active:not(.chore-card-pwa-swiping) {
     transform: scale(0.98);
   }
+}
+
+.chore-card-pwa-swiping {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .chore-card-pwa-dragging {

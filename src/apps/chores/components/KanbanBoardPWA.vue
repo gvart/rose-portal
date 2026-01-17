@@ -1,50 +1,78 @@
 <template>
   <div class="kanban-board-pwa-wrapper">
-    <!-- Edge Drop Zones (shown during drag) -->
-    <EdgeDropZone
-      edge="top"
-      :target-status="ChoreStatus.IN_PROGRESS"
-      :active="activeEdge === 'top'"
-    />
-    <EdgeDropZone
-      edge="bottom"
-      :target-status="ChoreStatus.DONE"
-      :active="activeEdge === 'bottom'"
-    />
-    <EdgeDropZone
-      edge="left"
-      :target-status="ChoreStatus.TODO"
-      :active="activeEdge === 'left'"
-    />
-    <EdgeDropZone
-      edge="right"
-      :target-status="ChoreStatus.IN_PROGRESS"
-      :active="activeEdge === 'right'"
-    />
+    <!-- ARIA live region for accessibility announcements -->
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      class="sr-only"
+    >
+      {{ accessibilityAnnouncement }}
+    </div>
 
-    <!-- Swipeable Columns using QCarousel -->
-    <q-carousel
-      v-model="activeSlide"
-      :swipeable="!isDragging"
+    <!-- Labeled Tabs for Column Navigation -->
+    <q-tabs
+      v-model="activeColumnIndex"
+      class="kanban-tabs"
+      active-color="primary"
+      indicator-color="primary"
+      narrow-indicator
+      dense
+      align="justify"
+    >
+      <q-tab
+        :name="0"
+        label="To Do"
+        :ripple="false"
+        class="kanban-tab"
+      >
+        <q-badge
+          v-if="sortedTodoChores.length > 0"
+          :label="sortedTodoChores.length"
+          color="grey-6"
+          class="kanban-tab-badge"
+        />
+      </q-tab>
+      <q-tab
+        :name="1"
+        label="In Progress"
+        :ripple="false"
+        class="kanban-tab"
+      >
+        <q-badge
+          v-if="sortedInProgressChores.length > 0"
+          :label="sortedInProgressChores.length"
+          color="blue"
+          class="kanban-tab-badge"
+        />
+      </q-tab>
+      <q-tab
+        :name="2"
+        label="Done"
+        :ripple="false"
+        class="kanban-tab"
+      >
+        <q-badge
+          v-if="sortedDoneChores.length > 0"
+          :label="sortedDoneChores.length"
+          color="green"
+          class="kanban-tab-badge"
+        />
+      </q-tab>
+    </q-tabs>
+
+    <!-- Swipeable Columns using QTabPanels -->
+    <q-tab-panels
+      v-model="activeColumnIndex"
       animated
-      navigation
-      padding
+      swipeable
       transition-prev="slide-right"
       transition-next="slide-left"
-      control-color="primary"
-      navigation-position="bottom"
-      class="kanban-carousel"
+      class="kanban-panels"
     >
-      <!-- TODO Slide -->
-      <q-carousel-slide name="TODO" class="kanban-slide">
+      <!-- TODO Panel -->
+      <q-tab-panel :name="0" class="kanban-panel">
         <div class="kanban-column">
-          <div class="kanban-column-header todo-header">
-            <div class="kanban-column-title-row">
-              <q-icon name="list" size="20px" color="grey-7" />
-              <h2 class="kanban-column-title">To Do</h2>
-              <q-badge :label="sortedTodoChores.length" color="grey-6" />
-            </div>
-          </div>
           <div class="kanban-column-content">
             <ChoreCardPWA
               v-for="chore in sortedTodoChores"
@@ -52,9 +80,7 @@
               :chore="chore"
               :can-edit="true"
               @click="emit('select-chore', chore)"
-              @drag-start="handleDragStart"
-              @drag-move="handleDragMove"
-              @drag-end="handleDragEnd"
+              @swipe-status-change="handleSwipeStatusChange"
             />
             <div v-if="sortedTodoChores.length === 0" class="kanban-empty">
               <q-icon name="assignment" size="48px" color="grey-4" />
@@ -63,18 +89,11 @@
             </div>
           </div>
         </div>
-      </q-carousel-slide>
+      </q-tab-panel>
 
-      <!-- IN_PROGRESS Slide -->
-      <q-carousel-slide name="IN_PROGRESS" class="kanban-slide">
+      <!-- IN_PROGRESS Panel -->
+      <q-tab-panel :name="1" class="kanban-panel">
         <div class="kanban-column">
-          <div class="kanban-column-header in-progress-header">
-            <div class="kanban-column-title-row">
-              <q-icon name="play_arrow" size="20px" color="blue" />
-              <h2 class="kanban-column-title">In Progress</h2>
-              <q-badge :label="sortedInProgressChores.length" color="blue" />
-            </div>
-          </div>
           <div class="kanban-column-content">
             <ChoreCardPWA
               v-for="chore in sortedInProgressChores"
@@ -82,29 +101,20 @@
               :chore="chore"
               :can-edit="true"
               @click="emit('select-chore', chore)"
-              @drag-start="handleDragStart"
-              @drag-move="handleDragMove"
-              @drag-end="handleDragEnd"
+              @swipe-status-change="handleSwipeStatusChange"
             />
             <div v-if="sortedInProgressChores.length === 0" class="kanban-empty">
               <q-icon name="schedule" size="48px" color="grey-4" />
               <p class="kanban-empty-title">Nothing in progress</p>
-              <p class="kanban-empty-subtitle">Long-press a task and drag to edge to start</p>
+              <p class="kanban-empty-subtitle">Swipe right on a task to start</p>
             </div>
           </div>
         </div>
-      </q-carousel-slide>
+      </q-tab-panel>
 
-      <!-- DONE Slide -->
-      <q-carousel-slide name="DONE" class="kanban-slide">
+      <!-- DONE Panel -->
+      <q-tab-panel :name="2" class="kanban-panel">
         <div class="kanban-column">
-          <div class="kanban-column-header done-header">
-            <div class="kanban-column-title-row">
-              <q-icon name="check_circle" size="20px" color="green" />
-              <h2 class="kanban-column-title">Done</h2>
-              <q-badge :label="sortedDoneChores.length" color="green" />
-            </div>
-          </div>
           <div class="kanban-column-content">
             <ChoreCardPWA
               v-for="chore in sortedDoneChores"
@@ -112,9 +122,7 @@
               :chore="chore"
               :can-edit="true"
               @click="emit('select-chore', chore)"
-              @drag-start="handleDragStart"
-              @drag-move="handleDragMove"
-              @drag-end="handleDragEnd"
+              @swipe-status-change="handleSwipeStatusChange"
             />
             <div v-if="sortedDoneChores.length === 0" class="kanban-empty">
               <q-icon name="celebration" size="48px" color="grey-4" />
@@ -123,18 +131,16 @@
             </div>
           </div>
         </div>
-      </q-carousel-slide>
-    </q-carousel>
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import ChoreCardPWA from './ChoreCardPWA.vue';
-import EdgeDropZone from './EdgeDropZone.vue';
 import type { Chore } from '../types/chores';
 import { ChoreStatus, ChorePriority } from '../types/chores';
-import { useHapticFeedback } from '@/composables/useHapticFeedback';
 import { useToast } from '@/composables/useToast';
 
 interface Props {
@@ -150,8 +156,7 @@ const emit = defineEmits<{
   'select-chore': [chore: Chore];
 }>();
 
-const { vibrate } = useHapticFeedback();
-const { success, error } = useToast();
+const { success } = useToast();
 
 // Priority order for sorting (HIGH = 0, MEDIUM = 1, LOW = 2)
 const PRIORITY_ORDER: Record<ChorePriority, number> = {
@@ -172,135 +177,37 @@ const sortedTodoChores = computed(() => sortByPriority(props.todoChores));
 const sortedInProgressChores = computed(() => sortByPriority(props.inProgressChores));
 const sortedDoneChores = computed(() => sortByPriority(props.doneChores));
 
-// Active carousel slide
-const activeSlide = ref<'TODO' | 'IN_PROGRESS' | 'DONE'>('TODO');
+// Active tab panel index (0=TODO, 1=IN_PROGRESS, 2=DONE)
+const activeColumnIndex = ref<number>(0);
 
-// Drag state
-const draggedChoreId = ref<number | null>(null);
-const draggedChoreStatus = ref<ChoreStatus | null>(null);
-const activeEdge = ref<'top' | 'bottom' | 'left' | 'right' | null>(null);
-const isDragging = ref(false);
+// Accessibility announcement for screen readers
+const accessibilityAnnouncement = ref<string>('');
 
-// Edge detection threshold
-const EDGE_THRESHOLD = 60; // px from edge
+// Handle swipe-based status change
+function handleSwipeStatusChange(choreId: number, targetStatus: ChoreStatus): void {
+  // Find the chore to get its title for accessibility
+  const allChores = [...props.todoChores, ...props.inProgressChores, ...props.doneChores];
+  const chore = allChores.find(c => c.id === choreId);
+  const choreTitle = chore?.title || 'Task';
 
-// Throttle drag events
-let lastDragMoveTime = 0;
-const DRAG_THROTTLE = 16; // ~60fps
+  // Emit status change to parent
+  emit('status-change', choreId, targetStatus);
 
-function handleDragStart(choreId: number): void {
-  isDragging.value = true;
-  draggedChoreId.value = choreId;
+  // Announce for screen readers
+  accessibilityAnnouncement.value = `${choreTitle} moved to ${getStatusLabel(targetStatus)}`;
 
-  // Find the chore to get its status
-  const chore =
-    props.todoChores.find(c => c.id === choreId) ||
-    props.inProgressChores.find(c => c.id === choreId) ||
-    props.doneChores.find(c => c.id === choreId);
+  // Clear announcement after screen reader reads it
+  setTimeout(() => {
+    accessibilityAnnouncement.value = '';
+  }, 1000);
 
-  draggedChoreStatus.value = chore?.status || null;
-  activeEdge.value = null;
-}
+  // Show success toast
+  success(`Task moved to ${getStatusLabel(targetStatus)}`);
 
-function handleDragMove({ x, y }: { x: number; y: number; choreId: number }): void {
-  // Throttle drag events
-  const now = Date.now();
-  if (now - lastDragMoveTime < DRAG_THROTTLE) {
-    return;
-  }
-  lastDragMoveTime = now;
-
-  // Detect which edge we're near
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
-
-  let detectedEdge: 'top' | 'bottom' | 'left' | 'right' | null = null;
-
-  // Check edges in priority order
-  if (y <= EDGE_THRESHOLD) {
-    detectedEdge = 'top';
-  } else if (y >= windowHeight - EDGE_THRESHOLD) {
-    detectedEdge = 'bottom';
-  } else if (x <= EDGE_THRESHOLD) {
-    detectedEdge = 'left';
-  } else if (x >= windowWidth - EDGE_THRESHOLD) {
-    detectedEdge = 'right';
-  }
-
-  // Only activate edge if it's a valid transition
-  if (detectedEdge && isValidTransition(draggedChoreStatus.value, detectedEdge)) {
-    activeEdge.value = detectedEdge;
-  } else {
-    activeEdge.value = null;
-  }
-}
-
-function handleDragEnd(choreId: number): void {
-  if (!activeEdge.value || !draggedChoreStatus.value) {
-    // Reset state
-    resetDragState();
-    return;
-  }
-
-  // Determine target status based on edge
-  const targetStatus = getTargetStatus(activeEdge.value);
-
-  if (!targetStatus || targetStatus === draggedChoreStatus.value) {
-    // Invalid or same status
-    vibrate('light');
-    resetDragState();
-    return;
-  }
-
-  // Update status
-  try {
-    emit('status-change', choreId, targetStatus);
-
-    // Success feedback
-    vibrate('heavy');
-    success(`Task moved to ${getStatusLabel(targetStatus)}`);
-
-    // Navigate to target column after status change
+  // Navigate to target column after a brief delay
+  setTimeout(() => {
     navigateToColumn(targetStatus);
-  } catch (err) {
-    error('Failed to update task');
-    vibrate('light');
-  }
-
-  resetDragState();
-}
-
-function resetDragState(): void {
-  isDragging.value = false;
-  draggedChoreId.value = null;
-  draggedChoreStatus.value = null;
-  activeEdge.value = null;
-}
-
-function isValidTransition(
-  currentStatus: ChoreStatus | null,
-  edge: 'top' | 'bottom' | 'left' | 'right'
-): boolean {
-  if (!currentStatus) return false;
-
-  const validTransitions: Record<ChoreStatus, string[]> = {
-    [ChoreStatus.TODO]: ['right'], // TODO → IN_PROGRESS
-    [ChoreStatus.IN_PROGRESS]: ['left', 'bottom'], // IN_PROGRESS → TODO or DONE
-    [ChoreStatus.DONE]: ['top'], // DONE → IN_PROGRESS
-  };
-
-  return validTransitions[currentStatus]?.includes(edge) || false;
-}
-
-function getTargetStatus(edge: 'top' | 'bottom' | 'left' | 'right'): ChoreStatus | null {
-  const edgeToStatus: Record<string, ChoreStatus> = {
-    top: ChoreStatus.IN_PROGRESS,
-    bottom: ChoreStatus.DONE,
-    left: ChoreStatus.TODO,
-    right: ChoreStatus.IN_PROGRESS,
-  };
-
-  return edgeToStatus[edge] || null;
+  }, 150);
 }
 
 function getStatusLabel(status: ChoreStatus): string {
@@ -314,18 +221,31 @@ function getStatusLabel(status: ChoreStatus): string {
 }
 
 function navigateToColumn(status: ChoreStatus): void {
-  // Map status to slide name and navigate
-  const statusToSlide: Record<ChoreStatus, 'TODO' | 'IN_PROGRESS' | 'DONE'> = {
-    [ChoreStatus.TODO]: 'TODO',
-    [ChoreStatus.IN_PROGRESS]: 'IN_PROGRESS',
-    [ChoreStatus.DONE]: 'DONE',
+  // Map status to column index
+  const statusToIndex: Record<ChoreStatus, number> = {
+    [ChoreStatus.TODO]: 0,
+    [ChoreStatus.IN_PROGRESS]: 1,
+    [ChoreStatus.DONE]: 2,
   };
 
-  setTimeout(() => {
-    activeSlide.value = statusToSlide[status];
-  }, 100);
+  activeColumnIndex.value = statusToIndex[status];
 }
 </script>
+
+<style scoped lang="scss">
+// Screen reader only class for accessibility
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+</style>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -343,45 +263,62 @@ export default defineComponent({
   flex-direction: column;
 }
 
-.kanban-carousel {
+// Tabs navigation
+.kanban-tabs {
+  flex-shrink: 0;
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+
+  :deep(.q-tab) {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    position: relative;
+  }
+
+  :deep(.q-tab__indicator) {
+    height: 2px;
+  }
+
+  :deep(.q-tab--active) {
+    color: var(--q-primary);
+  }
+}
+
+.kanban-tab-badge {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.75rem;
+  min-width: 20px;
+  height: 20px;
+  padding: 2px 6px;
+}
+
+// Tab panels
+.kanban-panels {
   flex: 1;
   background: transparent;
   height: 100%;
 
-  :deep(.q-carousel__slide) {
+  :deep(.q-panel) {
     padding: 0;
+    overflow: hidden;
   }
 
-  :deep(.q-carousel__navigation) {
-    bottom: calc(var(--safe-bottom, 0px) + 90px);
-    z-index: 10;
-  }
-
-  :deep(.q-carousel__navigation-inner) {
-    gap: 12px;
-    padding: 8px 16px;
-    background: white;
-    border-radius: 999px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  :deep(.q-carousel__navigation-icon) {
-    width: 10px;
-    height: 10px;
-    opacity: 0.4;
-    transition: all 0.2s ease;
-
-    &.q-carousel__navigation-icon--active {
-      opacity: 1;
-      transform: scale(1.3);
-    }
+  :deep(.q-tab-panel) {
+    height: 100%;
   }
 }
 
-.kanban-slide {
+.kanban-panel {
   padding: 0 8px;
-  padding-bottom: calc(var(--safe-bottom, 0px) + 140px);
+  padding-bottom: calc(var(--safe-bottom, 0px) + 80px);
   overflow: hidden;
+  height: 100%;
 }
 
 .kanban-column {
@@ -392,42 +329,6 @@ export default defineComponent({
   background: #F9FAFB;
   border-radius: 12px;
   overflow: hidden;
-}
-
-.kanban-column-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  background: white;
-  border-bottom: 3px solid;
-}
-
-.todo-header {
-  border-color: #6B7280;
-}
-
-.in-progress-header {
-  border-color: #3B82F6;
-}
-
-.done-header {
-  border-color: #10B981;
-}
-
-.kanban-column-title-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.kanban-column-title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #111827;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .kanban-column-content {
