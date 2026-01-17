@@ -1,168 +1,159 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)" persistent>
-    <q-card class="plant-config-card modal-lg">
-      <q-card-section class="modal-header">
-        <div>
-          <div class="text-h6">Plant Configuration</div>
-          <div class="text-caption text-grey-7">{{ plant?.name || 'Configure plant settings' }}</div>
-        </div>
-        <q-btn icon="close" flat round dense @click="closeModal" :disable="saveInProgress" />
-      </q-card-section>
+  <PwaModal
+    :model-value="modelValue"
+    @update:model-value="val => $emit('update:modelValue', val)"
+    :show-submit="true"
+    :can-submit="isValid"
+    :loading="saveInProgress"
+    @submit="saveConfig"
+    @close="closeModal"
+  >
+    <template #title>
+      <div>
+        <div>Plant Configuration</div>
+        <div class="text-caption text-grey-7">{{ plant?.name || 'Configure plant settings' }}</div>
+      </div>
+    </template>
 
-      <q-card-section class="modal-content scrollable-content">
-        <div class="form-grid">
-          <!-- Plant Name - Full Width -->
-          <div class="input-section full-width">
-            <label class="input-label">Plant Name</label>
-            <input
-              v-model="localConfig.name"
-              type="text"
-              class="text-input"
-              placeholder="Enter plant name"
-              maxlength="50"
-              :readonly="isPi5"
-              @click="isPi5 && (showKeyboard = true)"
-              @focus="isPi5 && (showKeyboard = true)"
-            />
-          </div>
-
-          <!-- Dry Threshold -->
-          <div class="input-section">
-            <label class="input-label">
-              Dry Threshold
-              <span class="form-label--secondary">(triggers watering)</span>
-            </label>
-            <ThresholdStepper
-              v-model="localConfig.dryThreshold"
-              :min="CONFIG_LIMITS.dryThreshold.min"
-              :max="CONFIG_LIMITS.dryThreshold.max"
-              :step="CONFIG_LIMITS.dryThreshold.step"
-              unit="%"
-              dense
-            />
-            <p class="form-hint">
-              Waters when moisture drops below this %.
-            </p>
-          </div>
-
-          <!-- Wet Threshold -->
-          <div class="input-section">
-            <label class="input-label">
-              Wet Threshold
-              <span class="form-label--secondary">(stops watering)</span>
-            </label>
-            <ThresholdStepper
-              v-model="localConfig.wetThreshold"
-              :min="CONFIG_LIMITS.wetThreshold.min"
-              :max="CONFIG_LIMITS.wetThreshold.max"
-              :step="CONFIG_LIMITS.wetThreshold.step"
-              unit="%"
-              dense
-            />
-            <p class="form-hint">
-              Stops watering at this moisture level.
-            </p>
-          </div>
-
-          <!-- Safety Warnings - Full Width -->
-          <q-banner v-if="safetyWarnings.length > 0" rounded dense class="bg-warning text-warning full-width">
-            <template v-slot:avatar>
-              <q-icon name="warning" />
-            </template>
-            <div v-for="(warning, idx) in safetyWarnings" :key="idx" class="q-mb-xs">
-              {{ warning }}
-            </div>
-          </q-banner>
-
-          <!-- Pump Duration -->
-          <div class="input-section">
-            <label class="input-label">Pump Duration</label>
-            <DurationStepper
-              v-model="localConfig.pumpDuration"
-              :min="CONFIG_LIMITS.pumpDuration.min"
-              :max="CONFIG_LIMITS.pumpDuration.max"
-              :step="CONFIG_LIMITS.pumpDuration.step"
-              unit="seconds"
-              :presets="[1, 2, 3, 5]"
-              dense
-            />
-            <p class="form-hint">
-              Duration per watering cycle.
-            </p>
-          </div>
-
-          <!-- Update Interval -->
-          <div class="input-section">
-            <label class="input-label">Update Interval</label>
-            <DurationStepper
-              v-model="localConfig.publishInterval"
-              :min="CONFIG_LIMITS.publishInterval.min"
-              :max="CONFIG_LIMITS.publishInterval.max"
-              :step="CONFIG_LIMITS.publishInterval.step"
-              unit="auto"
-              :presets="[30, 60, 300, 600]"
-              dense
-            />
-            <p class="form-hint">
-              How often data is published.
-            </p>
-          </div>
-
-          <!-- Display Dim Toggle - Full Width -->
-          <div class="input-section full-width">
-            <div class="toggle-row">
-              <div class="toggle-label-group">
-                <label class="input-label">Display Dim</label>
-                <p class="form-hint">
-                  Auto-dim display after inactivity.
-                </p>
-              </div>
-              <q-toggle
-                v-model="localConfig.displayDimEnabled"
-                color="positive"
-              />
-            </div>
-          </div>
-
-          <!-- Dim Timeout - Full Width -->
-          <div v-if="localConfig.displayDimEnabled" class="input-section full-width">
-            <label class="input-label">Dim Timeout</label>
-            <DurationStepper
-              v-model="localConfig.displayDimTimeout"
-              :min="CONFIG_LIMITS.displayDimTimeout.min"
-              :max="CONFIG_LIMITS.displayDimTimeout.max"
-              :step="CONFIG_LIMITS.displayDimTimeout.step"
-              unit="auto"
-              :presets="[10, 30, 60, 120]"
-              dense
-            />
-          </div>
-
-          <!-- Validation Errors - Full Width -->
-          <q-banner v-if="validationErrors.length > 0" rounded dense class="bg-negative text-white full-width">
-            <template v-slot:avatar>
-              <q-icon name="error" />
-            </template>
-            <div v-for="(error, idx) in validationErrors" :key="idx" class="q-mb-xs">
-              {{ error.message }}
-            </div>
-          </q-banner>
-        </div>
-      </q-card-section>
-
-      <q-card-actions align="right" class="modal-footer">
-        <q-btn label="Cancel" flat @click="closeModal" :disable="saveInProgress" />
-        <q-btn
-          label="Save"
-          color="primary"
-          unelevated
-          :disable="!isValid || saveInProgress"
-          :loading="saveInProgress"
-          @click="saveConfig"
+    <div class="form-grid">
+      <!-- Plant Name - Full Width -->
+      <div class="input-section full-width">
+        <label class="input-label">Plant Name</label>
+        <input
+          v-model="localConfig.name"
+          type="text"
+          class="text-input"
+          placeholder="Enter plant name"
+          maxlength="50"
+          :readonly="isPi5"
+          @click="isPi5 && (showKeyboard = true)"
+          @focus="isPi5 && (showKeyboard = true)"
         />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+      </div>
+
+      <!-- Dry Threshold -->
+      <div class="input-section">
+        <label class="input-label">
+          Dry Threshold
+          <span class="form-label--secondary">(triggers watering)</span>
+        </label>
+        <ThresholdStepper
+          v-model="localConfig.dryThreshold"
+          :min="CONFIG_LIMITS.dryThreshold.min"
+          :max="CONFIG_LIMITS.dryThreshold.max"
+          :step="CONFIG_LIMITS.dryThreshold.step"
+          unit="%"
+          dense
+        />
+        <p class="form-hint">
+          Waters when moisture drops below this %.
+        </p>
+      </div>
+
+      <!-- Wet Threshold -->
+      <div class="input-section">
+        <label class="input-label">
+          Wet Threshold
+          <span class="form-label--secondary">(stops watering)</span>
+        </label>
+        <ThresholdStepper
+          v-model="localConfig.wetThreshold"
+          :min="CONFIG_LIMITS.wetThreshold.min"
+          :max="CONFIG_LIMITS.wetThreshold.max"
+          :step="CONFIG_LIMITS.wetThreshold.step"
+          unit="%"
+          dense
+        />
+        <p class="form-hint">
+          Stops watering at this moisture level.
+        </p>
+      </div>
+
+      <!-- Safety Warnings - Full Width -->
+      <q-banner v-if="safetyWarnings.length > 0" rounded dense class="bg-warning text-warning full-width">
+        <template v-slot:avatar>
+          <q-icon name="warning" />
+        </template>
+        <div v-for="(warning, idx) in safetyWarnings" :key="idx" class="q-mb-xs">
+          {{ warning }}
+        </div>
+      </q-banner>
+
+      <!-- Pump Duration -->
+      <div class="input-section">
+        <label class="input-label">Pump Duration</label>
+        <DurationStepper
+          v-model="localConfig.pumpDuration"
+          :min="CONFIG_LIMITS.pumpDuration.min"
+          :max="CONFIG_LIMITS.pumpDuration.max"
+          :step="CONFIG_LIMITS.pumpDuration.step"
+          unit="seconds"
+          :presets="[1, 2, 3, 5]"
+          dense
+        />
+        <p class="form-hint">
+          Duration per watering cycle.
+        </p>
+      </div>
+
+      <!-- Update Interval -->
+      <div class="input-section">
+        <label class="input-label">Update Interval</label>
+        <DurationStepper
+          v-model="localConfig.publishInterval"
+          :min="CONFIG_LIMITS.publishInterval.min"
+          :max="CONFIG_LIMITS.publishInterval.max"
+          :step="CONFIG_LIMITS.publishInterval.step"
+          unit="auto"
+          :presets="[30, 60, 300, 600]"
+          dense
+        />
+        <p class="form-hint">
+          How often data is published.
+        </p>
+      </div>
+
+      <!-- Display Dim Toggle - Full Width -->
+      <div class="input-section full-width">
+        <div class="toggle-row">
+          <div class="toggle-label-group">
+            <label class="input-label">Display Dim</label>
+            <p class="form-hint">
+              Auto-dim display after inactivity.
+            </p>
+          </div>
+          <q-toggle
+            v-model="localConfig.displayDimEnabled"
+            color="positive"
+          />
+        </div>
+      </div>
+
+      <!-- Dim Timeout - Full Width -->
+      <div v-if="localConfig.displayDimEnabled" class="input-section full-width">
+        <label class="input-label">Dim Timeout</label>
+        <DurationStepper
+          v-model="localConfig.displayDimTimeout"
+          :min="CONFIG_LIMITS.displayDimTimeout.min"
+          :max="CONFIG_LIMITS.displayDimTimeout.max"
+          :step="CONFIG_LIMITS.displayDimTimeout.step"
+          unit="auto"
+          :presets="[10, 30, 60, 120]"
+          dense
+        />
+      </div>
+
+      <!-- Validation Errors - Full Width -->
+      <q-banner v-if="validationErrors.length > 0" rounded dense class="bg-negative text-white full-width">
+        <template v-slot:avatar>
+          <q-icon name="error" />
+        </template>
+        <div v-for="(error, idx) in validationErrors" :key="idx" class="q-mb-xs">
+          {{ error.message }}
+        </div>
+      </q-banner>
+    </div>
+  </PwaModal>
 
   <!-- On-Screen Keyboard (Pi5 only) -->
   <Teleport to="body">
@@ -180,6 +171,7 @@ import { ref, computed, watch } from 'vue'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import type { Plant, PlantConfig, ConfigValidationError } from '../types/plant'
 import { CONFIG_LIMITS, SAFE_THRESHOLD_RANGE, rawToPercentage, percentageToRaw } from '../types/plant'
+import PwaModal from '@/components/common/PwaModal.vue'
 import ThresholdStepper from './ThresholdStepper.vue'
 import DurationStepper from './DurationStepper.vue'
 import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
@@ -314,18 +306,6 @@ function saveConfig() {
 </script>
 
 <style scoped>
-.plant-config-card {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.modal-content {
-  flex: 1;
-  min-height: 0;
-  max-height: 60vh;
-}
-
 .text-input {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
@@ -364,14 +344,6 @@ function saveConfig() {
 
 /* Mobile-specific optimizations for phones */
 @media (max-width: 768px) {
-  .plant-config-card {
-    max-width: 100vw !important;
-  }
-
-  .modal-content {
-    max-height: 70vh;
-  }
-
   /* Tighter form grid */
   .form-grid {
     gap: 12px !important;
@@ -403,11 +375,6 @@ function saveConfig() {
 
 /* Ultra-compact mode optimizations for Pi5 */
 @media (max-height: 768px) {
-  .plant-config-card.modal-lg {
-    max-height: 90vh !important;
-    max-width: 90vw !important;
-  }
-
   /* Make form grid more horizontal on landscape */
   .form-grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -428,10 +395,6 @@ function saveConfig() {
   .q-banner {
     padding: 6px 8px !important;
     font-size: 10px !important;
-  }
-
-  .modal-content {
-    max-height: 75vh;
   }
 }
 </style>

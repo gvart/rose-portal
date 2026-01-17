@@ -1,6 +1,9 @@
 <template>
   <AppLayout title="Calendar" theme-color="#6366F1">
-    <div class="calendar-app">
+    <div ref="containerRef" class="calendar-app">
+      <!-- Pull-to-refresh indicator -->
+      <PullIndicator :state="pullState" :distance="pullDistance" :progress="pullProgress" />
+
       <!-- Calendar Header with Navigation -->
       <CalendarHeader
         :title="store.viewTitle"
@@ -79,16 +82,28 @@ import type { CalendarOptions, EventClickArg, DateSelectArg, EventDropArg, Event
 import AppLayout from '@/layouts/AppLayout.vue'
 import CalendarHeader from './components/CalendarHeader.vue'
 import EventModal from './components/EventModal.vue'
+import PullIndicator from '@/components/common/PullIndicator.vue'
 import { useCalendarStore } from './stores/calendarStore'
 import type { EventFormData } from './types/calendar'
 import { KEYBOARD_SHORTCUTS } from './types/calendar'
 import { transformToFullCalendarEvent, getFullCalendarView } from './utils/fullcalendarHelpers'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 
 const store = useCalendarStore()
 const route = useRoute()
 const router = useRouter()
 
 const fullCalendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
+
+// Pull-to-refresh setup
+const containerRef = ref<HTMLElement | null>(null)
+const { pullState, pullDistance, pullProgress } = usePullToRefresh(containerRef, {
+  threshold: 60,
+  onRefresh: async () => {
+    await store.fetchEventsForCurrentView()
+  },
+  hapticOnTrigger: true
+})
 
 // ============================================================================
 // Viewport Detection for PWA & Pi5
@@ -478,6 +493,7 @@ watch([isSmallViewport, () => store.currentView], ([small, view]) => {
   flex-direction: column;
   height: 100%;
   gap: var(--space-4);
+  position: relative;
 }
 
 .calendar-content {

@@ -427,3 +427,176 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ========================================
+   DARK MODE TEXT VISIBILITY FIXES
+   WCAG AA Compliant (4.5:1 contrast minimum)
+   ======================================== */
+
+/**
+ * Fix input labels, placeholders, and form text in dark mode
+ * Quasar uses .body--dark class for dark mode detection
+ */
+
+/* Input labels - ensure visibility in dark mode */
+.body--dark .input-label,
+.body--dark .form-label {
+  color: var(--color-text-primary) !important;
+}
+
+/* Secondary/hint labels */
+.body--dark .form-label--secondary,
+.body--dark .form-hint,
+.body--dark .input-hint {
+  color: var(--color-text-muted) !important;
+}
+
+/* Input placeholders - native inputs */
+.body--dark input::placeholder,
+.body--dark textarea::placeholder {
+  color: var(--color-text-muted) !important;
+  opacity: 0.8;
+}
+
+/* Quasar input placeholders */
+.body--dark .q-field__native::placeholder,
+.body--dark .q-field input::placeholder {
+  color: var(--color-text-muted) !important;
+  opacity: 0.8;
+}
+
+/* Quasar input text */
+.body--dark .q-field__native,
+.body--dark .q-field input,
+.body--dark .q-field textarea {
+  color: var(--color-text-primary) !important;
+}
+
+/* Quasar field labels */
+.body--dark .q-field__label {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Custom text inputs (like in PlantConfigModal) */
+.body--dark .text-input {
+  color: var(--color-text-primary) !important;
+  background: var(--color-bg-secondary) !important;
+  border-color: var(--color-border-primary) !important;
+}
+
+.body--dark .text-input::placeholder {
+  color: var(--color-text-muted) !important;
+  opacity: 0.8;
+}
+
+/* Toggle row labels in dark mode */
+.body--dark .toggle-row .input-label,
+.body--dark .toggle-label-group .input-label {
+  color: var(--color-text-primary) !important;
+}
+
+/* Quasar select dropdown text */
+.body--dark .q-select .q-field__native span,
+.body--dark .q-select__dropdown-icon {
+  color: var(--color-text-primary) !important;
+}
+
+/* Modal title and subtitle in dark mode */
+.body--dark .modal-header-title,
+.body--dark .pwa-modal-title {
+  color: var(--color-text-primary) !important;
+}
+
+.body--dark .modal-header-subtitle {
+  color: var(--color-text-muted) !important;
+}
+
+/* Quasar btn-toggle in dark mode - fix text visibility */
+.body--dark .q-btn-toggle .q-btn {
+  color: var(--color-text-primary) !important;
+}
+
+.body--dark .q-btn-toggle .q-btn--active {
+  color: #ffffff !important;
+}
+
+/* VueDatePicker dark mode support */
+.body--dark .dp__theme_light {
+  --dp-background-color: var(--color-bg-secondary);
+  --dp-text-color: var(--color-text-primary);
+  --dp-hover-color: var(--color-bg-tertiary);
+  --dp-hover-text-color: var(--color-text-primary);
+  --dp-primary-color: var(--color-accent-primary);
+  --dp-secondary-color: var(--color-bg-tertiary);
+  --dp-border-color: var(--color-border-primary);
+  --dp-menu-border-color: var(--color-border-secondary);
+  --dp-input-background-color: var(--color-bg-secondary);
+  --dp-disabled-color: var(--color-text-faint);
+}
+
+/* Quasar grey-3 and grey-9 overrides for dark mode */
+.body--dark .bg-grey-3 {
+  background: var(--color-bg-tertiary) !important;
+}
+
+.body--dark .text-grey-9 {
+  color: var(--color-text-primary) !important;
+}
+
+.body--dark .text-grey-7 {
+  color: var(--color-text-muted) !important;
+}
+
+/* ========================================
+   ACCESSIBILITY - FOCUS INDICATORS (WCAG 2.1 AA)
+   ======================================== */
+
+/**
+ * Focus visible styles for custom buttons
+ * Ensures keyboard navigation is visible
+ */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-border-focus, #3B82F6);
+  outline-offset: 2px;
+}
+
+.btn-primary:focus:not(:focus-visible),
+.btn-secondary:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/**
+ * Generic interactive element focus styles
+ */
+.interactive-touch:focus-visible {
+  outline: 2px solid var(--color-border-focus, #3B82F6);
+  outline-offset: 2px;
+}
+
+.interactive-touch:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/**
+ * Skip link for keyboard accessibility
+ * Allows users to skip to main content
+ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding: var(--space-3) var(--space-4);
+  z-index: 9999;
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  border: 2px solid var(--color-border-focus);
+  border-radius: var(--radius-sm);
+}
+
+.skip-link:focus {
+  top: var(--space-2);
+  left: var(--space-2);
+}

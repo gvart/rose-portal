@@ -1,115 +1,102 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
-    <q-card class="chore-modal-card modal-lg">
-      <q-card-section class="modal-header">
-        <div class="text-h6">
-          {{ mode === 'create' ? 'Create Chore' : 'Edit Chore' }}
-        </div>
-        <q-btn icon="close" flat round dense @click="close" />
-      </q-card-section>
+  <PwaModal
+    :model-value="modelValue"
+    @update:model-value="val => $emit('update:modelValue', val)"
+    :show-submit="true"
+    :can-submit="isValid"
+    :loading="loading"
+    @submit="handleSave"
+    @close="close"
+  >
+    <template #title>
+      {{ mode === 'create' ? 'Create Chore' : 'Edit Chore' }}
+    </template>
 
-      <q-card-section class="modal-content scrollable-content">
-        <div class="modal-two-column">
-          <!-- Main Content Area -->
-          <div class="modal-main">
-            <!-- Title -->
-            <div class="input-section">
-              <q-input
-                v-model="localFormData.title"
-                placeholder="Chore title"
-                maxlength="255"
-                outlined
-                dense
-                input-class="text-subtitle1 text-weight-medium"
-                :error="!!errors.title"
-                :error-message="errors.title"
-                :readonly="isPi5"
-                @click="isPi5 && handleTitleFocus()"
-              />
-            </div>
-
-            <!-- Description -->
-            <div class="input-section">
-              <label class="input-label">Description</label>
-              <ChoreDescriptionEditor
-                v-model="localFormData.description"
-                placeholder="Add details about this chore..."
-                :compact="true"
-                @focus="isPi5 && handleDescriptionFocus()"
-              />
-            </div>
-          </div>
-
-          <!-- Details Sidebar -->
-          <div class="modal-sidebar">
-            <!-- Priority -->
-            <div class="input-section">
-              <label class="input-label">Priority</label>
-              <PrioritySegmentedControl v-model="localFormData.priority" dense />
-            </div>
-
-            <!-- Due Date -->
-            <div class="input-section">
-              <label class="input-label">Due Date</label>
-              <VueDatePicker
-                v-model="localFormData.dueDate"
-                :enable-time-picker="false"
-                format="MMM dd, yyyy"
-                auto-apply
-                :teleport="true"
-              >
-                <template #dp-input="{ value }">
-                  <q-input
-                    :model-value="value"
-                    readonly
-                    outlined
-                    dense
-                    placeholder="Select date"
-                  >
-                    <template v-slot:append>
-                      <q-icon name="event" class="cursor-pointer" />
-                    </template>
-                  </q-input>
-                </template>
-              </VueDatePicker>
-            </div>
-
-            <!-- Assigned To (Edit mode only) -->
-            <AssignmentSelector
-              v-if="mode === 'edit'"
-              v-model="localFormData.assignedToId"
-              :users="availableUsers"
-              dense
-            />
-          </div>
-        </div>
-      </q-card-section>
-
-      <q-card-actions class="modal-footer modal-footer--between">
-        <q-btn
-          v-if="mode === 'edit' && canDelete"
-          label="Delete"
-          color="negative"
-          flat
-          :disable="loading"
-          @click="handleDelete"
-        />
-        <q-space v-else />
-
-        <div class="row q-gutter-sm">
-          <q-btn label="Cancel" flat @click="close" />
-          <q-btn
-            :label="loading ? 'Saving...' : 'Save'"
-            color="primary"
-            unelevated
-            :disable="loading || !isValid"
-            :loading="loading"
-            @click="handleSave"
+    <div class="modal-two-column">
+      <!-- Main Content Area -->
+      <div class="modal-main">
+        <!-- Title -->
+        <div class="input-section">
+          <q-input
+            v-model="localFormData.title"
+            placeholder="Chore title"
+            maxlength="255"
+            outlined
+            dense
+            input-class="text-subtitle1 text-weight-medium"
+            :error="!!errors.title"
+            :error-message="errors.title"
+            :readonly="isPi5"
+            @click="isPi5 && handleTitleFocus()"
           />
         </div>
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+
+        <!-- Description -->
+        <div class="input-section">
+          <label class="input-label">Description</label>
+          <ChoreDescriptionEditor
+            v-model="localFormData.description"
+            placeholder="Add details about this chore..."
+            :compact="true"
+            @focus="isPi5 && handleDescriptionFocus()"
+          />
+        </div>
+      </div>
+
+      <!-- Details Sidebar -->
+      <div class="modal-sidebar">
+        <!-- Priority -->
+        <div class="input-section">
+          <label class="input-label">Priority</label>
+          <PrioritySegmentedControl v-model="localFormData.priority" dense />
+        </div>
+
+        <!-- Due Date -->
+        <div class="input-section">
+          <label class="input-label">Due Date</label>
+          <VueDatePicker
+            v-model="localFormData.dueDate"
+            :enable-time-picker="false"
+            format="MMM dd, yyyy"
+            auto-apply
+            :teleport="true"
+          >
+            <template #dp-input="{ value }">
+              <q-input
+                :model-value="value"
+                readonly
+                outlined
+                dense
+                placeholder="Select date"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer" />
+                </template>
+              </q-input>
+            </template>
+          </VueDatePicker>
+        </div>
+
+        <!-- Assigned To (Edit mode only) -->
+        <AssignmentSelector
+          v-if="mode === 'edit'"
+          v-model="localFormData.assignedToId"
+          :users="availableUsers"
+          dense
+        />
+      </div>
+    </div>
+
+    <template #footer v-if="mode === 'edit' && canDelete">
+      <q-btn
+        label="Delete"
+        color="negative"
+        flat
+        :disable="loading"
+        @click="handleDelete"
+      />
+    </template>
+  </PwaModal>
 
   <!-- On-Screen Keyboard (Pi5 only) -->
   <Teleport to="body">
@@ -127,6 +114,7 @@ import { ref, computed, watch } from 'vue'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useDeviceDetection } from '@/composables/useDeviceDetection'
+import PwaModal from '@/components/common/PwaModal.vue'
 import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
 import AssignmentSelector from './AssignmentSelector.vue'
 import ChoreDescriptionEditor from './ChoreDescriptionEditor.vue'
@@ -234,18 +222,6 @@ function close(): void {
 </script>
 
 <style scoped>
-.chore-modal-card {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.modal-content {
-  flex: 1;
-  min-height: 0;
-  max-height: 60vh;
-}
-
 /* Mobile: Single column */
 .modal-two-column {
   display: flex;
@@ -263,10 +239,6 @@ function close(): void {
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
-  }
-
-  .modal-content {
-    max-height: 70vh;
   }
 
   .input-section {
@@ -296,11 +268,6 @@ function close(): void {
 
 /* Ultra-compact optimizations for Pi5 */
 @media (max-height: 768px) {
-  .chore-modal-card.modal-lg {
-    max-height: 90vh !important;
-    max-width: 92vw !important; /* Use more horizontal space */
-  }
-
   /* Force two-column on landscape small displays */
   .modal-two-column {
     flex-direction: row !important;
@@ -316,10 +283,6 @@ function close(): void {
   /* Compact date picker */
   .q-input--dense {
     font-size: 12px !important;
-  }
-
-  .modal-content {
-    max-height: 75vh;
   }
 }
 </style>

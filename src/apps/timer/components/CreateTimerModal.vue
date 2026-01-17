@@ -1,160 +1,165 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
-    <q-card class="create-timer-card modal-md">
-      <q-card-section class="modal-header">
-        <div class="text-h6">Create Timer</div>
-        <q-btn icon="close" flat round dense @click="handleClose" />
-      </q-card-section>
+  <PwaModal
+    :model-value="modelValue"
+    @update:model-value="val => $emit('update:modelValue', val)"
+    :show-submit="true"
+    :can-submit="isValid"
+    @submit="handleCreate"
+    @close="handleClose"
+  >
+    <template #title>Create Timer</template>
 
-      <q-card-section class="modal-content">
-        <q-form class="form-grid">
-          <!-- Timer Name - Full Width -->
-          <div class="input-section full-width">
-            <label class="input-label">Timer Name</label>
-            <q-input
-              v-model="name"
-              outlined
-              dense
-              placeholder="My Timer"
-            />
-          </div>
-
-          <!-- Timer Type - Full Width -->
-          <div class="input-section full-width">
-            <label class="input-label">Timer Type</label>
-            <q-btn-toggle
-              v-model="selectedType"
-              spread
-              unelevated
-              toggle-color="warning"
-              color="grey-3"
-              text-color="grey-9"
-              dense
-              :options="[
-                { label: 'Countdown', value: 'countdown' },
-                { label: 'Stopwatch', value: 'stopwatch' },
-                { label: 'Pomodoro', value: 'pomodoro' }
-              ]"
-            />
-          </div>
-
-          <!-- Quick Presets (Countdown only) -->
-          <div v-if="selectedType === 'countdown'" class="input-section full-width">
-            <label class="input-label">Quick Presets</label>
-            <div class="preset-grid">
-              <q-btn
-                v-for="preset in TIMER_PRESETS"
-                :key="preset.label"
-                :label="preset.label"
-                color="warning"
-                text-color="white"
-                unelevated
-                dense
-                @click="applyPreset(preset)"
-              />
-            </div>
-          </div>
-
-          <!-- Countdown Duration Input -->
-          <template v-if="selectedType === 'countdown'">
-            <div class="input-section">
-              <label class="input-label">Hours</label>
-              <q-input
-                v-model.number="hours"
-                type="number"
-                min="0"
-                max="23"
-                suffix="h"
-                outlined
-                dense
-                input-class="text-center numeric-data"
-              />
-            </div>
-            <div class="input-section">
-              <label class="input-label">Minutes</label>
-              <q-input
-                v-model.number="minutes"
-                type="number"
-                min="0"
-                max="59"
-                suffix="m"
-                outlined
-                dense
-                input-class="text-center numeric-data"
-              />
-            </div>
-            <div class="input-section full-width">
-              <label class="input-label">Seconds</label>
-              <q-input
-                v-model.number="seconds"
-                type="number"
-                min="0"
-                max="59"
-                suffix="s"
-                outlined
-                dense
-                input-class="text-center numeric-data"
-                style="max-width: 50%;"
-              />
-            </div>
-          </template>
-
-          <!-- Pomodoro Settings -->
-          <template v-if="selectedType === 'pomodoro'">
-            <div class="input-section">
-              <label class="input-label">Work Duration</label>
-              <q-input
-                v-model.number="pomodoroWorkMinutes"
-                type="number"
-                min="1"
-                max="60"
-                suffix="min"
-                outlined
-                dense
-                input-class="text-center numeric-data"
-              />
-            </div>
-            <div class="input-section">
-              <label class="input-label">Break Duration</label>
-              <q-input
-                v-model.number="pomodoroBreakMinutes"
-                type="number"
-                min="1"
-                max="30"
-                suffix="min"
-                outlined
-                dense
-                input-class="text-center numeric-data"
-              />
-            </div>
-            <div class="toggle-row full-width">
-              <label class="input-label">Auto-start breaks</label>
-              <q-toggle v-model="autoStartBreaks" color="warning" />
-            </div>
-          </template>
-        </q-form>
-      </q-card-section>
-
-      <q-card-actions class="modal-footer">
-        <q-btn label="Cancel" flat @click="handleClose" />
-        <q-btn
-          label="Create & Start"
-          color="warning"
-          unelevated
-          :disable="!isValid"
-          @click="handleCreate"
+    <q-form class="form-grid">
+      <!-- Timer Name - Full Width -->
+      <div class="input-section full-width">
+        <label class="input-label">Timer Name</label>
+        <q-input
+          v-model="name"
+          outlined
+          dense
+          placeholder="My Timer"
+          :readonly="isPi5"
+          @click="isPi5 && (showKeyboard = true)"
+          @focus="isPi5 && (showKeyboard = true)"
         />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+      </div>
+
+      <!-- Timer Type - Full Width -->
+      <div class="input-section full-width">
+        <label class="input-label">Timer Type</label>
+        <q-btn-toggle
+          v-model="selectedType"
+          spread
+          unelevated
+          toggle-color="warning"
+          color="grey-3"
+          text-color="grey-9"
+          dense
+          :options="[
+            { label: 'Countdown', value: 'countdown' },
+            { label: 'Stopwatch', value: 'stopwatch' },
+            { label: 'Pomodoro', value: 'pomodoro' }
+          ]"
+        />
+      </div>
+
+      <!-- Quick Presets (Countdown only) -->
+      <div v-if="selectedType === 'countdown'" class="input-section full-width">
+        <label class="input-label">Quick Presets</label>
+        <div class="preset-grid">
+          <q-btn
+            v-for="preset in TIMER_PRESETS"
+            :key="preset.label"
+            :label="preset.label"
+            color="warning"
+            text-color="white"
+            unelevated
+            dense
+            @click="applyPreset(preset)"
+          />
+        </div>
+      </div>
+
+      <!-- Countdown Duration Input -->
+      <template v-if="selectedType === 'countdown'">
+        <div class="input-section">
+          <label class="input-label">Hours</label>
+          <q-input
+            v-model.number="hours"
+            type="number"
+            min="0"
+            max="23"
+            suffix="h"
+            outlined
+            dense
+            input-class="text-center numeric-data"
+          />
+        </div>
+        <div class="input-section">
+          <label class="input-label">Minutes</label>
+          <q-input
+            v-model.number="minutes"
+            type="number"
+            min="0"
+            max="59"
+            suffix="m"
+            outlined
+            dense
+            input-class="text-center numeric-data"
+          />
+        </div>
+        <div class="input-section full-width">
+          <label class="input-label">Seconds</label>
+          <q-input
+            v-model.number="seconds"
+            type="number"
+            min="0"
+            max="59"
+            suffix="s"
+            outlined
+            dense
+            input-class="text-center numeric-data"
+            style="max-width: 50%;"
+          />
+        </div>
+      </template>
+
+      <!-- Pomodoro Settings -->
+      <template v-if="selectedType === 'pomodoro'">
+        <div class="input-section">
+          <label class="input-label">Work Duration</label>
+          <q-input
+            v-model.number="pomodoroWorkMinutes"
+            type="number"
+            min="1"
+            max="60"
+            suffix="min"
+            outlined
+            dense
+            input-class="text-center numeric-data"
+          />
+        </div>
+        <div class="input-section">
+          <label class="input-label">Break Duration</label>
+          <q-input
+            v-model.number="pomodoroBreakMinutes"
+            type="number"
+            min="1"
+            max="30"
+            suffix="min"
+            outlined
+            dense
+            input-class="text-center numeric-data"
+          />
+        </div>
+        <div class="toggle-row full-width">
+          <label class="input-label">Auto-start breaks</label>
+          <q-toggle v-model="autoStartBreaks" color="warning" />
+        </div>
+      </template>
+    </q-form>
+  </PwaModal>
+
+  <!-- On-Screen Keyboard (Pi5 only) -->
+  <Teleport to="body">
+    <FloatingKeyboard
+      v-if="isPi5"
+      v-model="name"
+      v-model:show="showKeyboard"
+      :docked="true"
+    />
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
 import { useTimerStore } from '../stores/timerStore'
 import { useTimerFormatter } from '../composables/useTimerFormatter'
 import type { TimerType, TimerPreset } from '../types/timer'
 import { TIMER_PRESETS } from '../types/timer'
+import PwaModal from '@/components/common/PwaModal.vue'
+import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -166,6 +171,7 @@ const emit = defineEmits<{
 
 const store = useTimerStore()
 const { formatDurationInput } = useTimerFormatter()
+const { isPi5 } = useDeviceDetection()
 
 // Form state
 const name = ref('')
@@ -173,6 +179,7 @@ const selectedType = ref<TimerType>('countdown')
 const hours = ref(0)
 const minutes = ref(5)
 const seconds = ref(0)
+const showKeyboard = ref(false)
 
 // Pomodoro settings
 const pomodoroWorkMinutes = ref(25)
@@ -278,12 +285,6 @@ watch(
 </script>
 
 <style scoped>
-.create-timer-card {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -339,10 +340,6 @@ watch(
 
 /* Ultra-compact optimizations for Pi5 */
 @media (max-height: 768px) {
-  .create-timer-card.modal-md {
-    max-height: 88vh !important;
-  }
-
   /* Horizontal timer type selection */
   .q-btn-toggle {
     font-size: 11px !important;

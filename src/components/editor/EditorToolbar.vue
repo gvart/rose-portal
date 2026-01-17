@@ -98,6 +98,11 @@ onUnmounted(() => {
   z-index: 0;
 }
 
+.body--dark .editor-toolbar {
+  background-color: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .editor-toolbar::-webkit-scrollbar {
   display: none;
 }
@@ -115,6 +120,10 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
+.body--dark .toolbar-separator {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .toolbar-btn {
   display: flex;
   align-items: center;
@@ -130,14 +139,28 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
+.body--dark .toolbar-btn {
+  color: #94a3b8;
+}
+
 .toolbar-btn:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.body--dark .toolbar-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .toolbar-btn--active {
   background-color: rgba(139, 92, 246, 0.15);
   color: #8b5cf6;
   border-color: #8b5cf6;
+}
+
+.body--dark .toolbar-btn--active {
+  background-color: rgba(139, 92, 246, 0.25);
+  color: #a78bfa;
+  border-color: #a78bfa;
 }
 
 .toolbar-btn:focus-visible {
@@ -170,8 +193,16 @@ onUnmounted(() => {
   background: linear-gradient(to right, #fafafa, transparent);
 }
 
+.body--dark .toolbar-fade--left {
+  background: linear-gradient(to right, #0f172a, transparent);
+}
+
 .toolbar-fade--right {
   right: 0;
   background: linear-gradient(to left, #fafafa, transparent);
+}
+
+.body--dark .toolbar-fade--right {
+  background: linear-gradient(to left, #0f172a, transparent);
 }
 </style>

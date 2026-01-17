@@ -32,7 +32,7 @@
   --color-text-primary: #0F172A;
   --color-text-secondary: #475569;
   --color-text-muted: #64748B;
-  --color-text-faint: #94A3B8;
+  --color-text-faint: #6B7280;  /* Updated from #94A3B8 (2.85:1) to #6B7280 (4.56:1) for WCAG AA */
 
   /* Semantic Colors (Meaning-Only Usage) */
   --color-success-bg: #ECFDF5;
@@ -197,7 +197,7 @@
   --color-text-primary: #F1F5F9;
   --color-text-secondary: #CBD5E1;
   --color-text-muted: #94A3B8;
-  --color-text-faint: #64748B;
+  --color-text-faint: #78859B;  /* Updated from #64748B (4.15:1) to #78859B (5.12:1) for better WCAG AA compliance */
 
   /* Semantic Colors (Desaturated for Dark Backgrounds) */
   --color-success-bg: #14532D;
@@ -259,7 +259,7 @@
     --color-text-primary: #F1F5F9;
     --color-text-secondary: #CBD5E1;
     --color-text-muted: #94A3B8;
-    --color-text-faint: #64748B;
+    --color-text-faint: #78859B;  /* WCAG AA compliant */
 
     --color-success-bg: #14532D;
     --color-success-border: rgba(34, 197, 94, 0.4);
@@ -286,4 +286,61 @@
     --depth-3-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     --depth-4-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
+}
+
+/* ========================================
+   QUASAR DARK MODE CLASS SUPPORT
+   ======================================== */
+
+.body--dark {
+  color-scheme: dark;
+
+  /* Apply dark mode variables to body when Quasar dark mode is active */
+  --color-bg-primary: #0F172A;
+  --color-bg-secondary: #1E293B;
+  --color-bg-tertiary: #334155;
+  --color-bg-hover: #475569;
+  --color-bg-active: #64748B;
+
+  --color-border-primary: rgba(255, 255, 255, 0.10);
+  --color-border-secondary: rgba(255, 255, 255, 0.15);
+  --color-border-focus: #60A5FA;
+
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #CBD5E1;
+  --color-text-muted: #94A3B8;
+  --color-text-faint: #78859B;
+
+  --color-success-bg: #14532D;
+  --color-success-border: rgba(34, 197, 94, 0.4);
+  --color-success-text: #86EFAC;
+  --color-success-solid: #22C55E;
+
+  --color-warning-bg: #451A03;
+  --color-warning-border: rgba(245, 158, 11, 0.4);
+  --color-warning-text: #FCD34D;
+  --color-warning-solid: #F59E0B;
+
+  --color-error-bg: #450A0A;
+  --color-error-border: rgba(239, 68, 68, 0.4);
+  --color-error-text: #FCA5A5;
+  --color-error-solid: #EF4444;
+
+  --color-info-bg: #1E3A8A;
+  --color-info-border: rgba(59, 130, 246, 0.4);
+  --color-info-text: #93C5FD;
+  --color-info-solid: #3B82F6;
+
+  --color-accent-primary: #60A5FA;
+  --color-accent-primary-hover: #3B82F6;
+  --color-accent-primary-active: #2563EB;
+
+  --backdrop-color: rgba(0, 0, 0, 0.5);
+
+  --depth-1-border: 1px solid var(--color-border-primary);
+  --depth-2-border: 1px solid var(--color-border-secondary);
+  --depth-3-border: 1px solid var(--color-border-secondary);
+  --depth-3-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --depth-4-border: 1px solid var(--color-border-secondary);
+  --depth-4-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

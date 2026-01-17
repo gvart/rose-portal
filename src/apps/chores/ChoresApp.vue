@@ -1,6 +1,9 @@
 <template>
   <AppLayout title="Chores" theme-color="#EC4899">
-    <div class="chores-app">
+    <div ref="containerRef" class="chores-app">
+      <!-- Pull-to-refresh indicator -->
+      <PullIndicator :state="pullState" :distance="pullDistance" :progress="pullProgress" />
+
       <!-- Header with Filters and Create Button -->
       <ChoresHeader
         :loading="store.loading"
@@ -122,11 +125,13 @@ import KanbanBoardPWA from './components/KanbanBoardPWA.vue'
 import ChoreModal from './components/ChoreModal.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import OnboardingTooltip from './components/OnboardingTooltip.vue'
+import PullIndicator from '@/components/common/PullIndicator.vue'
 import { useChoresStore } from './stores/choresStore'
 import type { ChoreFormData, Chore } from './types/chores'
 import { ChoreStatus, canEditChore } from './types/chores'
 import { usePWA } from '@/composables/usePWA'
 import { usePwaDetection } from '@/composables/usePwaDetection'
+import { usePullToRefresh } from '@/composables/usePullToRefresh'
 
 const store = useChoresStore()
 const route = useRoute()
@@ -137,6 +142,16 @@ const showDeleteDialog = ref(false)
 const choreToDelete = ref<Chore | null>(null)
 const showOnboarding = ref(false)
 const firstChoreElement = ref<HTMLElement | null>(null)
+
+// Pull-to-refresh setup
+const containerRef = ref<HTMLElement | null>(null)
+const { pullState, pullDistance, pullProgress } = usePullToRefresh(containerRef, {
+  threshold: 60,
+  onRefresh: async () => {
+    await store.fetchChores()
+  },
+  hapticOnTrigger: true
+})
 
 const hasActiveFilters = computed(() => {
   return (
@@ -317,6 +332,7 @@ function handleDismissOnboarding(): void {
   flex-direction: column;
   height: 100%;
   padding: 0 1rem;
+  position: relative;
 }
 
 .chores-content {

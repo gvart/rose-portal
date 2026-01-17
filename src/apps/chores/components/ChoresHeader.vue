@@ -126,6 +126,12 @@ function handleAssigneeChange(event: Event): void {
   white-space: nowrap;
 }
 
+/* Dark mode support for filter labels */
+:deep(.body--dark) .filter-label,
+.body--dark .filter-label {
+  color: #E2E8F0;
+}
+
 .filter-chip {
   padding: 0.375rem 0.75rem;
   background: white;
@@ -150,6 +156,27 @@ function handleAssigneeChange(event: Event): void {
   color: var(--chip-text);
 }
 
+/* Dark mode support for filter chips */
+:deep(.body--dark) .filter-chip,
+.body--dark .filter-chip {
+  background: #1e293b;
+  border-color: #475569;
+  color: #CBD5E1;
+}
+
+:deep(.body--dark) .filter-chip:hover,
+.body--dark .filter-chip:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+
+:deep(.body--dark) .filter-chip-active,
+.body--dark .filter-chip-active {
+  background: #334155;
+  border-color: var(--chip-color);
+  color: #E2E8F0;
+}
+
 .filter-select {
   padding: 0.375rem 0.75rem;
   background: white;
@@ -170,6 +197,25 @@ function handleAssigneeChange(event: Event): void {
   outline: none;
   border-color: #EC4899;
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+}
+
+/* Dark mode support for filter select */
+:deep(.body--dark) .filter-select,
+.body--dark .filter-select {
+  background: #1e293b;
+  border-color: #475569;
+  color: #E2E8F0;
+}
+
+:deep(.body--dark) .filter-select:hover,
+.body--dark .filter-select:hover {
+  border-color: #64748b;
+}
+
+:deep(.body--dark) .filter-select option,
+.body--dark .filter-select option {
+  background: #1e293b;
+  color: #E2E8F0;
 }
 
 .filter-clear {

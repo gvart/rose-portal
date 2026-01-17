@@ -186,6 +186,11 @@ useInfiniteScroll(listContainerRef, {
   z-index: 10;
 }
 
+.body--dark .notes-list__header {
+  background-color: #1e293b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .notes-list__skeleton,
 .notes-list__empty,
 .notes-list__items {
@@ -200,6 +205,10 @@ useInfiniteScroll(listContainerRef, {
   padding: 16px;
   color: #6b7280;
   font-size: 14px;
+}
+
+.body--dark .load-more-indicator {
+  color: #94a3b8;
 }
 
 /* Pull-to-refresh indicator */

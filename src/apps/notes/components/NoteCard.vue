@@ -167,8 +167,16 @@ const formattedDate = computed(() => {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.body--dark .note-card {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .note-card:hover {
   background-color: rgba(0, 0, 0, 0.03);
+}
+
+.body--dark .note-card:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .note-card--selected {
@@ -176,9 +184,17 @@ const formattedDate = computed(() => {
   border-left: 3px solid #8b5cf6;
 }
 
+.body--dark .note-card--selected {
+  background-color: rgba(139, 92, 246, 0.2);
+}
+
 .note-card--long-press {
   transform: scale(0.98);
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.body--dark .note-card--long-press {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .note-card:deep(.q-card__section) {
@@ -202,6 +218,11 @@ const formattedDate = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #1f2937;
+}
+
+.body--dark .note-card__title {
+  color: #e2e8f0;
 }
 
 .menu-btn:active {
@@ -216,6 +237,10 @@ const formattedDate = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.body--dark .note-card__preview {
+  color: #94a3b8;
 }
 
 .note-card__footer {
@@ -237,6 +262,10 @@ const formattedDate = computed(() => {
   color: #9ca3af;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.body--dark .note-card__date {
+  color: #64748b;
 }
 
 /* Reduced motion support */

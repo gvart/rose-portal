@@ -380,6 +380,11 @@ function handleDragChange(event: any): void {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  /* 44px minimum touch target */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .kanban-column-load-more:hover:not(:disabled) {

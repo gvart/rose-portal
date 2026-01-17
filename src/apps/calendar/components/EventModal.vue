@@ -1,33 +1,38 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="val => $emit('update:modelValue', val)">
-    <q-card class="event-modal-card modal-md">
-      <q-card-section class="modal-header">
-        <div>
-          <div class="text-h6">
-            {{ mode === 'create' ? 'Create Event' : 'Edit Event' }}
-          </div>
-          <div v-if="mode === 'edit' && selectedEvent?.createdBy?.name" class="text-caption text-grey-7">
-            Created by {{ selectedEvent.createdBy.name }}
-          </div>
+  <PwaModal
+    :model-value="modelValue"
+    @update:model-value="val => $emit('update:modelValue', val)"
+    :show-submit="true"
+    :can-submit="isValid"
+    :loading="loading"
+    @submit="handleSave"
+    @close="closeModal"
+  >
+    <template #title>
+      <div>
+        {{ mode === 'create' ? 'Create Event' : 'Edit Event' }}
+        <div v-if="mode === 'edit' && selectedEvent?.createdBy?.name" class="text-caption text-grey-7" style="font-weight: 400; font-size: 12px; margin-top: 2px;">
+          Created by {{ selectedEvent.createdBy.name }}
         </div>
-        <q-btn icon="close" flat round dense @click="closeModal" :disable="loading" />
-      </q-card-section>
+      </div>
+    </template>
 
-      <q-card-section class="modal-content scrollable-content">
-        <div class="form-grid">
-          <!-- Event Name - Full Width -->
-          <div class="input-section full-width">
-            <label class="input-label">Event Name</label>
-            <q-input
-              ref="nameInputRef"
-              v-model="localFormData.eventName"
-              outlined
-              dense
-              placeholder="Enter event name"
-              maxlength="100"
-              @keydown.enter="handleSave"
-            />
-          </div>
+    <div class="form-grid">
+      <!-- Event Name - Full Width -->
+      <div class="input-section full-width">
+        <label class="input-label">Event Name</label>
+        <q-input
+          ref="nameInputRef"
+          v-model="localFormData.eventName"
+          outlined
+          dense
+          placeholder="Enter event name"
+          maxlength="100"
+          :readonly="isPi5"
+          @click="isPi5 && handleEventNameFocus()"
+          @keydown.enter="!isPi5 && handleSave"
+        />
+      </div>
 
           <!-- All Day Toggle - Full Width -->
           <div class="toggle-row full-width">
@@ -126,49 +131,43 @@
             />
           </div>
 
-          <!-- Validation Errors -->
-          <q-banner
-            v-if="attemptedSubmit && validationErrors.length > 0"
-            rounded
-            dense
-            class="bg-negative text-white full-width"
-          >
-            <template v-slot:avatar>
-              <q-icon name="error" />
-            </template>
-            <div v-for="(error, idx) in validationErrors" :key="idx" class="q-mb-xs">
-              {{ error }}
-            </div>
-          </q-banner>
+      <!-- Validation Errors -->
+      <q-banner
+        v-if="attemptedSubmit && validationErrors.length > 0"
+        rounded
+        dense
+        class="bg-negative text-white full-width"
+      >
+        <template v-slot:avatar>
+          <q-icon name="error" />
+        </template>
+        <div v-for="(error, idx) in validationErrors" :key="idx" class="q-mb-xs">
+          {{ error }}
         </div>
-      </q-card-section>
+      </q-banner>
+    </div>
 
-      <q-card-actions class="modal-footer modal-footer--between">
-        <q-btn
-          v-if="mode === 'edit'"
-          icon="delete"
-          label="Delete"
-          color="negative"
-          flat
-          :disable="loading"
-          @click="handleDelete"
-        />
-        <q-space v-else />
+    <template #footer v-if="mode === 'edit'">
+      <q-btn
+        icon="delete"
+        label="Delete"
+        color="negative"
+        flat
+        :disable="loading"
+        @click="handleDelete"
+      />
+    </template>
+  </PwaModal>
 
-        <div class="row q-gutter-sm">
-          <q-btn label="Cancel" flat :disable="loading" @click="closeModal" />
-          <q-btn
-            :label="loading ? 'Saving...' : (mode === 'create' ? 'Create' : 'Save')"
-            color="primary"
-            unelevated
-            :disable="!isValid || loading"
-            :loading="loading"
-            @click="handleSave"
-          />
-        </div>
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+  <!-- On-Screen Keyboard (Pi5 only) -->
+  <Teleport to="body">
+    <FloatingKeyboard
+      v-if="isPi5"
+      v-model="keyboardValue"
+      v-model:show="showKeyboard"
+      :docked="true"
+    />
+  </Teleport>
 
   <!-- Delete Confirmation Dialog -->
   <q-dialog v-model="showDeleteConfirm">
@@ -196,6 +195,9 @@ import type { CalendarEvent, EventFormData, EventColor, ModalMode, ReminderTime 
 import { EVENT_COLORS, REMINDER_TIME_OPTIONS } from '../types/calendar'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useDeviceDetection } from '@/composables/useDeviceDetection'
+import PwaModal from '@/components/common/PwaModal.vue'
+import FloatingKeyboard from '@/components/common/FloatingKeyboard.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -219,6 +221,8 @@ const emit = defineEmits<{
 const nameInputRef = ref<HTMLInputElement | null>(null)
 const showDeleteConfirm = ref(false)
 const attemptedSubmit = ref(false)
+const showKeyboard = ref(false)
+const { isPi5 } = useDeviceDetection()
 
 // Local copy of form data for editing
 const localFormData = ref<EventFormData>({ ...props.formData })
@@ -306,6 +310,16 @@ const validationErrors = computed<string[]>(() => {
  * Form is valid
  */
 const isValid = computed(() => validationErrors.value.length === 0)
+
+/**
+ * Keyboard value for Pi5 on-screen keyboard
+ */
+const keyboardValue = computed({
+  get: () => localFormData.value.eventName,
+  set: (value: string) => {
+    localFormData.value.eventName = value
+  }
+})
 
 // ============================================================================
 // Watchers
@@ -403,6 +417,13 @@ function confirmDelete() {
 }
 
 /**
+ * Handle event name input focus for Pi5 keyboard
+ */
+function handleEventNameFocus() {
+  showKeyboard.value = true
+}
+
+/**
  * Get actual color value for inline styles
  */
 function getColorValue(colorId: EventColor): string {
@@ -466,6 +487,11 @@ function getColorValue(colorId: EventColor): string {
   border: 2px solid transparent;
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-in-out);
+  /* 44px touch target: 32px visual + 6px padding = 44px */
+  padding: 6px;
+  background-clip: content-box;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .color-option:active {
@@ -491,12 +517,14 @@ function getColorValue(colorId: EventColor): string {
 
   /* Compact color picker */
   .color-picker-compact {
-    gap: 6px !important;
+    gap: 4px !important;
   }
 
   .color-option {
     width: 28px !important;
     height: 28px !important;
+    /* Maintain 44px touch target even when visual is smaller */
+    padding: 8px !important;
   }
 
   /* Compact reminder dropdown */

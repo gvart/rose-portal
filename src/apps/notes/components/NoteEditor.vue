@@ -163,6 +163,10 @@ onUnmounted(() => {
   background-color: white;
 }
 
+.body--dark .note-editor {
+  background-color: #1e293b; /* Dark wrapper, but editor content area stays white */
+}
+
 .note-editor__header {
   display: flex;
   align-items: center;
@@ -172,6 +176,10 @@ onUnmounted(() => {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.body--dark .note-editor__header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .note-title-input {
   flex: 1;
   font-size: 24px;
@@ -179,10 +187,20 @@ onUnmounted(() => {
   border: none;
   outline: none;
   padding: 8px 0;
+  color: #1f2937;
+  background-color: transparent;
+}
+
+.body--dark .note-title-input {
+  color: #e2e8f0;
 }
 
 .note-title-input::placeholder {
   color: #d1d5db;
+}
+
+.body--dark .note-title-input::placeholder {
+  color: #64748b;
 }
 
 .note-editor__status {
@@ -210,6 +228,10 @@ onUnmounted(() => {
   gap: 12px;
   padding: 12px 24px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.body--dark .note-editor__tags-section {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .note-editor__tags {
@@ -312,12 +334,22 @@ onUnmounted(() => {
   color: #6b7280;
 }
 
+.body--dark .note-editor__content :deep(.tiptap-editor blockquote) {
+  color: #6b7280; /* Keep dark gray on white bg */
+}
+
 .note-editor__content :deep(.tiptap-editor code) {
   background-color: #f3f4f6;
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'Courier New', monospace;
   font-size: 14px;
+  color: #1f2937;
+}
+
+.body--dark .note-editor__content :deep(.tiptap-editor code) {
+  background-color: #f3f4f6; /* Keep light gray bg on white editor */
+  color: #1f2937; /* Dark text */
 }
 
 .note-editor__content :deep(.tiptap-editor pre) {
@@ -355,10 +387,18 @@ onUnmounted(() => {
   height: 0;
 }
 
+.body--dark .note-editor__content :deep(.tiptap-editor p.is-editor-empty:first-child::before) {
+  color: #64748b;
+}
+
 /* Strikethrough */
 .note-editor__content :deep(.tiptap-editor s) {
   text-decoration: line-through;
   color: #6b7280;
+}
+
+.body--dark .note-editor__content :deep(.tiptap-editor s) {
+  color: #6b7280; /* Keep dark gray on white bg */
 }
 
 /* Horizontal Rule */
@@ -366,5 +406,38 @@ onUnmounted(() => {
   border: none;
   border-top: 2px solid #e5e7eb;
   margin: 24px 0;
+}
+
+.body--dark .note-editor__content :deep(.tiptap-editor hr) {
+  border-top: 2px solid #475569;
+}
+
+/* Editor content area - ALWAYS white background with dark text for visibility */
+.note-editor__content :deep(.tiptap-editor),
+.note-editor__content :deep(.ProseMirror) {
+  background-color: white;
+  color: #0F172A;
+}
+
+/* Keep white bg and dark text even in dark mode */
+.body--dark .note-editor__content :deep(.tiptap-editor),
+.body--dark .note-editor__content :deep(.ProseMirror) {
+  background-color: white;
+  color: #0F172A;
+}
+
+/* Ensure all text elements are dark on white in dark mode */
+.body--dark .note-editor__content :deep(.tiptap-editor p),
+.body--dark .note-editor__content :deep(.tiptap-editor h1),
+.body--dark .note-editor__content :deep(.tiptap-editor h2),
+.body--dark .note-editor__content :deep(.tiptap-editor h3),
+.body--dark .note-editor__content :deep(.tiptap-editor h4),
+.body--dark .note-editor__content :deep(.tiptap-editor h5),
+.body--dark .note-editor__content :deep(.tiptap-editor h6),
+.body--dark .note-editor__content :deep(.tiptap-editor li),
+.body--dark .note-editor__content :deep(.tiptap-editor span),
+.body--dark .note-editor__content :deep(.ProseMirror p),
+.body--dark .note-editor__content :deep(.ProseMirror *) {
+  color: #0F172A !important;
 }
 </style>

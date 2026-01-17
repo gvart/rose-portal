@@ -24,6 +24,18 @@
   // Remove default shadows
   box-shadow: none !important;
 
+  // Focus visible indicator for keyboard navigation (WCAG 2.1 AA)
+  // Override Quasar's .no-outline class with !important
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+  }
+
+  // Remove default focus outline (replaced by focus-visible)
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+  }
+
   // Button variants
   &--standard {
     border: 1px solid var(--color-border-primary, #E2E8F0);
@@ -308,19 +320,90 @@ body.body--dark {
   .q-menu,
   .q-banner,
   .q-notification {
-    border-color: var(--color-border-primary-dark, #334155);
+    border-color: var(--color-border-primary);
   }
 
   .q-separator {
-    background-color: var(--color-border-primary-dark, #334155);
+    background-color: var(--color-border-primary);
   }
 
   .q-item:hover {
-    background-color: var(--color-bg-hover-dark, #1E293B);
+    background-color: var(--color-bg-hover);
   }
 
   .q-item:active {
-    background-color: var(--color-bg-active-dark, #334155);
+    background-color: var(--color-bg-active);
+  }
+
+  // Ensure circular progress track is visible in dark mode
+  .q-circular-progress__track {
+    stroke: var(--color-border-secondary) !important;
+  }
+
+  // Input field text and placeholder visibility fixes
+  .q-field {
+    .q-field__native,
+    input,
+    textarea {
+      color: var(--color-text-primary, #F1F5F9) !important;
+    }
+
+    .q-field__native::placeholder,
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--color-text-muted, #94A3B8) !important;
+      opacity: 0.85;
+    }
+
+    // Outlined variant border
+    &--outlined .q-field__control::before {
+      border-color: var(--color-border-primary, rgba(255, 255, 255, 0.10));
+    }
+
+    // Focus state
+    &--focused .q-field__control::before {
+      border-color: var(--color-accent-primary, #60A5FA) !important;
+    }
+  }
+
+  // Input suffix/prefix text
+  .q-field__suffix,
+  .q-field__prefix {
+    color: var(--color-text-muted, #94A3B8) !important;
+  }
+
+  // Select dropdown
+  .q-select {
+    .q-field__native {
+      color: var(--color-text-primary, #F1F5F9) !important;
+    }
+
+    .q-select__dropdown-icon {
+      color: var(--color-text-muted, #94A3B8) !important;
+    }
+  }
+
+  // Btn-toggle (used in CreateTimerModal)
+  .q-btn-toggle {
+    .q-btn {
+      color: var(--color-text-primary, #F1F5F9) !important;
+      background: var(--color-bg-tertiary, #334155) !important;
+      border-color: var(--color-border-primary, rgba(255, 255, 255, 0.10)) !important;
+    }
+
+    .q-btn--active {
+      color: #ffffff !important;
+    }
+  }
+
+  // Dialog/modal content
+  .q-dialog .q-card {
+    background: var(--color-bg-primary, #0F172A) !important;
+  }
+
+  // Banner text
+  .q-banner {
+    color: var(--color-text-primary, #F1F5F9);
   }
 }
 
@@ -337,4 +420,141 @@ body.body--dark {
 .q-dialog__inner {
   padding-top: max(16px, env(safe-area-inset-top));
   padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+// ==================================================
+// ACCESSIBILITY - FOCUS INDICATORS (WCAG 2.1 AA)
+// Override Quasar's .no-outline class with !important
+// ==================================================
+
+// Interactive list items
+.q-item {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: -2px !important;
+    background-color: var(--color-bg-hover, #E2E8F0);
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+  }
+}
+
+// Chips
+.q-chip {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+  }
+}
+
+// Tabs (bottom navigation and regular tabs)
+.q-tab {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: -2px !important;
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+  }
+}
+
+// Checkboxes and toggles
+.q-checkbox,
+.q-toggle {
+  &:focus-visible .q-checkbox__inner,
+  &:focus-visible .q-toggle__inner {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+    border-radius: 4px;
+  }
+
+  &:focus:not(:focus-visible) .q-checkbox__inner,
+  &:focus:not(:focus-visible) .q-toggle__inner {
+    outline: none !important;
+  }
+}
+
+// Radio buttons
+.q-radio {
+  &:focus-visible .q-radio__inner {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+    border-radius: 50%;
+  }
+
+  &:focus:not(:focus-visible) .q-radio__inner {
+    outline: none !important;
+  }
+}
+
+// Select dropdowns
+.q-select {
+  &:focus-visible .q-field__control {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+  }
+
+  &:focus:not(:focus-visible) .q-field__control {
+    outline: none !important;
+  }
+}
+
+// Generic clickable elements
+.clickable,
+[role="button"],
+[tabindex="0"] {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+  }
+}
+
+// Cards that are clickable
+.q-card.cursor-pointer,
+.q-card[role="button"] {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 2px !important;
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none !important;
+  }
+}
+
+// Icon buttons (ensure visibility)
+.q-btn--round,
+.q-btn.icon-only {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #3B82F6) !important;
+    outline-offset: 3px !important; // Slightly more offset for round buttons
+  }
+}
+
+// Dark mode focus indicator adjustments
+body.body--dark {
+  .q-btn:focus-visible,
+  .q-item:focus-visible,
+  .q-chip:focus-visible,
+  .q-tab:focus-visible,
+  .clickable:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex="0"]:focus-visible {
+    outline-color: var(--color-border-focus, #60A5FA) !important;
+  }
+
+  .q-tab:focus-visible {
+    background-color: rgba(96, 165, 250, 0.15);
+  }
 }

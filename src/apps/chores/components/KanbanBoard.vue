@@ -212,7 +212,11 @@ onBeforeUnmount(() => {
   transition: all var(--duration-fast, 150ms) cubic-bezier(0.25, 1, 0.5, 1);
   border: none;
   cursor: pointer;
-  padding: var(--space-2, 8px); /* Larger tap target */
+  /* 44px touch target: 8px dot + 18px padding on each side */
+  padding: 18px;
+  background-clip: content-box;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .indicator-dot.active {
